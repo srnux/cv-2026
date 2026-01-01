@@ -1,0 +1,35 @@
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+@font-face {
+  font-family: 'cormorantgaramond-light';
+  src: url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300&display=swap');
+}
+@font-face {
+  font-family: 'cormorantgaramond';
+  src: url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&display=swap');
+}
+body {
+  margin: 0;
+  font-family: "cormorantgaramond-light", "cormorantgaramond", "cormorant garamond", serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: black;
+  color: white;
+}
+h1, h2, h3, h4, h5, h6 {
+  font-family: "cormorantgaramond", "cormorant garamond", serif;
+}
+.section-padding {
+  padding: 5rem 2rem;
+}
+@media (min-width: 768px) {
+  .section-padding {
+    padding: 6rem 4rem;
+  }
+}
+@media (min-width: 1024px) {
+  .section-padding {
+    padding: 8rem 6rem;
+  }
+}
