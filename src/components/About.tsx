@@ -1,4 +1,3 @@
-import React from 'react';
 const About = () => {
   return <section id="about" className="section-padding bg-white text-black">
       <div className="container mx-auto">

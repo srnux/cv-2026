@@ -1,4 +1,3 @@
-import React from 'react';
 const Education = () => {
   const educationItems = [{
     degree: 'Master of Computer Science',
