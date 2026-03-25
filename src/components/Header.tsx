@@ -1,6 +1,22 @@
-import React from 'react';
-const Header = () => {
-  return <header className="fixed top-0 left-0 right-0 bg-black bg-opacity-90 z-50">
+import React, { useEffect, useState } from 'react';
+
+const Header: React.FC = () => {
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setVisible(window.scrollY > 0);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  return (
+    <header
+      className={
+        `fixed top-0 left-0 right-0 bg-black bg-opacity-90 z-50 transform transition-transform duration-300 ` +
+        (visible ? 'translate-y-0' : '-translate-y-full')
+      }
+    >
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
         <div className="flex items-center">
           <div className="mr-3">
@@ -35,6 +51,8 @@ const Header = () => {
           Learn More
         </a>
       </div>
-    </header>;
+    </header>
+  );
 };
+
 export default Header;

@@ -1,17 +1,17 @@
 import React from 'react';
 const Hero = () => {
-  return <section id="home" className="pt-24 min-h-screen flex items-center bg-black">
+  return <section id="home" className="min-h-screen flex items-center bg-black">
       <div className="container mx-auto px-4 md:px-8 flex flex-col md:flex-row">
         <div className="w-full md:w-1/2 mb-8 md:mb-0">
           <img src="/images/luka-web-bw.jpg" alt="Professional portrait" className="w-full h-auto object-cover grayscale" />
         </div>
         <div className="w-full md:w-1/2 md:pl-12 flex flex-col justify-center">
-          <h2 className="text-5xl md:text-6xl lg:text-7xl font-light tracking-wider mb-2">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-light tracking-wider mb-2">
             SKILLS
             <br />
             UNVEILED
           </h2>
-          <h3 className="text-2xl font-light mt-8 mb-4">
+          <h3 className="text-xl font-light mt-8 mb-4">
             IT Recruiter's Delight
           </h3>
           <p className="text-lg font-light leading-relaxed mb-8">
