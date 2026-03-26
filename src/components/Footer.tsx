@@ -6,9 +6,9 @@ const Footer = () => {
             <div className="flex items-center">
               <div className="mr-3">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1">
-                  <rect x="2" y="2" width="20" height="20" />
-                  <line x1="2" y1="2" x2="22" y2="22" />
-                  <line x1="2" y1="22" x2="22" y2="2" />
+                  <rect x="2" y="4" width="20" height="16" />
+                  <polyline points="7,9 11,12 7,15" />
+                  <line x1="13" y1="15" x2="17" y2="15" />
                 </svg>
               </div>
               <h3 className="text-xl font-light">Luka Engels CV</h3>

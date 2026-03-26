@@ -17,16 +17,16 @@ const Header: React.FC = () => {
         (visible ? 'translate-y-0' : '-translate-y-full')
       }
     >
-      <div className="container mx-auto px-4 py-4 flex justify-between items-center">
+      <div className="container mx-auto px-4 py-4 flex justify-between items-center font-grotesk">
         <div className="flex items-center">
           <div className="mr-3">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1">
-              <rect x="2" y="2" width="20" height="20" />
-              <line x1="2" y1="2" x2="22" y2="22" />
-              <line x1="2" y1="22" x2="22" y2="2" />
+              <rect x="2" y="4" width="20" height="16" />
+              <polyline points="7,9 11,12 7,15" />
+              <line x1="13" y1="15" x2="17" y2="15" />
             </svg>
           </div>
-          <h1 className="text-xl font-light">Luka Engels CV</h1>
+          <h1 className="text-xl font-light">Luka Engels</h1>
         </div>
         <nav className="hidden md:block">
           <ul className="flex space-x-8">
@@ -37,7 +37,7 @@ const Header: React.FC = () => {
             </li>
             <li>
               <a href="#contact" className="hover:underline">
-                Book Online
+                Contact
               </a>
             </li>
             <li>
@@ -48,7 +48,7 @@ const Header: React.FC = () => {
           </ul>
         </nav>
         <a href="#about" className="bg-white text-black px-6 py-2 rounded-full text-sm hover:bg-gray-200 transition">
-          Learn More
+          More ...
         </a>
       </div>
     </header>
