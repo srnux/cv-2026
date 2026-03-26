@@ -6,12 +6,12 @@ const Hero = () => {
         </div>
         <div className="w-full md:w-1/2 md:pl-12 flex flex-col justify-center">
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-light tracking-wider mb-4">
-            LUKA ENGELS
+            Luka Engels
           </h2>
           <h3 className="text-xl md:text-2xl lg:text-3xl font-light mb-4">
              Software Development Team Lead
           </h3>
-          <div className="flex flex-wrap gap-4 mb-8">
+          <div className="flex flex-wrap gap-4 mb-8 font-grotesk">
             <span className="border px-4 py-1.5 text-sm font-light tracking-wider">Team leadership</span>
             <span className="border px-4 py-1.5 text-sm font-light tracking-wider">TypeScript</span>
             <span className="border px-4 py-1.5 text-sm font-light tracking-wider">AWS</span>

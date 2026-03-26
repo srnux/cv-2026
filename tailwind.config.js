@@ -6,7 +6,8 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        cormorant: ["cormorantgaramond-light", "cormorantgaramond", "cormorant garamond", "serif"],
+        grotesk: ["Space Grotesk", "sans-serif"],
+        inter: ["Inter", "sans-serif"],
       },
     },
   },

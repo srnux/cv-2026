@@ -3,14 +3,14 @@
 @import 'tailwindcss/utilities';
 body {
   margin: 0;
-  font-family:  "Cormorant Garamond", Arial, Helvetica, sans-serif;
+  font-family: "Inter", Arial, Helvetica, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: black;
   color: white;
 }
 h1, h2, h3, h4, h5, h6 {
-  font-family: "Cormorant Garamond", Arial, Helvetica, sans-serif;
+  font-family: "Space Grotesk", Arial, Helvetica, sans-serif;
 }
 .section-padding {
   padding: 5rem 2rem;

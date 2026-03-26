@@ -8,7 +8,7 @@ import Projects from './components/Projects';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
 export function App() {
-  return <div className="font-cormorant bg-black text-white min-h-screen">
+  return <div className="font-inter bg-black text-white min-h-screen">
       <Header />
       <main>
         <Hero />
