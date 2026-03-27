@@ -1,16 +1,19 @@
 const Skills = () => {
   const skillCategories = [{
     category: 'Programming Languages',
-    skills: ['TypeScript', 'JavaScript', 'Python', 'Java', 'C#']
+    skills: ['TypeScript', 'JavaScript', 'C#']
   }, {
     category: 'Frameworks & Libraries',
-    skills: ['React', 'Node.js', 'Express', 'Next.js', 'Django']
+    skills: ['Node.js','Angular','NestJS','Express', 'Nx']
   }, {
     category: 'Cloud & DevOps',
-    skills: ['AWS', 'Docker', 'Kubernetes', 'CI/CD', 'Terraform']
+    skills: ['AWS', 'Docker', 'Azure']
   }, {
-    category: 'Tools & Methodologies',
-    skills: ['Git', 'Agile', 'Scrum', 'TDD', 'DDD']
+    category: 'Methodologies',
+    skills: ['Agile', 'Scrum', 'TDD', 'DDD', 'Microservices', 'Onion Architecture', 'Event-Driven Architecture']
+  }, {
+    category: 'Tools',
+    skills: ['VS Code', 'Claude Code','Git', 'GitHub - Code, Actions', 'Jira', 'Confluence', ]
   }];
   return <section id="skills" className="section-padding bg-white text-black">
       <div className="container mx-auto">

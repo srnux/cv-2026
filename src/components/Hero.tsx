@@ -1,10 +1,10 @@
 const Hero = () => {
-  return <section id="home" className="min-h-screen flex items-center bg-black">
-      <div className="container mx-auto px-4 md:px-8 flex flex-col md:flex-row">
-        <div className="w-full md:w-1/2 mb-8 md:mb-0">
-          <img src="/images/luka-web-bw.jpg" alt="Professional portrait" className="w-full h-auto object-cover grayscale" />
+  return <section id="home" className="h-screen flex items-center bg-black overflow-hidden">
+      <div className="flex flex-col md:flex-row w-full h-full">
+        <div className="w-full md:w-1/2 h-screen px-2">
+          <img src="/images/luka-web-bw.jpg" alt="Professional portrait" className="w-full h-full object-contain grayscale" />
         </div>
-        <div className="w-full md:w-1/2 md:pl-12 flex flex-col justify-center">
+        <div className="w-full md:w-1/2 px-4 md:px-8 md:pl-12 flex flex-col justify-center">
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-light tracking-wider mb-4">
             Luka Engels
           </h2>
