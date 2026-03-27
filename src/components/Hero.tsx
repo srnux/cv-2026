@@ -11,22 +11,22 @@ const Hero = () => {
           <h3 className="text-xl md:text-2xl lg:text-3xl font-light mb-4">
              Software Development Team Lead
           </h3>
-          <div className="flex flex-wrap gap-4 mb-8 font-grotesk">
-            <span className="border px-4 py-1.5 text-sm font-light tracking-wider">Team leadership</span>
-            <span className="border px-4 py-1.5 text-sm font-light tracking-wider">TypeScript</span>
-            <span className="border px-4 py-1.5 text-sm font-light tracking-wider">AWS</span>
-            <span className="border px-4 py-1.5 text-sm font-light tracking-wider">Cloud architecture</span>
-            <span className="border px-4 py-1.5 text-sm font-light tracking-wider">Microservices</span>
-            <span className="border px-4 py-1.5 text-sm font-light tracking-wider">Node.JS</span>
-            <span className="border px-4 py-1.5 text-sm font-light tracking-wider">Angular</span>
-            <span className="border px-4 py-1.5 text-sm font-light tracking-wider">SCRUM</span>
-            <span className="border px-4 py-1.5 text-sm font-light tracking-wider">GitHub</span>
-          </div>
+          
           <p className="text-lg font-light leading-relaxed mb-8">
             A decade of building scalable cloud solutions, leading high-performing engineering teams, and shipping production-grade TypeScript microservices on AWS. From hands-on code, strategic leadership to deployment. Turning complex distributed systems into reliable, maintainable platforms that deliver real impact.
-          </p>
+          </p><div className="flex flex-wrap gap-4 mb-8 font-grotesk">
+            <a href="#about" className="border px-4 py-1.5 text-sm font-light tracking-wider hover:bg-white hover:text-black transition">Team leadership</a>
+            <a href="#skills-programming-languages" className="border px-4 py-1.5 text-sm font-light tracking-wider hover:bg-white hover:text-black transition">TypeScript</a>
+            <a href="#skills-cloud-devops" className="border px-4 py-1.5 text-sm font-light tracking-wider hover:bg-white hover:text-black transition">AWS</a>
+            <a href="#skills-cloud-devops" className="border px-4 py-1.5 text-sm font-light tracking-wider hover:bg-white hover:text-black transition">Cloud architecture</a>
+            <a href="#skills-methodologies" className="border px-4 py-1.5 text-sm font-light tracking-wider hover:bg-white hover:text-black transition">Microservices</a>
+            <a href="#skills-frameworks-libraries" className="border px-4 py-1.5 text-sm font-light tracking-wider hover:bg-white hover:text-black transition">Node.JS</a>
+            <a href="#skills-frameworks-libraries" className="border px-4 py-1.5 text-sm font-light tracking-wider hover:bg-white hover:text-black transition">Angular</a>
+            <a href="#skills-methodologies" className="border px-4 py-1.5 text-sm font-light tracking-wider hover:bg-white hover:text-black transition">SCRUM</a>
+            <a href="#skills-tools" className="border px-4 py-1.5 text-sm font-light tracking-wider hover:bg-white hover:text-black transition">GitHub</a>
+          </div>
           <div>
-            <a href="#about" className="inline-block border border-white px-8 py-3 hover:bg-white hover:text-black transition duration-300">
+            <a href="#about" className="inline-block border border-white px-6 py-1.5 text-sm font-light tracking-wider font-grotesk hover:bg-white hover:text-black transition duration-300">
               More ...
             </a>
           </div>

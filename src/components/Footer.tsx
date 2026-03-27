@@ -11,7 +11,7 @@ const Footer = () => {
                   <line x1="13" y1="15" x2="17" y2="15" />
                 </svg>
               </div>
-              <h3 className="text-xl font-light">Luka Engels CV</h3>
+              <h3 className="text-xl font-light">Luka Engels</h3>
             </div>
           </div>
           <nav className="mb-6 md:mb-0">

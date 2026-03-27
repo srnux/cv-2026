@@ -21,7 +21,7 @@ const Skills = () => {
           Technical Expertise
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {skillCategories.map((category, index) => <div key={index} className="border border-black p-8">
+          {skillCategories.map((category, index) => <div key={index} id={`skills-${category.category.toLowerCase().replace(/ & /g, '-').replace(/ /g, '-')}`} className="border border-black p-8">
               <h3 className="text-2xl font-medium mb-6">{category.category}</h3>
               <div className="space-y-4">
                 {category.skills.map((skill, skillIndex) => <div key={skillIndex} className="flex items-center">
