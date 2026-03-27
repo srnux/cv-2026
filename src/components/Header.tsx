@@ -1,14 +1,25 @@
 import React, { useEffect, useState } from 'react';
 
 const Header: React.FC = () => {
-  const [visible, setVisible] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [hovered, setHovered] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setVisible(window.scrollY > 0);
+    const onScroll = () => setScrolled(window.scrollY > 0);
     onScroll();
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
+
+  useEffect(() => {
+    const onMouseMove = (e: MouseEvent) => {
+      setHovered(e.clientY < window.innerHeight * 0.1);
+    };
+    window.addEventListener('mousemove', onMouseMove, { passive: true });
+    return () => window.removeEventListener('mousemove', onMouseMove);
+  }, []);
+
+  const visible = scrolled || hovered;
 
   return (
     <header
@@ -47,7 +58,7 @@ const Header: React.FC = () => {
             </li>
           </ul>
         </nav>
-        <a href="#about" className="bg-white text-black px-6 py-2 rounded-full text-sm hover:bg-gray-200 transition">
+        <a href="#about" className="bg-white text-black px-6 py-2 text-sm hover:bg-gray-200 transition">
           More ...
         </a>
       </div>
