@@ -7,7 +7,7 @@ const About = () => {
         <div className="flex flex-col md:flex-row items-center">
           <div className="w-full md:w-1/2 mb-8 md:mb-0 md:pr-12">
             <p className="text-lg font-light leading-relaxed mb-6">
-              With over a decade of experience in software development and team
+              With over two decades of experience in software development and team
               leadership, I bring a unique blend of technical expertise and
               people management skills to the table. My journey in the tech
               industry has equipped me with a profound understanding of
@@ -16,7 +16,7 @@ const About = () => {
             </p>
             <p className="text-lg font-light leading-relaxed">
               I am passionate about creating elegant solutions to complex
-              problems and mentoring the next generation of developers. My
+              problems and staying at the forefront of modern software architecture. My
               approach combines analytical thinking with creative
               problem-solving, always with an eye toward scalable and
               maintainable code.

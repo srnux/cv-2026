@@ -22,6 +22,7 @@ const Hero = () => {
             <a href="#skills-methodologies" className="border px-4 py-1.5 text-sm font-light tracking-wider hover:bg-white hover:text-black transition">Microservices</a>
             <a href="#skills-frameworks-libraries" className="border px-4 py-1.5 text-sm font-light tracking-wider hover:bg-white hover:text-black transition">Node.JS</a>
             <a href="#skills-frameworks-libraries" className="border px-4 py-1.5 text-sm font-light tracking-wider hover:bg-white hover:text-black transition">Angular</a>
+            <a href="#skills-frameworks-libraries" className="border px-4 py-1.5 text-sm font-light tracking-wider hover:bg-white hover:text-black transition">Elasticsearch</a>
             <a href="#skills-methodologies" className="border px-4 py-1.5 text-sm font-light tracking-wider hover:bg-white hover:text-black transition">SCRUM</a>
             <a href="#skills-tools" className="border px-4 py-1.5 text-sm font-light tracking-wider hover:bg-white hover:text-black transition">GitHub</a>
             <a href="#about" className="border px-4 py-1.5 text-sm font-light tracking-wider hover:bg-white hover:text-black transition">...</a>
