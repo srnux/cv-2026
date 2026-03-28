@@ -1,16 +1,11 @@
 const Education = () => {
   const educationItems = [{
-    degree: 'Master of Computer Science',
-    institution: 'University of Technology',
-    period: '2012 - 2014',
-    description: 'Specialized in Software Engineering with a focus on distributed systems. Thesis on scalable cloud architectures.'
-  }, {
-    degree: 'Bachelor of Science in Information Technology',
-    institution: 'State University',
-    period: '2008 - 2012',
-    description: 'Core studies in programming, databases, and systems analysis. Graduated with honors.'
+    degree: 'Master of Economics',
+    institution: 'University of Rijeka',
+    period: '1998 - 2007',
+    description: 'Broad economics curriculum covering Human Resource Management, Accounting, Information Technology, and Marketing. Developed strong analytical and organisational foundations that bridge business strategy with technology-driven solutions.'
   }];
-  const certifications = ['AWS Certified Solutions Architect', 'Microsoft Certified: Azure Developer Associate', 'Certified Scrum Master', 'Google Cloud Professional Developer'];
+  const certifications = ['MCSD: Web Applications', 'MCSA: Web Applications'];
   return <section id="education" className="section-padding bg-black text-white">
       <div className="container mx-auto">
         <h2 className="text-4xl md:text-5xl font-light mb-12 text-center">
@@ -57,13 +52,19 @@ const Education = () => {
               <div>
                 <p className="text-lg font-light mb-2">German</p>
                 <div className="flex space-x-1">
+                  {[...Array(5)].map((_, i) => <div key={i} className={`w-8 h-2 ${i < 3 ? 'bg-white' : 'bg-gray-700'}`}></div>)}
+                </div>
+              </div>
+              <div>
+                <p className="text-lg font-light mb-2">Italian</p>
+                <div className="flex space-x-1">
                   {[...Array(5)].map((_, i) => <div key={i} className={`w-8 h-2 ${i < 4 ? 'bg-white' : 'bg-gray-700'}`}></div>)}
                 </div>
               </div>
               <div>
-                <p className="text-lg font-light mb-2">French</p>
+                <p className="text-lg font-light mb-2">Croatian</p>
                 <div className="flex space-x-1">
-                  {[...Array(5)].map((_, i) => <div key={i} className={`w-8 h-2 ${i < 3 ? 'bg-white' : 'bg-gray-700'}`}></div>)}
+                  {[...Array(5)].map((_, i) => <div key={i} className={`w-8 h-2 ${i < 5 ? 'bg-white' : 'bg-gray-700'}`}></div>)}
                 </div>
               </div>
             </div>
