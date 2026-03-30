@@ -58,9 +58,20 @@ const Header: React.FC = () => {
             </li>
           </ul>
         </nav>
-        <a href="#about" className="border px-4 py-1.5 text-sm font-light tracking-wider font-grotesk hover:bg-white hover:text-black transition">
-          More
-        </a>
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-1">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="6 9 6 2 18 2 18 9"/>
+              <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
+              <rect x="6" y="14" width="12" height="8"/>
+            </svg>
+            <button onClick={() => window.open('/cv-luka-engels-de.html', '_blank')} className="text-sm font-light tracking-wider font-grotesk hover:underline">de</button> |
+            <button onClick={() => window.open('/cv-luka-engels-en.html', '_blank')} className="text-sm font-light tracking-wider font-grotesk hover:underline">en</button>
+          </div>
+          <a href="#about" className="border px-4 py-1.5 text-sm font-light tracking-wider font-grotesk hover:bg-white hover:text-black transition">
+            More
+          </a>
+        </div>
       </div>
     </header>
   );
