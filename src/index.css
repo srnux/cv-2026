@@ -25,3 +25,154 @@ h1, h2, h3, h4, h5, h6 {
     padding: 4rem 6rem;
   }
 }
+
+/* ---- Print Styles ---- */
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 1.5cm 2cm;
+  }
+
+  /* Base reset */
+  body {
+    background-color: white !important;
+    color: black !important;
+    font-size: 11pt;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Hide non-print elements */
+  header,
+  footer,
+  form,
+  button {
+    display: none !important;
+  }
+
+  /* Hero: remove full-screen height, constrain image */
+  #home {
+    height: auto !important;
+    overflow: visible !important;
+    padding: 1rem 0 !important;
+  }
+  /* Outer row: image left, text right */
+  #home > div {
+    flex-direction: row !important;
+    height: auto !important;
+    align-items: flex-start !important;
+  }
+  /* Image container */
+  #home > div > div:first-child {
+    width: 35% !important;
+    height: auto !important;
+    flex-shrink: 0 !important;
+  }
+  #home img {
+    max-height: 260px;
+    width: 100% !important;
+    height: auto !important;
+    object-fit: contain;
+    object-position: top;
+  }
+  /* Text container: keep stacked vertically */
+  #home > div > div:last-child {
+    flex: 1 !important;
+    width: auto !important;
+    padding-left: 2rem !important;
+    flex-direction: column !important;
+    justify-content: flex-start !important;
+  }
+  /* Hide keyword tag buttons in hero */
+  #home > div > div:last-child > div {
+    display: none !important;
+  }
+
+  /* Invert black sections to white for print */
+  .bg-black {
+    background-color: white !important;
+    color: black !important;
+  }
+  .text-white {
+    color: black !important;
+  }
+  .text-gray-400 {
+    color: #555 !important;
+  }
+  .border-white {
+    border-color: #333 !important;
+  }
+  .border {
+    border-color: #333 !important;
+  }
+
+  /* Section padding */
+  .section-padding {
+    padding: 1.5rem 0 !important;
+  }
+  .container {
+    max-width: 100% !important;
+    padding: 0 !important;
+  }
+
+  /* Show all experience entries (hidden by JS collapse) */
+  .print-show {
+    display: flex !important;
+  }
+
+  /* Avoid breaking mid-entry */
+  #experience .flex.flex-col {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+  #skills > div > .grid > div {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  /* Skills grid: force 2 columns */
+  #skills .grid {
+    grid-template-columns: 1fr 1fr !important;
+    display: grid !important;
+  }
+
+  /* Progress bars */
+  .bg-gray-200 {
+    background-color: #ddd !important;
+  }
+
+  /* Page breaks between major sections */
+  #experience {
+    page-break-before: always;
+    break-before: page;
+  }
+  #skills {
+    page-break-before: always;
+    break-before: page;
+  }
+  #education {
+    page-break-before: always;
+    break-before: page;
+  }
+  #projects {
+    page-break-before: always;
+    break-before: page;
+  }
+  #contact {
+    page-break-before: always;
+    break-before: page;
+  }
+
+  /* Contact: hide form, show only contact info */
+  #contact form {
+    display: none !important;
+  }
+  #contact .md\:w-1\/2:first-child {
+    width: 100% !important;
+  }
+
+  /* Don't print URL annotations on links */
+  a[href]::after {
+    content: none !important;
+  }
+}

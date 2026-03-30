@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Luka Engels – Lebenslauf</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+  body {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 8.5pt;
+    color: #222;
+    background: #fff;
+  }
+
+  .page {
+    width: 210mm;
+    min-height: 297mm;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── TOP BANNER ── */
+  .banner {
+    background: #1a1a1a;
+    color: #fff;
+    padding: 0 24px 0 0;
+    display: flex;
+    align-items: stretch;
+    gap: 20px;
+    overflow: hidden;
+    height: 115px;
+  }
+
+  .banner-photo {
+    width: 110px;
+    height: 115px;
+    flex-shrink: 0;
+    object-fit: cover;
+    object-position: center top;
+    filter: grayscale(100%);
+    display: block;
+    margin-left: 15px;
+  }
+
+  .banner-name {
+    flex: 1;
+    padding: 15px 0 13px 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .banner-name .first { font-size: 24pt; font-weight: 300; letter-spacing: 1px; }
+  .banner-name .last  { font-size: 35pt; font-weight: 700; letter-spacing: 2px; line-height: 1; }
+  .banner-title {
+    font-size: 7pt;
+    font-weight: 300;
+    letter-spacing: 0.3px;
+    color: #ccc;
+    margin-top: 5px;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .banner-label {
+    font-size: 12pt;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #fff;
+    align-self: center;
+  }
+
+  /* ── BODY ── */
+  .body { display: flex; flex: 1; }
+
+  /* ── LEFT COLUMN ── */
+  .left {
+    width: 100px;
+    min-width: 68mm;
+    background: #f2f2f2;
+    padding: 13px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  /* ── RIGHT COLUMN ── */
+  .right {
+    flex: 1;
+    padding: 13px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  /* ── SECTION HEADERS ── */
+  .section-title {
+    font-size: 8.5pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    border-bottom: 1.5px solid #333;
+    padding-bottom: 3px;
+    margin-bottom: 6px;
+  }
+
+  .left .section-title { border-color: #555; }
+
+  /* ── CONTACT ── */
+  .contact-item {
+    font-size: 7.5pt;
+    margin-bottom: 3px;
+    line-height: 1.4;
+    word-break: break-all;
+  }
+
+  .contact-item strong { display: block; font-size: 7pt; text-transform: uppercase; color: #555; }
+
+  /* ── SKILL BARS ── */
+  .skill-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+    gap: 6px;
+  }
+
+  .skill-name {
+    width: 110px;
+    min-width: 110px;
+    font-size: 7.5pt;
+  }
+
+  .skill-bar-bg {
+    flex: 1;
+    height: 5px;
+    background: #ccc;
+    border-radius: 2px;
+  }
+
+  .skill-bar-fill {
+    height: 100%;
+    background: #333;
+    border-radius: 2px;
+  }
+
+  /* ── LANGUAGES ── */
+  .lang-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 5px;
+    gap: 6px;
+  }
+
+  .lang-name {
+    width: 80px;
+    min-width: 80px;
+    font-size: 7.5pt;
+  }
+
+  .lang-dots { display: flex; gap: 3px; }
+
+  .dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    border: 1.5px solid #555;
+    background: #fff;
+  }
+
+  .dot.filled { background: #333; border-color: #333; }
+
+  /* ── EDUCATION ── */
+  .edu-degree { font-size: 8pt; font-weight: 700; }
+  .edu-school { font-size: 7.5pt; margin-top: 1px; }
+  .edu-period { font-size: 7pt; color: #666; margin-top: 1px; }
+  .edu-desc   { font-size: 7pt; color: #444; margin-top: 3px; line-height: 1.4; }
+
+  /* ── CERTIFICATIONS ── */
+  .cert-item {
+    font-size: 7.5pt;
+    margin-bottom: 3px;
+    padding-left: 8px;
+    position: relative;
+  }
+
+  .cert-item::before {
+    content: "•";
+    position: absolute;
+    left: 0;
+    color: #555;
+  }
+
+  /* ── EXPERIENCE ── */
+  .exp-entry { margin-bottom: 8px; }
+
+  .exp-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .exp-company { font-size: 8.5pt; font-weight: 700; }
+  .exp-industry { font-size: 7pt; color: #555; font-style: italic; }
+  .exp-period {
+    font-size: 7pt;
+    color: #555;
+    white-space: nowrap;
+    text-align: right;
+    padding-top: 1px;
+  }
+  .exp-location { font-size: 7pt; color: #777; }
+
+  .exp-role { font-size: 7.5pt; font-weight: 700; margin-top: 1px; }
+
+  .exp-bullets { margin-top: 2px; padding-left: 10px; }
+
+  .exp-bullets li {
+    font-size: 7pt;
+    line-height: 1.38;
+    margin-bottom: 0;
+    color: #333;
+  }
+
+  /* ── PRINT ── */
+  @media print {
+    body { background: #fff; }
+    .page { width: 210mm; margin: 0; }
+    @page { size: A4; margin: 0; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- BANNER -->
+  <div class="banner">
+    <img class="banner-photo" src="public/images/luka-web-bw.jpg" alt="Luka Engels">
+    <div class="banner-name">
+      <div class="first">Luka</div>
+      <div class="last">ENGELS</div>
+      <div class="banner-title">Senior Softwareentwickler &nbsp;·&nbsp; Teamleiter &nbsp;·&nbsp; Cloud-Architekt &nbsp;·&nbsp; Freelancer</div>
+    </div>
+    <div class="banner-label">Lebenslauf</div>
+  </div>
+
+  <!-- BODY -->
+  <div class="body">
+
+    <!-- LEFT COLUMN -->
+    <div class="left">
+
+      <!-- KONTAKT -->
+      <div>
+        <div class="section-title">Kontaktdaten</div>
+        <div class="contact-item"><strong>Mobilnummer</strong>+49 152 53682780</div>
+        <div class="contact-item"><strong>E-Mail</strong>luka.engels@outlook.de</div>
+        <div class="contact-item"><strong>Standort</strong>Hamburg, Deutschland</div>
+        <div class="contact-item"><strong>LinkedIn</strong>linkedin.com/in/lukaengels</div>
+        <div class="contact-item"><strong>GitHub</strong>github.com/srnux</div>
+      </div>
+
+      <!-- SPRACHEN -->
+      <div>
+        <div class="section-title">Sprachen</div>
+        <div class="lang-row">
+          <div class="lang-name">Englisch</div>
+          <div class="lang-dots">
+            <div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div>
+          </div>
+        </div>
+        <div class="lang-row">
+          <div class="lang-name">Deutsch</div>
+          <div class="lang-dots">
+            <div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot"></div><div class="dot"></div>
+          </div>
+        </div>
+        <div class="lang-row">
+          <div class="lang-name">Italienisch</div>
+          <div class="lang-dots">
+            <div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot"></div>
+          </div>
+        </div>
+        <div class="lang-row">
+          <div class="lang-name">Kroatisch</div>
+          <div class="lang-dots">
+            <div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div><div class="dot filled"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PROGRAMMIERSPRACHEN -->
+      <div>
+        <div class="section-title">Programmiersprachen</div>
+        <div class="skill-row"><div class="skill-name">TypeScript</div><div class="skill-bar-bg"><div class="skill-bar-fill" style="width:95%"></div></div></div>
+        <div class="skill-row"><div class="skill-name">JavaScript</div><div class="skill-bar-bg"><div class="skill-bar-fill" style="width:90%"></div></div></div>
+        <div class="skill-row"><div class="skill-name">C#</div><div class="skill-bar-bg"><div class="skill-bar-fill" style="width:75%"></div></div></div>
+        <div class="skill-row"><div class="skill-name">SQL</div><div class="skill-bar-bg"><div class="skill-bar-fill" style="width:70%"></div></div></div>
+        <div class="skill-row"><div class="skill-name">HTML / CSS / Sass</div><div class="skill-bar-bg"><div class="skill-bar-fill" style="width:85%"></div></div></div>
+      </div>
+
+      <!-- FRAMEWORKS -->
+      <div>
+        <div class="section-title">Frameworks &amp; Bibliotheken</div>
+        <div class="skill-row"><div class="skill-name">Node.js</div><div class="skill-bar-bg"><div class="skill-bar-fill" style="width:90%"></div></div></div>
+        <div class="skill-row"><div class="skill-name">Angular</div><div class="skill-bar-bg"><div class="skill-bar-fill" style="width:90%"></div></div></div>
+        <div class="skill-row"><div class="skill-name">NestJS</div><div class="skill-bar-bg"><div class="skill-bar-fill" style="width:90%"></div></div></div>
+        <div class="skill-row"><div class="skill-name">AWS CDK</div><div class="skill-bar-bg"><div class="skill-bar-fill" style="width:80%"></div></div></div>
+        <div class="skill-row"><div class="skill-name">Elasticsearch</div><div class="skill-bar-bg"><div class="skill-bar-fill" style="width:75%"></div></div></div>
+        <div class="skill-row"><div class="skill-name">React</div><div class="skill-bar-bg"><div class="skill-bar-fill" style="width:60%"></div></div></div>
+        <div class="skill-row"><div class="skill-name">.NET Core</div><div class="skill-bar-bg"><div class="skill-bar-fill" style="width:70%"></div></div></div>
+      </div>
+
+      <!-- CLOUD & DEVOPS -->
+      <div>
+        <div class="section-title">Cloud &amp; DevOps</div>
+        <div class="skill-row"><div class="skill-name">AWS</div><div class="skill-bar-bg"><div class="skill-bar-fill" style="width:80%"></div></div></div>
+        <div class="skill-row"><div class="skill-name">Azure</div><div class="skill-bar-bg"><div class="skill-bar-fill" style="width:65%"></div></div></div>
+        <div class="skill-row"><div class="skill-name">Docker</div><div class="skill-bar-bg"><div class="skill-bar-fill" style="width:60%"></div></div></div>
+        <div class="skill-row"><div class="skill-name">GitHub Actions</div><div class="skill-bar-bg"><div class="skill-bar-fill" style="width:80%"></div></div></div>
+      </div>
+
+      <!-- AUSBILDUNG -->
+      <div>
+        <div class="section-title">Ausbildung</div>
+        <div class="edu-period">1998 – 2007</div>
+        <div class="edu-degree">Magister der Wirtschaftswissenschaften</div>
+        <div class="edu-school">Universität Rijeka</div>
+        <div class="edu-desc">Breites wirtschaftswissenschaftliches Curriculum mit Schwerpunkten in Personalwesen, Buchhaltung, Informationstechnologie und Marketing. Analytische und organisatorische Grundlagen, die Unternehmensstrategie mit technologischen Lösungen verbinden.</div>
+      </div>
+
+      <!-- ZERTIFIZIERUNGEN -->
+      <div>
+        <div class="section-title">Zertifizierungen</div>
+        <div class="cert-item">MCSD: Web Applications</div>
+        <div class="cert-item">MCSA: Web Applications</div>
+      </div>
+
+      <!-- METHODEN -->
+      <div>
+        <div class="section-title">Methoden</div>
+        <div class="skill-row"><div class="skill-name">Agile / Scrum</div><div class="skill-bar-bg"><div class="skill-bar-fill" style="width:92%"></div></div></div>
+        <div class="skill-row"><div class="skill-name">TDD</div><div class="skill-bar-bg"><div class="skill-bar-fill" style="width:85%"></div></div></div>
+        <div class="skill-row"><div class="skill-name">DDD</div><div class="skill-bar-bg"><div class="skill-bar-fill" style="width:80%"></div></div></div>
+        <div class="skill-row"><div class="skill-name">Microservices</div><div class="skill-bar-bg"><div class="skill-bar-fill" style="width:85%"></div></div></div>
+        <div class="skill-row"><div class="skill-name">Event-Driven</div><div class="skill-bar-bg"><div class="skill-bar-fill" style="width:80%"></div></div></div>
+      </div>
+
+    </div><!-- /left -->
+
+    <!-- RIGHT COLUMN -->
+    <div class="right">
+
+      <div>
+        <div class="section-title">Beruflicher Werdegang</div>
+
+        <!-- 1 -->
+        <div class="exp-entry">
+          <div class="exp-header">
+            <div>
+              <div class="exp-company">Empro / AVIV Group GmbH <span class="exp-industry">– Immobilien SaaS</span></div>
+              <div class="exp-location">Hamburg, Deutschland · Remote</div>
+              <div class="exp-role">Lead Software Engineer</div>
+            </div>
+            <div class="exp-period">Sep 2024 – Heute</div>
+          </div>
+          <ul class="exp-bullets">
+            <li>Leitung der Software-Engineering-Aktivitäten, Architekturentscheidungen und Mentoring von Entwicklern.</li>
+            <li>Verantwortung für den gesamten Entwicklungslebenszyklus – von der technischen Planung bis zur Auslieferung.</li>
+            <li>Sicherstellung von Codequalität, skalierbarem Systemdesign und Ausrichtung an Produktzielen.</li>
+            <li>Entwicklung und Weiterentwicklung einer modernen SaaS-CRM-Plattform mit KI-gesteuerter Anfragenautomatisierung und Elasticsearch-basierter Suche.</li>
+          </ul>
+        </div>
+
+        <!-- 2 -->
+        <div class="exp-entry">
+          <div class="exp-header">
+            <div>
+              <div class="exp-company">immowelt GmbH / AVIV Group GmbH <span class="exp-industry">– Immobilien</span></div>
+              <div class="exp-location">Hamburg, Deutschland · Remote</div>
+              <div class="exp-role">Senior Softwareentwickler (Full-Stack)</div>
+            </div>
+            <div class="exp-period">Aug 2020 – Sep 2024</div>
+          </div>
+          <ul class="exp-bullets">
+            <li>Entwurf und Entwicklung skalierbarer Microservices und Webanwendungen für eine große Immobilienplattform.</li>
+            <li>Entwicklung Cloud-basierter Dienste nach Domain Driven Design (DDD) auf AWS.</li>
+            <li>Teamarbeit im Scrum-Prozess: Backlog-Verfeinerung, Sprint-Planung, Erstellung von Wireframes und Prototypen.</li>
+            <li>Entwicklung von Funktions-, Unit- und Integrationstests; Mitwirkung an CI/CD-Pipelines.</li>
+          </ul>
+        </div>
+
+        <!-- 3 -->
+        <div class="exp-entry">
+          <div class="exp-header">
+            <div>
+              <div class="exp-company">neveling.net GmbH <span class="exp-industry">– Softwareentwicklung</span></div>
+              <div class="exp-location">Hamburg, Deutschland</div>
+              <div class="exp-role">Senior Softwareentwickler</div>
+            </div>
+            <div class="exp-period">Sep 2015 – Aug 2020</div>
+          </div>
+          <ul class="exp-bullets">
+            <li>Entwicklung und Pflege von CMS-Lösungen und individuellen Webanwendungen mit C#, JavaScript und Sitecore.</li>
+            <li>Implementierung responsiver Front-ends, Aufbau von Backend-Diensten und Integration von Drittanbieter-APIs.</li>
+            <li>Anforderungsanalyse, Backlog-Verfeinerung, Sprint-Planung, Wireframes und Prototypen.</li>
+            <li>Verwaltung der Produktveröffentlichungen und CI/CD-Prozesse.</li>
+          </ul>
+        </div>
+
+        <!-- 4 -->
+        <div class="exp-entry">
+          <div class="exp-header">
+            <div>
+              <div class="exp-company">Spencer Stuart <span class="exp-industry">– Direktsuche</span></div>
+              <div class="exp-location">Dublin, Irland</div>
+              <div class="exp-role">Senior Softwareentwickler</div>
+            </div>
+            <div class="exp-period">Jul 2014 – Mai 2015</div>
+          </div>
+          <ul class="exp-bullets">
+            <li>Entwicklung und Weiterentwicklung einer Plattform für die Executive-Search-Branche mit C#, JavaScript und T-SQL.</li>
+            <li>Anforderungserhebung, technische Spezifikation und Full-Stack-Umsetzung neuer Funktionen.</li>
+            <li>Optimierung von Kandidatenmanagement- und Kundeninteraktions-Workflows.</li>
+            <li>Aufbau und Pflege von CI/CD-Prozessen für kontinuierliche Produktveröffentlichungen.</li>
+          </ul>
+        </div>
+
+        <!-- 5 -->
+        <div class="exp-entry">
+          <div class="exp-header">
+            <div>
+              <div class="exp-company">Clarity Consulting <span class="exp-industry">– Softwareberatung / IT</span></div>
+              <div class="exp-location">Rijeka, Kroatien</div>
+              <div class="exp-role">Teamleiter &amp; Leitender Softwareentwickler</div>
+            </div>
+            <div class="exp-period">Jan 2012 – Jul 2014</div>
+          </div>
+          <ul class="exp-bullets">
+            <li>Leitung eines Entwicklungsteams beim Aufbau von Clarity Connect – einer Unified-Communications-Plattform mit Microsoft-Lync-Integration.</li>
+            <li>Technische Gesamtverantwortung, Sprint-Koordination, Definition von Standards und Vorgehensweisen.</li>
+            <li>Entwicklung von Kernfunktionen mit .NET WPF, ASP.NET MVC, MS SQL und UCMA.</li>
+            <li>Fortlaufende Weiterbildung und Leistungsbewertung von Teammitgliedern.</li>
+          </ul>
+        </div>
+
+        <!-- 6 -->
+        <div class="exp-entry">
+          <div class="exp-header">
+            <div>
+              <div class="exp-company">Erste Group Bank AG <span class="exp-industry">– Banking &amp; Finanzen</span></div>
+              <div class="exp-location">Rijeka, Kroatien</div>
+              <div class="exp-role">Leiter der Satellitenapplikationsentwicklung</div>
+            </div>
+            <div class="exp-period">Jan 2008 – Jan 2012</div>
+          </div>
+          <ul class="exp-bullets">
+            <li>Verantwortung für die Entwicklung von Satellitenapplikationen zur Unterstützung einer komplexen Kernbankingplattform.</li>
+            <li>Aufbau und Integration von Nebensystemen für Online-Banking, Reporting und Kundendienste.</li>
+            <li>Technologien: C# .NET, ASP.NET, Oracle PL/SQL.</li>
+          </ul>
+        </div>
+
+        <!-- 7 -->
+        <div class="exp-entry">
+          <div class="exp-header">
+            <div>
+              <div class="exp-company">Multilink <span class="exp-industry">– Telekommunikation</span></div>
+              <div class="exp-location">Kroatien</div>
+              <div class="exp-role">Senior Softwareentwickler</div>
+            </div>
+            <div class="exp-period">2004 – 2008</div>
+          </div>
+          <ul class="exp-bullets">
+            <li>Entwicklung und Pflege eines Webportals und unterstützender Dienste für T-Mobile.</li>
+            <li>Anforderungsanalyse und Full-Stack-Umsetzung von Kundenanforderungen.</li>
+          </ul>
+        </div>
+
+        <!-- 8 -->
+        <div class="exp-entry">
+          <div class="exp-header">
+            <div>
+              <div class="exp-company">Euris <span class="exp-industry">– Versicherungs- &amp; Industriesoftware</span></div>
+              <div class="exp-location">Triest, Italien</div>
+              <div class="exp-role">Softwareentwickler</div>
+            </div>
+            <div class="exp-period">Mai 2001 – Feb 2005</div>
+          </div>
+          <ul class="exp-bullets">
+            <li>Entwicklung von Windows-Desktop-Anwendungen für die Versicherungsbranche und industrielle Unterstützungssysteme.</li>
+            <li>Technologien: VB6, C++, MS SQL Server.</li>
+          </ul>
+        </div>
+
+      </div>
+    </div><!-- /right -->
+  </div><!-- /body -->
+</div><!-- /page -->
+</body>
+</html>

@@ -57,7 +57,7 @@ const Experience = () => {
           Professional Experience
         </h2>
         <div className="space-y-12">
-          {(expanded ? experiences : experiences.slice(0, 3)).map((exp, index) => <div key={index} className="flex flex-col md:flex-row border-t border-white pt-8">
+          {experiences.map((exp, index) => <div key={index} className={`flex flex-col md:flex-row border-t border-white pt-8${!expanded && index >= 3 ? ' print-show hidden' : ''}`}>
               <div className="w-full md:w-1/3 mb-4 md:mb-0">
                 <h3 className="text-2xl font-medium">{exp.title}</h3>
                 <p className="text-xl font-light">{exp.company}</p>
