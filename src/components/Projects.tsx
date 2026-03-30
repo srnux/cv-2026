@@ -1,16 +1,16 @@
 const Projects = () => {
   const projects = [{
-    title: 'Enterprise Cloud Migration',
-    description: 'Led the migration of legacy systems to AWS cloud infrastructure, implementing microservices architecture and CI/CD pipelines.',
-    technologies: ['AWS', 'Docker', 'Node.js', 'Terraform']
+    title: 'Empro – Real Estate CRM',
+    description: 'Development of a modern SaaS CRM platform for real estate brokers, featuring AI-powered inquiry automation, search profile matching, AI-generated property descriptions, and calendar/email integrations to streamline daily operations.',
+    technologies: ['Angular', 'TypeScript', 'Node.js', 'AWS', 'AI/ML', 'DynamoDB', 'Elasticsearch']
   }, {
-    title: 'E-commerce Platform',
-    description: 'Developed a scalable e-commerce solution with real-time inventory management and payment processing integration.',
-    technologies: ['React', 'Redux', 'Express', 'MongoDB']
+    title: 'Nivea – Portal & Web Shop',
+    description: 'Feature development for the Nivea customer portal and web shop, including product catalogue pages, shopping cart functionality, loyalty programme integration, and CMS-driven content management across multiple markets.',
+    technologies: ['Sitecore CMS', '.NET','C#','SCSS', 'REST API', 'Azure']
   }, {
-    title: 'Analytics Dashboard',
-    description: 'Created an interactive data visualization dashboard for business intelligence, featuring real-time updates and customizable reports.',
-    technologies: ['TypeScript', 'D3.js', 'Next.js', 'GraphQL']
+    title: 'Spencer Stuart – Executive Search Platform',
+    description: 'Development and maintenance of an internal platform for Spencer Stuart employees worldwide, streamlining daily business operations including executive search workflows, consultant collaboration tools, and internal data management across multiple regions.',
+    technologies: ['.NET', 'C#', 'MS SQL', 'REST API', 'MS SQL Server']
   }];
   return <section id="projects" className="section-padding bg-white text-black">
       <div className="container mx-auto">
