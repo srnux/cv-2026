@@ -1,0 +1,4 @@
+- [User profile](user_profile.md) — Luka Engels, Software Dev Team Lead, GitHub: srnux
+- [Use pnpm not npm](feedback_pnpm.md) — User prefers pnpm over npm for all package management
+- [Deployment setup](project_deployment.md) — GitHub Pages + custom domain luka-engels.de, DNS on strato.de
+- [Strato.de DNS](reference_strato.md) — Domain registrar with single A record and no apex CNAME limitations
