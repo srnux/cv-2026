@@ -4,26 +4,34 @@ const About = () => {
         <h2 className="text-4xl md:text-5xl font-light mb-12 text-center">
           About Me
         </h2>
-        <div className="flex flex-col md:flex-row items-center">
+        <div className="flex flex-col md:flex-row items-stretch">
           <div className="w-full md:w-1/2 mb-8 md:mb-0 md:pr-12">
             <p className="text-lg font-light leading-relaxed mb-6">
-              With over two decades of experience in software development and team
-              leadership, I bring a unique blend of technical expertise and
-              people management skills to the table. My journey in the tech
-              industry has equipped me with a profound understanding of
-              development lifecycles, cloud architecture, and effective team
-              dynamics.
+              Over two decades of experience in software development and team
+              leadership helped me shape a unique blend of technical expertise and
+              people management skills. A long journey through the tech
+              industry has built a profound understanding of development
+              lifecycles, cloud architecture, and effective team dynamics.
             </p>
-            <p className="text-lg font-light leading-relaxed">
-              I am passionate about creating elegant solutions to complex
-              problems and staying at the forefront of modern software architecture. My
-              approach combines analytical thinking with creative
+            <p className="text-lg font-light leading-relaxed mb-6">
+              A genuine drive for crafting elegant solutions to complex
+              problems, paired with a constant focus on modern software
+              architecture. Analytical thinking balanced with creative
               problem-solving, always with an eye toward scalable and
               maintainable code.
             </p>
+            <p className="text-lg font-light leading-relaxed">
+              Deep expertise in Large Language
+              Models and their practical application in software development.
+              From integrating LLM-powered features into production systems to
+              leveraging AI-assisted coding workflows, these tools are applied
+              to accelerate delivery, improve code quality, and unlock new
+              product capabilities — always with a mindful eye toward the
+              architectural and ethical considerations they bring.
+            </p>
           </div>
           <div className="w-full md:w-1/2">
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-4 h-full">
               <div className="p-6 border border-black">
                 <h3 className="text-xl font-medium mb-2">Vision</h3>
                 <p className="font-light">

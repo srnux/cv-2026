@@ -20,10 +20,10 @@ const Contact = () => {
         </h2>
         <div className="flex flex-col md:flex-row">
           <div className="w-full md:w-1/2 mb-8 md:mb-0 md:pr-12">
-            <h3 className="text-2xl font-medium mb-6">Book a Consultation</h3>
+            <h3 className="text-2xl font-medium mb-6">Book a Meeting</h3>
             <p className="text-lg font-light mb-8">
               Open to full-time employment, contract engagements, or project-based
-              collaboration. Schedule a consultation to explore how we can work together.
+              collaboration. Schedule a meeting to explore how we can work together.
             </p>
             <div className="space-y-4">
               <div className="flex items-center">
