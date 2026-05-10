@@ -1,0 +1,23 @@
+# Luka Engels
+
+> Software Development Team Lead with 20+ years of experience in scalable cloud systems, TypeScript microservices on AWS, and applied Large Language Models.
+
+Luka Engels is an engineering leader based in Hamburg, Germany, currently serving as Lead Software Engineer at Empro / AVIV Group. His core focus is production TypeScript microservices on AWS, distributed system architecture, and integrating Large Language Models into real-world products.
+
+He combines hands-on development with technical leadership of distributed teams, drawing on prior senior roles at immowelt GmbH, neveling.net, Spencer Stuart Dublin, and Erste Group Bank. Primary stack: TypeScript, Node.js, NestJS, Angular, AWS (with CDK), Elasticsearch, and Docker. Practices include Agile/Scrum, TDD, DDD, microservices, onion architecture, and event-driven design.
+
+Languages: English (fluent), German (professional), Italian (advanced), Croatian (native). The site is a single-page portfolio with downloadable A4 CVs in English and German.
+
+## Portfolio
+- [Personal site](https://luka-engels.de/): single-page portfolio with About, Experience, Skills, Education, Projects, and Contact sections.
+
+## CV
+- [CV (English, A4 HTML)](https://luka-engels.de/cv-luka-engels-en.html): print-ready résumé.
+- [Lebenslauf (Deutsch, A4 HTML)](https://luka-engels.de/cv-luka-engels-de.html): druckfertiger Lebenslauf.
+
+## Profiles
+- [LinkedIn](https://www.linkedin.com/in/lukaengels/): professional profile and full work history.
+- [GitHub](https://github.com/srnux): public code and project repositories.
+
+## Optional
+- [Contact email](mailto:luka.engels@outlook.de): direct contact for inquiries.
