@@ -18,7 +18,7 @@ const Hero = () => {
             <a href="#about" className="border px-4 py-1.5 text-sm font-light tracking-wider hover:bg-white hover:text-black transition">Team leadership</a>
             <a href="#skills-programming-languages" className="border px-4 py-1.5 text-sm font-light tracking-wider hover:bg-white hover:text-black transition">TypeScript</a>
             <a href="#skills-cloud-devops" className="border px-4 py-1.5 text-sm font-light tracking-wider hover:bg-white hover:text-black transition">AWS</a>
-            <a href="#skills-cloud-devops" className="border px-4 py-1.5 text-sm font-light tracking-wider hover:bg-white hover:text-black transition">Cloud architecture</a>
+            <a href="#skills-cloud-devops" className="border px-4 py-1.5 text-sm font-light tracking-wider hover:bg-white hover:text-black transition">Serverless Architecture</a>
             <a href="#skills-methodologies" className="border px-4 py-1.5 text-sm font-light tracking-wider hover:bg-white hover:text-black transition">Microservices</a>
             <a href="#skills-frameworks-libraries" className="border px-4 py-1.5 text-sm font-light tracking-wider hover:bg-white hover:text-black transition">Node.JS</a>
             <a href="#skills-frameworks-libraries" className="border px-4 py-1.5 text-sm font-light tracking-wider hover:bg-white hover:text-black transition">Angular</a>
