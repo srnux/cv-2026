@@ -15,7 +15,7 @@ const Footer = () => {
             </div>
           </div>
           <nav className="mb-6 md:mb-0">
-            <ul className="flex space-x-8">
+            <ul className="flex flex-wrap justify-center gap-x-6 gap-y-2">
               <li>
                 <a href="#home" className="hover:underline">
                   Home
@@ -39,6 +39,16 @@ const Footer = () => {
               <li>
                 <a href="#contact" className="hover:underline">
                   Contact
+                </a>
+              </li>
+              <li>
+                <a href="/impressum.html" className="hover:underline">
+                  Impressum
+                </a>
+              </li>
+              <li>
+                <a href="/datenschutz.html" className="hover:underline">
+                  Datenschutz
                 </a>
               </li>
             </ul>

@@ -1,18 +1,26 @@
 # Luka Engels
 
-> Software Development Team Lead with 20+ years of experience in scalable cloud systems, TypeScript microservices on AWS, and applied Large Language Models.
+> Lead Software Engineer in Hamburg, Germany, working fully remote. 25 years of production software across real estate SaaS, banking, insurance and telecommunications. Builds agentic SDLC platforms on large language models, with Claude skills, MCP servers and RAG retrieval, on a TypeScript and AWS foundation.
 
-Luka Engels is an engineering leader based in Hamburg, Germany, currently serving as Lead Software Engineer at Empro / AVIV Group. His core focus is production TypeScript microservices on AWS, distributed system architecture, and integrating Large Language Models into real-world products.
+Luka Engels is Lead Software Engineer at Empro (Whise Group), where he holds the technical direction for a SaaS CRM for real estate brokers serving more than 6,000 customers, 95,000 users and 4.2 million managed properties. He leads six developers inside an eleven-person cross-functional team.
 
-He combines hands-on development with technical leadership of distributed teams, drawing on prior senior roles at immowelt GmbH, neveling.net, Spencer Stuart Dublin, and Erste Group Bank. Primary stack: TypeScript, Node.js, NestJS, Angular, AWS (with CDK), Elasticsearch, and Docker. Practices include Agile/Scrum, TDD, DDD, microservices, onion architecture, and event-driven design.
+His team built and maintains an agentic SDLC platform: a harness of Claude skills, slash commands, hooks and rules that engineers work through daily, with Model Context Protocol (MCP) servers and RAG retrieval connecting agents to repositories, pipelines and issue tracking. A stakeholder-approved prototype enters the pipeline through specification extraction; agents then groom, implement, review and test, with hooks and rules enforcing standards. The team also shipped a customer-facing agentic UI on the Agno framework in Python, and owns an Angular design system of 87 components in an Nx monorepo.
 
-Languages: English (fluent), German (professional), Italian (advanced), Croatian (native). The site is a single-page portfolio with downloadable A4 CVs in English and German.
+Earlier senior and leadership roles: immowelt GmbH / AVIV Group (2020 to 2024), neveling.net GmbH, now Neveling Reply (2015 to 2020), Spencer Stuart in Dublin (2014 to 2015), Clarity Consulting, since acquired by Perficient (2012 to 2014), Erste Group Bank AG, leading a team of 10 (2008 to 2012), Multilink (2004 to 2008) and Euris (2000 to 2004).
+
+Primary stack: TypeScript, JavaScript, C#, Python, SQL. Node.js, NestJS, .NET Core, Angular, React, Nx. AWS with Lambda, DynamoDB, S3, CloudFront and CDK, Azure Kubernetes Service, Kubernetes, PostgreSQL, Elasticsearch, Docker, GitHub Actions. Practices: domain-driven design, microservices, event-driven architecture, TDD, Agile and Scrum, technical leadership and mentoring.
+
+Education: Master of Economics, University of Rijeka. Certifications: MCSD and MCSA Web Applications.
+
+Languages: Croatian (native), English (C2), Italian (C1), German (B2). Citizenship: German and Croatian, so no work authorisation or visa sponsorship is required anywhere in the EU.
+
+Currently open to permanent, fully remote roles employed in Germany, at Staff, Principal, Lead or Head of Engineering level, where agentic and LLM platform work is the core of the job. Not looking for freelance or contract engagements, hybrid or on-site roles, or relocation.
 
 ## Portfolio
-- [Personal site](https://luka-engels.de/): single-page portfolio with About, Experience, Skills, Education, Projects, and Contact sections.
+- [Personal site](https://luka-engels.de/): single page with About, Experience, Skills, Education, Portfolio and Contact sections.
 
 ## CV
-- [CV (English, A4 HTML)](https://luka-engels.de/cv-luka-engels-en.html): print-ready résumé.
+- [CV (English, A4 HTML)](https://luka-engels.de/cv-luka-engels-en.html): print-ready CV.
 - [Lebenslauf (Deutsch, A4 HTML)](https://luka-engels.de/cv-luka-engels-de.html): druckfertiger Lebenslauf.
 
 ## Profiles
@@ -20,4 +28,4 @@ Languages: English (fluent), German (professional), Italian (advanced), Croatian
 - [GitHub](https://github.com/srnux): public code and project repositories.
 
 ## Optional
-- [Contact email](mailto:luka.engels@outlook.de): direct contact for inquiries.
+- [Contact email](mailto:luka.engels@outlook.de): direct contact for role enquiries.

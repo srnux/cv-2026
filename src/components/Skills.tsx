@@ -1,71 +1,93 @@
+const skillCategories = [{
+  id: 'skills-ai-agents',
+  category: 'AI & Agents',
+  lead: true,
+  skills: [
+    'Generative AI (GenAI)',
+    'Large language models (LLMs)',
+    'AI agents and multi-agent systems',
+    'Agno',
+    'Prompt and context engineering',
+    'Claude skills, subagents, slash commands, hooks and rules',
+    'Model Context Protocol (MCP) server design',
+    'RAG pipelines',
+    'Agent workflow architecture',
+    'Guardrail and policy design',
+    'Token-cost engineering',
+  ],
+}, {
+  id: 'skills-languages',
+  category: 'Languages',
+  skills: [
+    'TypeScript',
+    'JavaScript',
+    'C#',
+    'Python',
+    'SQL',
+    'Elasticsearch Query Language',
+    'HTML / CSS / Sass',
+  ],
+}, {
+  id: 'skills-frontend',
+  category: 'Frontend',
+  skills: [
+    'Angular',
+    'React',
+    'Design systems and component libraries',
+    'Nx monorepos',
+  ],
+}, {
+  id: 'skills-backend',
+  category: 'Backend',
+  skills: [
+    'Node.js',
+    'NestJS',
+    '.NET Core',
+    'REST',
+    'Event-driven services',
+  ],
+}, {
+  id: 'skills-cloud-devops',
+  category: 'Cloud & DevOps',
+  skills: [
+    'AWS (Lambda, DynamoDB, S3, CloudFront, CDK)',
+    'Azure (AKS)',
+    'Kubernetes',
+    'PostgreSQL',
+    'Elasticsearch',
+    'Docker',
+    'GitHub Actions',
+    'CI/CD',
+  ],
+}, {
+  id: 'skills-practices',
+  category: 'Practices',
+  skills: [
+    'Domain-Driven Design',
+    'Microservices',
+    'TDD',
+    'Agile / Scrum',
+    'Technical leadership and mentoring',
+  ],
+}];
+
 const Skills = () => {
-  const skillCategories = [{
-    category: 'Programming Languages',
-    skills: [
-      { name: 'TypeScript', percentage: 95 },
-      { name: 'JavaScript', percentage: 90 },
-      { name: 'C#', percentage: 75 },
-      { name: 'SQL', percentage: 70 },
-    ]
-  }, {
-    category: 'Frameworks & Libraries',
-    skills: [
-      { name: 'Node.js', percentage: 90 },
-      { name: 'Angular', percentage: 90 },
-      { name: 'React', percentage: 60 },
-      { name: 'NestJS', percentage: 90 },
-      { name: 'AWS CDK', percentage: 80 },
-      { name: 'Express', percentage: 60 },
-      { name: 'Nx', percentage: 78 },
-      { name: 'Elasticsearch', percentage: 75 },
-    ]
-  }, {
-    category: 'Cloud & DevOps',
-    skills: [
-      { name: 'AWS', percentage: 80 },
-      { name: 'Docker', percentage: 60 },
-      { name: 'Azure', percentage: 65 },
-    ]
-  }, {
-    category: 'Methodologies',
-    skills: [
-      { name: 'Agile', percentage: 92 },
-      { name: 'Scrum', percentage: 90 },
-      { name: 'TDD', percentage: 85 },
-      { name: 'DDD', percentage: 80 },
-      { name: 'Microservices', percentage: 85 },
-      { name: 'Onion Architecture', percentage: 78 },
-      { name: 'Event-Driven Architecture', percentage: 80 },
-    ]
-  }, {
-    category: 'Tools',
-    skills: [
-      { name: 'VS Code', percentage: 95 },
-      { name: 'Claude Code', percentage: 90 },
-      { name: 'Git', percentage: 90 },
-      { name: 'GitHub - Code, Actions', percentage: 80 },
-      { name: 'Jira', percentage: 80 },
-      { name: 'Confluence', percentage: 78 },
-    ]
-  }];
   return <section id="skills" className="section-padding bg-white text-black">
       <div className="container mx-auto">
-        <h2 className="text-4xl md:text-5xl font-light mb-12 text-center">
+        <h2 className="text-4xl md:text-5xl font-light mb-4 text-center">
           Technical Expertise
         </h2>
+        <p className="text-lg font-light text-center mb-12 max-w-3xl mx-auto">
+          Everything below is in daily or recent production use, not a wish list.
+        </p>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {skillCategories.map((category, index) => <div key={index} id={`skills-${category.category.toLowerCase().replace(/ & /g, '-').replace(/ /g, '-')}`} className="border border-black p-8">
+          {skillCategories.map(category => <div key={category.id} id={category.id} className={`border border-black p-8${category.lead ? ' md:col-span-2' : ''}`}>
               <h3 className="text-2xl font-medium mb-6">{category.category}</h3>
-              <div className="space-y-4">
-                {category.skills.map((skill, skillIndex) => <div key={skillIndex} className="flex items-center">
-                    <div className="w-full">
-                      <p className="text-lg font-light mb-2">{skill.name}</p>
-                      <div className="w-full bg-gray-200 h-2">
-                        <div className="bg-black h-2" style={{ width: `${skill.percentage ?? 100}%` }}></div>
-                      </div>
-                    </div>
-                  </div>)}
-              </div>
+              <ul className="flex flex-wrap gap-2">
+                {category.skills.map(skill => <li key={skill} className="px-3 py-1.5 border border-black text-base font-light">
+                    {skill}
+                  </li>)}
+              </ul>
             </div>)}
         </div>
       </div>

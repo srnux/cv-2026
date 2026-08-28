@@ -1,3 +1,16 @@
+/* Fonts are self-hosted rather than pulled from Google Fonts. Loading them from
+   Google transfers the visitor's IP address to a US server on every page view,
+   which German courts have treated as a DSGVO violation without consent. Serving
+   them from our own origin removes the issue and one round trip with it. */
+@import '@fontsource/inter/latin-300.css';
+@import '@fontsource/inter/latin-400.css';
+@import '@fontsource/inter/latin-500.css';
+@import '@fontsource/inter/latin-700.css';
+@import '@fontsource/space-grotesk/latin-300.css';
+@import '@fontsource/space-grotesk/latin-400.css';
+@import '@fontsource/space-grotesk/latin-500.css';
+@import '@fontsource/space-grotesk/latin-700.css';
+
 @import 'tailwindcss/base';
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';

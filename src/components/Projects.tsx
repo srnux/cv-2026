@@ -1,23 +1,27 @@
 const Projects = () => {
   const projects = [{
-    title: 'Empro – Real Estate CRM',
-    description: 'Development of a modern SaaS CRM platform for real estate brokers, featuring AI-powered inquiry automation, search profile matching, AI-generated property descriptions, and calendar/email integrations to streamline daily operations.',
-    technologies: ['Angular', 'TypeScript', 'Node.js', 'AWS', 'AI/ML', 'DynamoDB', 'Elasticsearch']
+    title: 'Agentic SDLC platform',
+    description: 'The delivery platform our team built and maintains for the CRM below. A harness of Claude skills, slash commands, hooks and rules that engineers work through daily, with MCP servers and RAG retrieval connecting agents to repositories, pipelines and issue tracking. Used every day by an eleven-person cross-functional team.',
+    technologies: ['Claude skills, hooks & rules', 'MCP servers', 'RAG', 'TypeScript', 'Python', 'GitHub Actions'],
   }, {
-    title: 'Nivea – Portal & Web Shop',
-    description: 'Feature development for the Nivea customer portal and web shop, including product catalogue pages, shopping cart functionality, loyalty programme integration, and CMS-driven content management across multiple markets.',
-    technologies: ['Sitecore CMS', '.NET','C#','SCSS', 'REST API', 'Azure']
+    title: 'Empro — Real estate CRM',
+    description: 'A modern SaaS CRM for real estate brokers, serving over 6,000 customers, 95,000 users and 4.2 million managed properties. We deliver LLM-powered inquiry automation, search profile matching, AI-generated property descriptions, Elasticsearch-based search, and calendar and email integrations, alongside a customer-facing agentic UI built on the Agno framework.',
+    technologies: ['Angular', 'TypeScript', 'NestJS', 'AWS CDK', 'DynamoDB', 'Elasticsearch', 'Agno', 'Azure AKS', 'PostgreSQL'],
   }, {
-    title: 'Spencer Stuart – Executive Search Platform',
-    description: 'Development and maintenance of an internal platform for Spencer Stuart employees worldwide, streamlining daily business operations including executive search workflows, consultant collaboration tools, and internal data management across multiple regions.',
-    technologies: ['.NET', 'C#', 'MS SQL', 'REST API', 'MS SQL Server']
+    title: 'immowelt — Property portal',
+    description: "Scalable microservices and web applications for one of Germany's largest property portals. We built cloud services on AWS following domain-driven design, with functional, unit and integration test coverage, and contributed to the CI/CD pipelines that shipped them.",
+    technologies: ['TypeScript', 'Node.js', 'AWS', 'Microservices', 'DDD', 'CI/CD'],
+  }, {
+    title: 'Nivea — Portal & Web Shop',
+    description: 'Feature development for the Nivea customer portal and web shop. We built product catalogue pages, shopping cart functionality, loyalty programme integration, and CMS-driven content management across multiple markets, on Sitecore and .NET with Azure underneath.',
+    technologies: ['Sitecore CMS', '.NET', 'C#', 'SCSS', 'REST API', 'Azure'],
   }];
   return <section id="projects" className="section-padding bg-white text-black">
       <div className="container mx-auto">
         <h2 className="text-4xl md:text-5xl font-light mb-12 text-center">
           Portfolio Highlights
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-4 gap-8">
           {projects.map((project, index) => <div key={index} className="border border-black p-8 flex flex-col">
               <h3 className="text-2xl font-medium mb-4">{project.title}</h3>
               <p className="text-lg font-light mb-6 flex-grow">
@@ -35,7 +39,7 @@ const Projects = () => {
         </div>
         <div className="mt-12 text-center">
           <a href="#contact" className="inline-block border border-black px-8 py-3 hover:bg-black hover:text-white transition duration-300">
-            Discuss Your Project
+            Get in touch
           </a>
         </div>
       </div>
