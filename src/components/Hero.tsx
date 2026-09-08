@@ -14,9 +14,9 @@ const focusAreas = [
 ];
 
 const Hero = () => {
-  return <section id="home" className="h-screen flex items-center bg-black overflow-hidden">
-      <div className="flex flex-col md:flex-row w-full h-full">
-        <div className="w-full md:w-1/2 h-screen px-2">
+  return <section id="home" className="min-h-screen md:h-screen flex items-center bg-black md:overflow-hidden">
+      <div className="flex flex-col md:flex-row w-full md:h-full pb-12 md:pb-0">
+        <div className="w-full shrink-0 h-[45vh] md:h-screen md:w-1/2 px-2 mb-8 md:mb-0">
           <img src="/images/luka-web-bw.jpg" alt="Luka Engels, Lead Software Engineer, Hamburg" className="w-full h-full object-contain grayscale" />
         </div>
         <div className="w-full md:w-1/2 px-4 md:px-8 md:pl-12 flex flex-col justify-center">
@@ -38,7 +38,7 @@ const Hero = () => {
             in production because the foundation underneath is ordinary engineering discipline,
             domain-driven design and event-driven serverless architecture on AWS.
           </p>
-          <div className="flex flex-wrap gap-4 mb-8 font-grotesk">
+          <div className="flex flex-wrap gap-4 md:mb-8 font-grotesk">
             {focusAreas.map(area => <a key={area.label} href={area.href} className="border px-4 py-1.5 text-sm font-light tracking-wider hover:bg-white hover:text-black transition">{area.label}</a>)}
             <a href="#about" className="border px-4 py-1.5 text-sm font-light tracking-wider hover:bg-white hover:text-black transition">...</a>
           </div>
