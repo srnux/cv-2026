@@ -9,6 +9,7 @@ pnpm dev          # Start development server (Vite)
 pnpm build        # Client build + SSR build + prerender injection
 pnpm build:client # Client build only, no prerender (debugging)
 pnpm cv           # Regenerate the two A4 CV pages in public/
+pnpm articles     # Regenerate the article pages, the dev.to copies and articles.json
 pnpm typecheck    # tsc over src/ and over scripts/ + vite.config.ts
 pnpm preview      # Preview production build
 pnpm lint         # ESLint (TypeScript + React)
@@ -23,9 +24,9 @@ Everything in this repo is TypeScript, the two build scripts included; they run 
 Single-page React 18 portfolio/CV website built with Vite, TypeScript, and TailwindCSS.
 
 **Component layout** (rendered in order inside `src/App.tsx`):
-`Header` → `Hero` → `About` → `Experience` → `Skills` → `Education` → `Projects` → `Contact` → `Footer`
+`Header` → `Hero` → `About` → `Experience` → `Skills` → `Education` → `Projects` → `Writing` → `Contact` → `Footer`
 
-Each section is a self-contained component in `src/components/`. There is no routing, everything is a vertically scrolling single page. The two legal pages and the two A4 CV pages are static HTML in `public/`, outside React.
+Each section is a self-contained component in `src/components/`. There is no routing, everything is a vertically scrolling single page. The two legal pages, the two A4 CV pages and the article pages are static HTML in `public/`, outside React.
 
 ## Prerendering (important)
 
@@ -56,6 +57,24 @@ Editorial rules that apply to everything with his name on it:
 - Citizenship (German and Croatian) is stated on the site and in both CV pages.
 - He is looking for permanent, fully remote employment only. Never describe him as available for freelance, contract or project work, and never claim immediate availability.
 
+## Articles
+
+Articles are Markdown in `content/articles/<slug>.md` with YAML frontmatter (`title`, `description`, `date`, `tags`, `devtoPublished`). `pnpm articles` turns each one into three things:
+
+- `public/writing/<slug>/index.html`, the canonical page, served at `https://luka-engels.de/writing/<slug>/`
+- `content/devto/<slug>.md`, a dev.to-ready copy with dev.to's own frontmatter keys and `canonical_url` already pointing back here
+- `src/content/articles.json`, which `Writing.tsx` imports to render the listing on the home page
+
+**Adding an article is: drop a `.md` file in `content/articles/`, run `pnpm articles`, add the URL to `public/sitemap.xml` and `public/llms.txt`.** Everything under `public/writing/`, `content/devto/` and `src/content/articles.json` is generated; do not hand-edit it.
+
+**luka-engels.de is canonical, dev.to is the cross-post.** The generated dev.to copy carries the canonical link, so the cross-post feeds this domain rather than competing with it. Publish here first. `devtoPublished: false` in the source keeps `published: false` in the generated copy until you flip it.
+
+The pages are deliberately plain static HTML rather than React routes: no router to add, and a crawler reads them without executing anything, which is the same reason the home page is prerendered.
+
+There is no syntax highlighter. Code blocks are styled monospace on a dark panel, which suits the site's black-and-white design and keeps a ~90 kB dependency out of a page whose job is to be read. Revisit only if an article genuinely needs it.
+
+Fonts for the static pages are copied out of `@fontsource` into `public/fonts/` by the generator, so they stay in sync with the package and are never fetched from Google. See the styling note below.
+
 ## Styling conventions
 
 - Black background (`bg-black`), white text, dark theme throughout
@@ -75,7 +94,7 @@ Editorial rules that apply to everything with his name on it:
 
 ## Static assets
 
-`public/` is copied verbatim into `dist/`: images, `favicon.svg`, `robots.txt`, `sitemap.xml`, `llms.txt`, `CNAME`, `.nojekyll`, the two legal pages and the two CV pages. Images are referenced with root-relative paths (e.g. `/images/luka-web-bw.jpg`).
+`public/` is copied verbatim into `dist/`: images, `fonts/`, `favicon.svg`, `robots.txt`, `sitemap.xml`, `llms.txt`, `CNAME`, `.nojekyll`, the two legal pages, the two CV pages and the generated article pages under `writing/`. Images are referenced with root-relative paths (e.g. `/images/luka-web-bw.jpg`).
 
 ## Deployment
 

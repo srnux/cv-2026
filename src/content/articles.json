@@ -1,0 +1,17 @@
+[
+  {
+    "slug": "gates-not-prompts",
+    "title": "Stop Asking Your Coding Agent to Behave: Gates, Not Prompts",
+    "description": "A file-based delivery procedure for Claude Code and Codex that turns workflow preconditions into executable checks, with explicit limits.",
+    "date": "2026-09-25",
+    "displayDate": "25 September 2026",
+    "tags": [
+      "ai",
+      "productivity",
+      "architecture",
+      "webdev"
+    ],
+    "readingMinutes": 11,
+    "url": "/writing/gates-not-prompts/"
+  }
+]

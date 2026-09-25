@@ -56,6 +56,11 @@ const Header: React.FC = () => {
                 Portfolio
               </a>
             </li>
+            <li>
+              <a href="#writing" className="hover:underline">
+                Writing
+              </a>
+            </li>
           </ul>
         </nav>
         <div className="flex items-center gap-4">

@@ -16,6 +16,9 @@ Languages: Croatian (native), English (C2), Italian (C1), German (B2). Citizensh
 
 Currently open to permanent, fully remote roles employed in Germany, at Staff, Principal, Lead or Head of Engineering level, where agentic and LLM platform work is the core of the job. Not looking for freelance or contract engagements, hybrid or on-site roles, or relocation.
 
+## Writing
+- [Stop Asking Your Coding Agent to Behave: Gates, Not Prompts](https://luka-engels.de/writing/gates-not-prompts/): A file-based delivery procedure for Claude Code and Codex that turns workflow preconditions into executable checks, with explicit limits.
+
 ## Portfolio
 - [Personal site](https://luka-engels.de/): single page with About, Experience, Skills, Education, Portfolio and Contact sections.
 

@@ -8,6 +8,7 @@
     "build": "vite build && vite build --ssr src/entry-server.tsx --outDir dist-ssr && tsx scripts/prerender.ts",
     "build:client": "vite build",
     "cv": "tsx scripts/build-cv-pages.ts",
+    "articles": "tsx scripts/build-articles.ts",
     "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "typecheck": "tsc --noEmit && tsc --noEmit -p tsconfig.node.json",
     "preview": "vite preview"
@@ -29,6 +30,8 @@
     "eslint": "^10.1.0",
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.5.2",
+    "gray-matter": "^4.0.3",
+    "marked": "^18.0.14",
     "postcss": "latest",
     "tailwindcss": "3.4.17",
     "tsx": "^4.23.12",
