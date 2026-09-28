@@ -199,9 +199,83 @@
 
   /* ── PRINT ── */
   @media print {
-    body { background: #fff; }
-    .page { width: 210mm; margin: 0; }
+    /* No background here: it would paint over the root gradient below for the
+       height of the body box, which leaves a visible seam where the content
+       ends. */
+    body { background: transparent; }
+    /* min-height is what makes .page fill the screen in the browser. In print
+       the page box already does that, and a 297mm minimum against a page box
+       shortened by the margins below would force an extra break every time. */
+    .page { width: 210mm; margin: 0; min-height: 0; }
+
+    /* Zero margin on every page: the dark banner bleeds to the paper edge on
+       page 1, and the grey sidebar has to reach the edge on every page. Anything
+       painted by the document is clipped to the page box, so a page margin
+       leaves an unreachable white strip. Top spacing on a continuation page is
+       handled further down instead. */
     @page { size: A4; margin: 0; }
+
+    /* The grey sidebar is painted by .left, a flex child. Across a page break
+       that box only extends as far as the flex line on the new page, leaving a
+       short grey stub floating above white space.
+
+       A background on <html> is painted across the whole page box instead, so
+       with a zero page margin the stripe covers every sheet edge to edge. This
+       is why the page margin has to stay 0: both a root background and a
+       position:fixed element are clipped to the page box, leaving any margin
+       strip white. */
+    html {
+      background: linear-gradient(to right, #f2f2f2 0, #f2f2f2 68mm, #fff 68mm, #fff 100%);
+    }
+    .left { background: transparent; }
+
+    /* Keep atomic blocks whole. Without these the browser breaks wherever the
+       page happens to end, which split the Erste Group entry across pages with
+       its company name orphaned at the foot of page 1. */
+    .exp-entry,
+    .kp-line,
+    .cert-item,
+    .lang-row,
+    .tag-group,
+    .banner {
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+
+    /* A left-column block (contact, languages, a skill group, education,
+       certifications) stays with its own heading rather than shedding items
+       onto the next page. These are all short.
+
+       The right column is deliberately NOT listed: its blocks are whole
+       sections, and making the experience section atomic pushed all of it to
+       page 2 and left page 1 half empty. It breaks between .exp-entry items
+       instead, which the rule above keeps whole. */
+    .left > div {
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+
+    /* Never end a page on a heading. */
+    .section-title,
+    .exp-header,
+    .exp-role,
+    .edu-degree {
+      break-after: avoid;
+      page-break-after: avoid;
+    }
+
+    p, li { orphans: 2; widows: 2; }
+
+    /* Breathing room at the top of a continuation page. A margin is dropped at
+       a fragmentation break but padding is kept, so an equal negative margin and
+       positive padding cancel out in normal flow and leave only the padding when
+       a block starts a page. Nothing else on the sheet moves. */
+    .exp-entry,
+    .left > div,
+    .right > div {
+      margin-top: -32px;
+      padding-top: 32px;
+    }
   }
 
   /* ── SKILL TAGS (replaced self-assessed percentage bars) ── */
