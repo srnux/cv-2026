@@ -1,10 +1,12 @@
 <!doctype html>
-<html lang="de">
+<html lang="de-DE">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex, follow">
 <title>Datenschutzerklärung – Luka Engels</title>
+<link rel="alternate" hreflang="de-DE" href="https://luka-engels.de/datenschutz.html">
+<link rel="alternate" hreflang="en-GB" href="https://luka-engels.de/privacy.html">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 <style>
   :root { color-scheme: dark; }
@@ -29,13 +31,22 @@
   .back { display: inline-block; margin-bottom: 3rem; font-size: 0.875rem; letter-spacing: 0.08em; text-transform: uppercase; border: 1px solid #fff; padding: 0.4rem 1rem; text-decoration: none; }
   .back:hover { background: #fff; color: #000; }
   .todo { display: block; border: 1px solid #f5a623; color: #f5a623; padding: 1rem; margin: 1rem 0; font-size: 0.9375rem; }
+  .topbar { display: flex; justify-content: space-between; align-items: center; gap: 1rem; margin-bottom: 3rem; }
+  .topbar .back { margin-bottom: 0; }
+  .lang { font-size: 0.875rem; letter-spacing: 0.08em; color: #999; }
+  .lang a { text-decoration: none; color: #ccc; }
+  .lang a:hover { text-decoration: underline; }
+  .lang a[aria-current] { color: #fff; text-decoration: underline; }
   footer { border-top: 1px solid #333; margin-top: 4rem; padding-top: 1.5rem; font-size: 0.875rem; color: #999; }
   footer a { color: #999; }
 </style>
 </head>
 <body>
 <div class="wrap">
-  <a class="back" href="/">Zurück zur Startseite</a>
+  <div class="topbar">
+    <a class="back" href="/de/">Zurück zur Startseite</a>
+    <nav class="lang" aria-label="Sprache"><a href="/privacy.html" hreflang="en-GB" lang="en-GB" onclick="try{localStorage.setItem('lang','en')}catch(e){}">EN</a> / <a href="/datenschutz.html" hreflang="de-DE" lang="de-DE" aria-current="true">DE</a></nav>
+  </div>
   <h1>Datenschutzerklärung</h1>
 
   <h2>Verantwortlicher</h2>
@@ -106,6 +117,24 @@
     Social-Media-Plugins eingebunden, die bereits beim Seitenaufruf Verbindungen aufbauen.
   </p>
 
+  <h2>Spracheinstellung</h2>
+  <p>
+    Diese Website ist auf Deutsch und auf Englisch verfügbar. Wählen Sie über die Sprachauswahl
+    oder über den Hinweis „Diese Seite gibt es auch auf Deutsch.“ ausdrücklich eine Sprache, wird
+    diese Auswahl im lokalen Speicher Ihres Browsers (Local Storage) unter dem Schlüssel „lang“ mit
+    dem Wert „de“ oder „en“ abgelegt, damit Sie bei einem späteren Besuch direkt die gewählte
+    Sprachfassung erhalten. Die Angabe wird ausschließlich auf Ihrem Gerät gespeichert und weder an
+    mich noch an Dritte übermittelt. Ohne Ihren Klick wird nichts gespeichert; die
+    Spracheinstellung Ihres Browsers wird lediglich lokal ausgelesen, um den Hinweis auf die
+    deutsche Fassung anzuzeigen.
+  </p>
+  <p>
+    Die Speicherung ist unbedingt erforderlich, um die von Ihnen ausdrücklich gewünschte Funktion
+    bereitzustellen, und erfolgt daher ohne Einwilligung auf Grundlage von § 25 Abs. 2 Nr. 2
+    TDDDG. Sie können den Eintrag jederzeit entfernen, indem Sie die Websitedaten für
+    luka-engels.de in Ihrem Browser löschen, oder die Sprache über die Sprachauswahl erneut ändern.
+  </p>
+
   <h2>Ihre Rechte</h2>
   <p>
     Sie haben das Recht auf Auskunft über die zu Ihrer Person gespeicherten Daten (Art. 15 DSGVO),
@@ -128,10 +157,10 @@
   </p>
 
   <h2>Stand</h2>
-  <p>August 2026.</p>
+  <p>September 2026.</p>
 
   <footer>
-    <a href="/">Startseite</a> · <a href="/impressum.html">Impressum</a>
+    <a href="/de/">Startseite</a> · <a href="/impressum.html">Impressum</a>
   </footer>
 </div>
 </body>

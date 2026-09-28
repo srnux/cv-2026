@@ -172,3 +172,17 @@ describe('sitemap', () => {
     }
   });
 });
+
+describe('legal pages', () => {
+  it.each([
+    ['impressum.html', 'legal-notice.html'],
+    ['datenschutz.html', 'privacy.html'],
+  ])('%s and %s exist in their language and link each other', (de, en) => {
+    const dePage = read(de);
+    const enPage = read(en);
+    expect(dePage).toContain('<html lang="de-DE">');
+    expect(enPage).toContain('<html lang="en-GB">');
+    expect(dePage).toContain(`href="/${en}"`);
+    expect(enPage).toContain(`href="/${de}"`);
+  });
+});
