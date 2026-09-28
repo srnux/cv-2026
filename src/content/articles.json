@@ -1,23 +1,50 @@
-[
-  {
-    "slug": "gates-not-prompts",
-    "title": "Catching AI Workflow Failures with Executable Playbooks",
-    "description": "A file-based delivery procedure for Claude Code and Codex that turns workflow preconditions into executable checks, with explicit limits.",
-    "date": "2026-09-25",
-    "displayDate": "25 September 2026",
-    "tags": [
-      "ai",
-      "productivity",
-      "architecture",
-      "webdev",
-      "claude-code",
-      "codex",
-      "playbooks"
-    ],
-    "readingMinutes": 11,
-    "url": "/writing/gates-not-prompts/",
-    "coverImage": "/images/writing/gates-not-prompts-cover.jpg",
-    "devtoUrl": "https://dev.to/srnux/stop-asking-your-coding-agent-to-behave-gates-not-prompts-daa",
-    "repoUrl": "https://github.com/srnux/sdlc-playbooks"
-  }
-]
+{
+  "en": [
+    {
+      "slug": "gates-not-prompts",
+      "lang": "en",
+      "title": "Catching AI Workflow Failures with Executable Playbooks",
+      "description": "A file-based delivery procedure for Claude Code and Codex that turns workflow preconditions into executable checks, with explicit limits.",
+      "date": "2026-09-25",
+      "displayDate": "25 September 2026",
+      "tags": [
+        "ai",
+        "productivity",
+        "architecture",
+        "webdev",
+        "claude-code",
+        "codex",
+        "playbooks"
+      ],
+      "readingMinutes": 11,
+      "url": "/writing/gates-not-prompts/",
+      "coverImage": "/images/writing/gates-not-prompts-cover.jpg",
+      "devtoUrl": "https://dev.to/srnux/stop-asking-your-coding-agent-to-behave-gates-not-prompts-daa",
+      "repoUrl": "https://github.com/srnux/sdlc-playbooks"
+    }
+  ],
+  "de": [
+    {
+      "slug": "gates-not-prompts",
+      "lang": "en",
+      "title": "Catching AI Workflow Failures with Executable Playbooks",
+      "description": "A file-based delivery procedure for Claude Code and Codex that turns workflow preconditions into executable checks, with explicit limits.",
+      "date": "2026-09-25",
+      "displayDate": "25. September 2026",
+      "tags": [
+        "ai",
+        "productivity",
+        "architecture",
+        "webdev",
+        "claude-code",
+        "codex",
+        "playbooks"
+      ],
+      "readingMinutes": 11,
+      "url": "/de/writing/gates-not-prompts/",
+      "coverImage": "/images/writing/gates-not-prompts-cover.jpg",
+      "devtoUrl": "https://dev.to/srnux/stop-asking-your-coding-agent-to-behave-gates-not-prompts-daa",
+      "repoUrl": "https://github.com/srnux/sdlc-playbooks"
+    }
+  ]
+}
