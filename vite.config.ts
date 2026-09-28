@@ -1,3 +1,4 @@
+/// <reference types="vitest/config" />
 import { defineConfig, type Plugin } from 'vite'
 import react from '@vitejs/plugin-react'
 import { existsSync } from 'node:fs'
@@ -40,5 +41,9 @@ function staticDirectoryIndex(): Plugin {
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react(), staticDirectoryIndex()]
+  plugins: [react(), staticDirectoryIndex()],
+  test: {
+    // `pnpm test` runs the unit tests in src/; `pnpm test:build` runs tests/ against dist/.
+    include: ['src/**/*.test.ts', 'tests/**/*.test.ts'],
+  },
 })
