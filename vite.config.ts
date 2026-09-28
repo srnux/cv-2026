@@ -4,6 +4,7 @@ import react from '@vitejs/plugin-react'
 import { existsSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 import { dirname, resolve } from 'node:path'
+import { HEAD_END, HEAD_START, renderHead } from './src/i18n/head'
 
 const ROOT = dirname(fileURLToPath(import.meta.url))
 
@@ -39,9 +40,25 @@ function staticDirectoryIndex(): Plugin {
   }
 }
 
+/**
+ * Fill the head block of index.html with the English head from the
+ * dictionaries, in dev and in the build. The markers are kept, so
+ * scripts/prerender.ts can swap the block for the German one.
+ */
+function i18nHead(): Plugin {
+  const block = `${HEAD_START}${HEAD_END}`
+  return {
+    name: 'i18n-head',
+    transformIndexHtml(html) {
+      if (!html.includes(block)) throw new Error(`index.html: "${block}" not found`)
+      return html.replace(block, renderHead('en'))
+    },
+  }
+}
+
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react(), staticDirectoryIndex()],
+  plugins: [react(), staticDirectoryIndex(), i18nHead()],
   test: {
     // `pnpm test` runs the unit tests in src/; `pnpm test:build` runs tests/ against dist/.
     include: ['src/**/*.test.ts', 'tests/**/*.test.ts'],
