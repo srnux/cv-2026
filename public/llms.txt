@@ -21,6 +21,7 @@ Currently open to permanent, fully remote roles employed in Germany, at Staff, P
 
 ## Portfolio
 - [Personal site](https://luka-engels.de/): single page with About, Experience, Skills, Education, Portfolio and Contact sections.
+- [Persönliche Website (Deutsch)](https://luka-engels.de/de/): the same page in German.
 
 ## CV
 - [CV (English, A4 HTML)](https://luka-engels.de/cv-luka-engels-en.html): print-ready CV.
@@ -32,3 +33,5 @@ Currently open to permanent, fully remote roles employed in Germany, at Staff, P
 
 ## Optional
 - [Contact email](mailto:luka.engels@outlook.de): direct contact for role enquiries.
+- [Legal notice](https://luka-engels.de/legal-notice.html) and [Impressum](https://luka-engels.de/impressum.html): site operator details in English and German.
+- [Privacy policy](https://luka-engels.de/privacy.html) and [Datenschutzerklärung](https://luka-engels.de/datenschutz.html): in English and German.

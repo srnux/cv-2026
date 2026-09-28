@@ -9,10 +9,12 @@ pnpm dev          # Start development server (Vite)
 pnpm build        # Client build + SSR build + prerender injection
 pnpm build:client # Client build only, no prerender (debugging)
 pnpm cv           # Regenerate the two A4 CV pages in public/
-pnpm articles     # Regenerate the article pages, the dev.to copies and articles.json
-pnpm typecheck    # tsc over src/ and over scripts/ + vite.config.ts
+pnpm articles     # Regenerate the article pages (both languages), the dev.to copies, articles.json and sitemap.xml
+pnpm typecheck    # tsc over src/ and over scripts/ + tests/ + vite.config.ts
+pnpm test         # Vitest unit tests in src/
+pnpm test:build   # Vitest checks of the built dist/; run after pnpm build
 pnpm preview      # Preview production build
-pnpm lint         # ESLint (TypeScript + React)
+pnpm lint         # ESLint (TypeScript + React); currently broken, ESLint 10 no longer reads .eslintrc.cjs
 ```
 
 Everything in this repo is TypeScript, the two build scripts included; they run through `tsx`. Do not add build scripts in another language.
@@ -26,7 +28,7 @@ Single-page React 18 portfolio/CV website built with Vite, TypeScript, and Tailw
 **Component layout** (rendered in order inside `src/App.tsx`):
 `Header` → `Hero` → `About` → `Experience` → `Skills` → `Education` → `Projects` → `Writing` → `Contact` → `Footer`
 
-Each section is a self-contained component in `src/components/`. There is no routing, everything is a vertically scrolling single page. The two legal pages, the two A4 CV pages and the article pages are static HTML in `public/`, outside React.
+Each section is a self-contained component in `src/components/`. There is no routing, everything is a vertically scrolling single page, served in English at `/` and in German at `/de/` (see Languages). The four legal pages, the two A4 CV pages and the article pages are static HTML in `public/`, outside React.
 
 ## Prerendering (important)
 
@@ -34,14 +36,27 @@ The site is linked from CVs and job applications, so an ATS parser or an LLM scr
 
 1. `vite build` produces the client bundle and `dist/index.html`.
 2. `vite build --ssr src/entry-server.tsx` produces `dist-ssr/entry-server.js`.
-3. `tsx scripts/prerender.ts` renders `<App />` to a string and injects it into `<div id="root">`, then deletes `dist-ssr`.
+3. `tsx scripts/prerender.ts` renders `<App lang>` once per language, swaps in that language's head, injects the markup into `<div id="root">`, writes `dist/index.html` and `dist/de/index.html`, then deletes `dist-ssr`.
 
 `src/index.tsx` hydrates when it finds prerendered markup and falls back to a plain client render otherwise (which is what happens in dev).
 
 Consequences to respect when editing components:
 - No `window`, `document` or `localStorage` access during render. Effects are fine, they do not run on the server.
 - Anything conditionally hidden should stay in the DOM with a `hidden` class rather than being unmounted, so crawlers still read it. `Experience` does this for the collapsed roles.
-- If `<div id="root"></div>` in `index.html` ever changes shape, `scripts/prerender.ts` throws rather than silently shipping an empty page.
+- If `<div id="root"></div>`, `<html lang="en">` or the `<!--i18n-head--><!--/i18n-head-->` markers in `index.html` ever change shape, `scripts/prerender.ts` throws rather than silently shipping an empty page or German content under an English head.
+
+## Languages
+
+The site is en-GB at `/` and de-DE at `/de/`. Everything language-specific lives in `src/i18n/`:
+
+- `en.ts` and `de.ts` hold every string on the home page, typed against `Messages` in `messages.ts`, so a key missing from either fails `pnpm typecheck`. Components read them through `useMessages()` and hold no copy of their own. Change wording in the dictionaries, in both languages.
+- The language comes from the URL (`langFromPath` in `paths.ts`): the prerender passes it to `render(lang)`, the client reads `location.pathname` before hydrating, so both sides always agree.
+- `head.ts` renders the language-dependent `<head>` (title, description, canonical, hreflang, Open Graph, Twitter, Person JSON-LD) from the dictionaries. `index.html` holds only the markers; the `i18nHead` plugin in `vite.config.ts` fills them with English in dev and build, and the prerender replaces the block for German. In dev, `/de/` therefore renders German content under the English head; only the build is exact.
+- `inline.ts` is the one script on every home and article page. A stored choice of German (`localStorage.lang === 'de'`) replaces the English page with `/de` + path before it paints. With no stored choice and a browser that prefers German (`navigator.languages`, nothing else: no IP lookup, no time zone), it shows a bar at the bottom offering the German page. Detection never navigates and never stores anything; only a click does. It builds the bar at runtime, so the bar is never in prerendered HTML. It is ES5 and tested as a string in `inline.test.ts`.
+- The header switcher (`EN / DE`) and the switchers on the static pages are real links that also store the choice on click.
+- The Datenschutzerklärung and its translation describe that stored value. If what is stored changes, update both.
+
+The German copy follows the German CV model in `scripts/build-cv-pages.ts` where they say the same thing. The editorial rules below apply to German too: "wir" / "unser Team" for delivery claims, no dashes in prose.
 
 ## Content source of truth
 
@@ -59,13 +74,17 @@ Editorial rules that apply to everything with his name on it:
 
 ## Articles
 
-Articles are Markdown in `content/articles/<slug>.md` with YAML frontmatter: `title`, `description`, `date`, `tags`, plus the optional `coverImage` (a path under `public/`), `devtoPublished`, `devtoUrl` and `repoUrl` (linked as a second button in the home page listing). `pnpm articles` turns each one into three things:
+Articles are Markdown in `content/articles/<slug>.md` with YAML frontmatter: `title`, `description`, `date`, `tags`, plus the optional `coverImage` (a path under `public/`), `devtoPublished`, `devtoUrl` and `repoUrl` (linked as a second button in the home page listing). `pnpm articles` turns each one into:
 
 - `public/writing/<slug>/index.html`, the canonical page, served at `https://luka-engels.de/writing/<slug>/`
-- `content/devto/<slug>.md`, a dev.to-ready copy with dev.to's own frontmatter keys and `canonical_url` already pointing back here
-- `src/content/articles.json`, which `Writing.tsx` imports to render the listing on the home page
+- `public/de/writing/<slug>/index.html`, always, so a visitor redirected to `/de` + path never lands on a 404 (see below)
+- `content/devto/<slug>.md`, a dev.to-ready copy with dev.to's own frontmatter keys and `canonical_url` already pointing back here, from the English source only
+- `src/content/articles.json`, `{ "en": [...], "de": [...] }`, which `Writing.tsx` imports to render the listing on the home page
+- `public/sitemap.xml`, the whole sitemap, with hreflang alternates for every translated pair
 
-**Adding an article is: drop a `.md` file in `content/articles/`, run `pnpm articles`, add the URL to `public/sitemap.xml` and `public/llms.txt`.** Everything under `public/writing/`, `content/devto/` and `src/content/articles.json` is generated; do not hand-edit it.
+**German translations are optional.** `content/articles/<slug>.de.md` is the German version: same slug, its own `title`, `description` and optionally `tags`; `date`, `coverImage` and `repoUrl` fall back to the English file, `devtoUrl` does not. With a translation, both pages declare each other as hreflang alternates. Without one, the German route shows the English body in German chrome with a note, its canonical points at the English page, and the sitemap leaves it out. A `.de.md` without an English sibling fails the build.
+
+**Adding an article is: drop a `.md` file in `content/articles/` (and optionally its `.de.md`), run `pnpm articles`, add the URL to `public/llms.txt`.** Everything under `public/writing/`, `public/de/writing/`, `content/devto/`, `src/content/articles.json` and `public/sitemap.xml` is generated; do not hand-edit it. A new static page outside the generator goes into the sitemap list at the end of `scripts/build-articles.ts`.
 
 **The slug is the canonical URL, so never rename a published article's file.** The title can change freely; `content/articles/gates-not-prompts.md` keeps that slug even though the title no longer contains those words, because `https://luka-engels.de/writing/gates-not-prompts/` is what the dev.to cross-post points at.
 
@@ -104,8 +123,10 @@ Fonts for the static pages are copied out of `@fontsource` into `public/fonts/` 
 
 ## Static assets
 
-`public/` is copied verbatim into `dist/`: images, `fonts/`, `favicon.svg`, `robots.txt`, `sitemap.xml`, `llms.txt`, `CNAME`, `.nojekyll`, the two legal pages, the two CV pages and the generated article pages under `writing/`. Images are referenced with root-relative paths (e.g. `/images/luka-web-bw.jpg`).
+`public/` is copied verbatim into `dist/`: images, `fonts/`, `favicon.svg`, `robots.txt`, `sitemap.xml`, `llms.txt`, `CNAME`, `.nojekyll`, the four legal pages, the two CV pages and the generated article pages under `writing/` and `de/writing/`.
+
+The legal pages come in pairs: `impressum.html` / `legal-notice.html` and `datenschutz.html` / `privacy.html`. The English ones are close translations of the German ones, section for section, with no "German version prevails" line. An edit to one is an edit to both. Images are referenced with root-relative paths (e.g. `/images/luka-web-bw.jpg`).
 
 ## Deployment
 
-GitHub Actions builds and deploys to GitHub Pages on every push to `main`. Custom domain `luka-engels.de` via `CNAME`.
+GitHub Actions typechecks, runs `pnpm test`, builds, runs `pnpm test:build` against `dist/`, and deploys to GitHub Pages on every push to `main`. Custom domain `luka-engels.de` via `CNAME`.

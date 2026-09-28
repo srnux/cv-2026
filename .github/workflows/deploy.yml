@@ -32,9 +32,12 @@ jobs:
           cache: pnpm
 
       - run: pnpm install --frozen-lockfile
+      - run: pnpm typecheck
+      - run: pnpm test
       - run: pnpm build
         env:
           VITE_WEB3FORMS_KEY: ${{ secrets.VITE_WEB3FORMS_KEY }}
+      - run: pnpm test:build
 
       - uses: actions/configure-pages@v6
       - uses: actions/upload-pages-artifact@v5
