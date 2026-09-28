@@ -8,8 +8,12 @@ import Projects from './components/Projects';
 import Writing from './components/Writing';
 import Contact from './components/Contact';
 import Footer from './components/Footer';
-export function App() {
-  return <div className="font-inter bg-black text-white min-h-screen">
+import { LangProvider } from './i18n/context';
+import type { Lang } from './i18n/lang';
+
+export function App({ lang }: { lang: Lang }) {
+  return <LangProvider lang={lang}>
+    <div className="font-inter bg-black text-white min-h-screen">
       <Header />
       <main>
         <Hero />
@@ -22,5 +26,6 @@ export function App() {
         <Contact />
       </main>
       <Footer />
-    </div>;
+    </div>
+  </LangProvider>;
 }

@@ -1,4 +1,7 @@
+import { useMessages } from '../i18n/context';
+
 const Footer = () => {
+  const m = useMessages();
   return <footer className="bg-black text-white py-12">
       <div className="container mx-auto px-4">
         <div className="flex flex-col md:flex-row justify-between items-center">
@@ -18,42 +21,42 @@ const Footer = () => {
             <ul className="flex flex-wrap justify-center gap-x-6 gap-y-2">
               <li>
                 <a href="#home" className="hover:underline">
-                  Home
+                  {m.nav.home}
                 </a>
               </li>
               <li>
                 <a href="#about" className="hover:underline">
-                  About
+                  {m.nav.about}
                 </a>
               </li>
               <li>
                 <a href="#experience" className="hover:underline">
-                  Experience
+                  {m.nav.experience}
                 </a>
               </li>
               <li>
                 <a href="#skills" className="hover:underline">
-                  Skills
+                  {m.nav.skills}
                 </a>
               </li>
               <li>
                 <a href="#writing" className="hover:underline">
-                  Writing
+                  {m.nav.writing}
                 </a>
               </li>
               <li>
                 <a href="#contact" className="hover:underline">
-                  Contact
+                  {m.nav.contact}
                 </a>
               </li>
               <li>
-                <a href="/impressum.html" className="hover:underline">
-                  Impressum
+                <a href={m.footer.legalNotice.href} className="hover:underline">
+                  {m.footer.legalNotice.label}
                 </a>
               </li>
               <li>
-                <a href="/datenschutz.html" className="hover:underline">
-                  Datenschutz
+                <a href={m.footer.privacy.href} className="hover:underline">
+                  {m.footer.privacy.label}
                 </a>
               </li>
             </ul>
@@ -73,7 +76,7 @@ const Footer = () => {
         </div>
         <div className="border-t border-gray-800 mt-8 pt-8 text-center">
           <p className="font-light">
-            &copy; {new Date().getFullYear()} Luka Engels. All rights reserved.
+            &copy; {new Date().getFullYear()} Luka Engels. {m.footer.rights}
           </p>
         </div>
       </div>

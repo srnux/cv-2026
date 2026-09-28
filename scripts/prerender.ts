@@ -18,8 +18,8 @@ const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const htmlPath = resolve(ROOT, 'dist/index.html');
 const serverEntry = resolve(ROOT, 'dist-ssr/entry-server.js');
 
-const { render } = (await import(pathToFileURL(serverEntry).href)) as { render: () => string };
-const appHtml = render();
+const { render } = (await import(pathToFileURL(serverEntry).href)) as { render: (lang: 'en' | 'de') => string };
+const appHtml = render('en');
 
 const html = readFileSync(htmlPath, 'utf8');
 const marker = '<div id="root"></div>';

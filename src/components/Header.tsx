@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
+import { useMessages } from '../i18n/context';
 
 const Header: React.FC = () => {
   const [scrolled, setScrolled] = useState(false);
   const [hovered, setHovered] = useState(false);
+  const m = useMessages().nav;
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 0);
@@ -43,22 +45,22 @@ const Header: React.FC = () => {
           <ul className="flex space-x-8">
             <li>
               <a href="#home" className="hover:underline">
-                Home
+                {m.home}
               </a>
             </li>
             <li>
               <a href="#contact" className="hover:underline">
-                Contact
+                {m.contact}
               </a>
             </li>
             <li>
               <a href="#projects" className="hover:underline">
-                Portfolio
+                {m.portfolio}
               </a>
             </li>
             <li>
               <a href="#writing" className="hover:underline">
-                Writing
+                {m.writing}
               </a>
             </li>
           </ul>
@@ -74,7 +76,7 @@ const Header: React.FC = () => {
             <button onClick={() => window.open('/cv-luka-engels-en.html', '_blank')} className="text-sm font-light tracking-wider font-grotesk hover:underline">en</button>
           </div>
           <a href="#about" className="border px-4 py-1.5 text-sm font-light tracking-wider font-grotesk hover:bg-white hover:text-black transition">
-            More
+            {m.more}
           </a>
         </div>
       </div>
