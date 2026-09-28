@@ -50,7 +50,6 @@ export type Messages = {
     contact: string;
     portfolio: string;
     more: string;
-    cv: string;
     cvTitle: string;
     switchLanguage: string;
   };

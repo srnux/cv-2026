@@ -29,7 +29,6 @@ export const en: Messages = {
     contact: 'Contact',
     portfolio: 'Portfolio',
     more: 'More',
-    cv: 'CV',
     cvTitle: 'Printable A4 CV',
     switchLanguage: 'Language',
   },

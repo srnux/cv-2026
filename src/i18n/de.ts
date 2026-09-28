@@ -34,7 +34,6 @@ export const de: Messages = {
     contact: 'Kontakt',
     portfolio: 'Portfolio',
     more: 'Mehr',
-    cv: 'Lebenslauf',
     cvTitle: 'Lebenslauf als A4-Seite zum Drucken',
     switchLanguage: 'Sprache',
   },
