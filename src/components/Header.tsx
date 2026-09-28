@@ -1,10 +1,14 @@
-import React, { useEffect, useState } from 'react';
-import { useMessages } from '../i18n/context';
+import React, { Fragment, useEffect, useState } from 'react';
+import { useLang, useMessages } from '../i18n/context';
+import { HTML_LANG, LANGS } from '../i18n/lang';
+import { homePath } from '../i18n/paths';
+import { storeLang } from '../i18n/preference';
 
 const Header: React.FC = () => {
   const [scrolled, setScrolled] = useState(false);
   const [hovered, setHovered] = useState(false);
   const m = useMessages().nav;
+  const lang = useLang();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 0);
@@ -66,15 +70,22 @@ const Header: React.FC = () => {
           </ul>
         </nav>
         <div className="flex items-center gap-4">
-          <div className="flex items-center gap-1">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+          <a href={`/cv-luka-engels-${lang}.html`} target="_blank" rel="noopener" title={m.cvTitle} className="flex items-center gap-1 text-sm font-light tracking-wider font-grotesk hover:underline">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
               <polyline points="6 9 6 2 18 2 18 9"/>
               <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
               <rect x="6" y="14" width="12" height="8"/>
             </svg>
-            <button onClick={() => window.open('/cv-luka-engels-de.html', '_blank')} className="text-sm font-light tracking-wider font-grotesk hover:underline">de</button> |
-            <button onClick={() => window.open('/cv-luka-engels-en.html', '_blank')} className="text-sm font-light tracking-wider font-grotesk hover:underline">en</button>
-          </div>
+            {m.cv}
+          </a>
+          {/* Real links, so crawlers follow them; a click also records the choice,
+              which is what stops or starts the redirect to /de/. */}
+          <nav aria-label={m.switchLanguage} className="text-sm font-light tracking-wider font-grotesk">
+            {LANGS.map((l, i) => <Fragment key={l}>
+                {i > 0 && ' / '}
+                <a href={homePath(l)} hrefLang={HTML_LANG[l]} lang={HTML_LANG[l]} aria-current={l === lang ? 'true' : undefined} onClick={() => storeLang(l)} className={l === lang ? 'font-medium underline' : 'hover:underline'}>{l.toUpperCase()}</a>
+              </Fragment>)}
+          </nav>
           <a href="#about" className="border px-4 py-1.5 text-sm font-light tracking-wider font-grotesk hover:bg-white hover:text-black transition">
             {m.more}
           </a>

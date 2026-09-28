@@ -84,3 +84,29 @@ describe('German home page', () => {
     expect(rootOf(html)).not.toContain('lang-offer');
   });
 });
+
+describe('localised links', () => {
+  const en = rootOf(read('index.html'));
+  const de = rootOf(read('de/index.html'));
+
+  it('English page links the English CV, the English legal pages and the German page', () => {
+    expect(en).toContain('href="/cv-luka-engels-en.html"');
+    expect(en).not.toContain('href="/cv-luka-engels-de.html"');
+    expect(en).toContain('href="/legal-notice.html"');
+    expect(en).toContain('href="/privacy.html"');
+    expect(en).toMatch(/<a href="\/de\/"[^>]*>DE<\/a>/);
+  });
+
+  it('German page links the German CV, the German legal pages and the English page', () => {
+    expect(de).toContain('href="/cv-luka-engels-de.html"');
+    expect(de).not.toContain('href="/cv-luka-engels-en.html"');
+    expect(de).toContain('href="/impressum.html"');
+    expect(de).toContain('href="/datenschutz.html"');
+    expect(de).toMatch(/<a href="\/"[^>]*>EN<\/a>/);
+  });
+
+  it('marks the active language', () => {
+    expect(en).toMatch(/<a href="\/"[^>]*aria-current="true"[^>]*>EN<\/a>/);
+    expect(de).toMatch(/<a href="\/de\/"[^>]*aria-current="true"[^>]*>DE<\/a>/);
+  });
+});

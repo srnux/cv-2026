@@ -337,7 +337,7 @@ export const en: Messages = {
 
   footer: {
     rights: 'All rights reserved.',
-    legalNotice: { label: 'Impressum', href: '/impressum.html' },
-    privacy: { label: 'Datenschutz', href: '/datenschutz.html' },
+    legalNotice: { label: 'Legal notice', href: '/legal-notice.html' },
+    privacy: { label: 'Privacy', href: '/privacy.html' },
   },
 };
