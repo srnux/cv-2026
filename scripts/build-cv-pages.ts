@@ -311,7 +311,7 @@ const DE: CvContent = {
       items: ['TypeScript', 'JavaScript', 'C#', 'Python', 'SQL', 'Elasticsearch Query Language', 'HTML / CSS / Sass'],
     },
     { group: 'Frontend', items: ['Angular', 'React', 'Design-Systeme', 'Nx-Monorepos'] },
-    { group: 'Backend', items: ['Node.js', 'NestJS', '.NET Core', 'REST', 'Event-getriebene Services'] },
+    { group: 'Backend', items: ['Node.js', 'NestJS', '.NET Core', 'REST', 'Ereignisgesteuerte Services'] },
     {
       group: 'Cloud &amp; DevOps',
       items: [
@@ -328,18 +328,18 @@ const DE: CvContent = {
     period: '1998 – 2007',
     degree: 'Master of Economics',
     school: 'Universität Rijeka',
-    desc: 'Berufsbegleitend studiert. Personalmanagement, Rechnungswesen, Informationstechnologie und Marketing, als analytische und organisatorische Grundlage zwischen Geschäftsstrategie und technischer Umsetzung.',
+    desc: 'Berufsbegleitend studiert. Personalmanagement, Rechnungswesen, Informationstechnologie und Marketing als Grundlage für die Verbindung von Geschäftsstrategie und technischer Umsetzung.',
   },
   certifications: ['MCSD: Web Applications', 'MCSA: Web Applications'],
   profile:
-    'Lead Software Engineer mit 25 Jahren Erfahrung in der Entwicklung produktiver Software für Immobilien-SaaS, Banken, Versicherungen und Telekommunikation, davon die letzten sechs Jahre vollständig remote bei immowelt, Empro und jetzt Whise. Unser Team entwickelt und betreibt eine agentische SDLC-Plattform aus KI-Agenten auf Basis von Large Language Models (LLMs), mit einem Harness aus Claude Skills, Commands, Hooks und Rules, mit dem die Entwickler täglich arbeiten. Dass sie im Produktivbetrieb trägt, liegt an der Grundlage darunter: Domain-Driven Design und event-getriebene Serverless-Architektur auf AWS, dazu Azure Kubernetes und PostgreSQL.',
+    'Lead Software Engineer mit 25 Jahren Erfahrung mit produktiv eingesetzter Software für Immobilien-SaaS, Banken, Versicherungen und Telekommunikation, davon die letzten sechs Jahre vollständig remote bei immowelt, Empro und jetzt Whise. Unser Team entwickelt und betreibt eine agentische SDLC-Plattform aus KI-Agenten auf Basis von Large Language Models (LLMs), mit einem Harness aus Claude Skills, Commands, Hooks und Rules, mit dem die Entwickler täglich arbeiten. Dass sie sich im Produktivbetrieb bewährt, liegt an ihrer Grundlage: Domain-Driven Design und ereignisgesteuerte Serverless-Architektur auf AWS, dazu Azure Kubernetes und PostgreSQL.',
   keyProject: {
     heading: 'KI-gestützte Entwicklung eines Immobilien-CRM',
     lines: [
-      { text: 'Unser Team baut ein neues Web- und Mobile-CRM für die Immobilienbranche, migriert Funktionalität aus Altsystemen und hat den agentischen SDLC entwickelt, der diese Arbeit trägt.' },
+      { text: 'Unser Team baut ein neues Web- und Mobile-CRM für die Immobilienbranche, überführt Funktionen aus Altsystemen und entwickelt und betreibt den agentischen SDLC für die Auslieferung.' },
       { label: 'Harness-Ebene.', text: 'Die Claude Skills, Slash Commands, Hooks und Rules, mit denen das Team arbeitet, mit Model-Context-Protocol-Servern (MCP) und RAG-Retrieval, die Agenten mit Repositories, Pipelines und Issue-Tracking verbinden.' },
-      { label: 'Ablauf.', text: 'Ein durch die Stakeholder freigegebener Prototyp geht über Spezifikationsextraktion in die Pipeline; Agenten verfeinern, implementieren, prüfen und testen, während Hooks und Rules die Standards durchsetzen, damit aus Durchsatz keine Prüfschuld wird.' },
-      { label: 'Reichweite.', text: 'Täglich im Einsatz in unserem elfköpfigen cross-funktionalen Team: 6 Entwickler, 2 QA-Engineers, 2 Product Owner und ein Scrum Master.' },
+      { label: 'Ablauf.', text: 'Ein durch die Stakeholder freigegebener Prototyp geht über Spezifikationsextraktion in die Pipeline; Agenten präzisieren die Anforderungen, implementieren, prüfen und testen, während Hooks und Rules die Standards durchsetzen, damit höherer Durchsatz nicht zu einem Rückstau ungeprüfter Änderungen führt.' },
+      { label: 'Einsatz.', text: 'Täglich im Einsatz in unserem elfköpfigen funktionsübergreifenden Team: 6 Entwickler, 2 QA-Engineers, 2 Product Owner und ein Scrum Master.' },
     ],
   },
   experience: [
@@ -348,13 +348,13 @@ const DE: CvContent = {
       industry: 'Immobilien-CRM, 6.000+ Kunden, 95.000+ Nutzer, 4,2 Mio.+ verwaltete Objekte',
       location: 'Hamburg, Deutschland · Vollständig remote',
       role: 'Lead Software Engineer',
-      period: 'Sep 2024 – heute',
+      period: 'Sept. 2024 – heute',
       bullets: [
         'Technische Leitung eines modernen SaaS-CRM: Architekturentscheidungen, End-to-End-Verantwortung von der technischen Planung bis zum Release, Mentoring der Entwickler.',
         'LLM-gestützte Anfrageautomatisierung (generative KI) und Elasticsearch-basierte Suche über die gesamte Plattform ausgeliefert.',
-        'Kundenseitige agentische Oberfläche auf dem Agno-Framework (Python) gebaut und damit Agentenfähigkeit vom internen Werkzeug ins Produkt selbst getragen.',
+        'Agentische Benutzeroberfläche für Kunden auf dem Agno-Framework (Python) gebaut und damit KI-Agenten aus internen Werkzeugen auch im Produkt nutzbar gemacht.',
         'Verantwortung für ein Angular-Design-System mit 87 Komponenten in einem Nx-Monorepo. Infrastruktur auf AWS (CDK) und Azure Kubernetes Service, mit PostgreSQL.',
-        'Technische Führung von 6 Entwicklern in einem elfköpfigen cross-funktionalen Team; Mitgestaltung des Agenten-Workflows, der die Auslieferung trägt.',
+        'Technische Führung von 6 Entwicklern in einem elfköpfigen funktionsübergreifenden Team; Mitgestaltung des Agenten-Workflows, der die Softwareauslieferung unterstützt.',
       ],
     },
     {
@@ -362,11 +362,11 @@ const DE: CvContent = {
       industry: 'Eines der größten Immobilienportale Deutschlands',
       location: 'Hamburg, Deutschland · Vollständig remote',
       role: 'Senior Softwareentwickler (Full-Stack)',
-      period: 'Aug 2020 – Sep 2024',
+      period: 'Aug. 2020 – Sept. 2024',
       bullets: [
         'Skalierbare Microservices und Webanwendungen für eine Immobilienplattform mit hohem Traffic entworfen und gebaut.',
-        'Cloud-Services auf AWS nach Domain-Driven Design entwickelt, mit funktionalen, Unit- und Integrationstests.',
-        'Mitarbeit an den CI/CD-Pipelines; Arbeit in Scrum über Backlog-Refinement, Sprint-Planung, Wireframes und Prototypen.',
+        'Cloud-Services auf AWS nach Domain-Driven Design entwickelt, mit Funktions-, Unit- und Integrationstests.',
+        'Mitarbeit an den CI/CD-Pipelines; Arbeit nach Scrum, vom Backlog-Refinement und der Sprint-Planung bis zu Wireframes und Prototypen.',
       ],
     },
     {
@@ -374,7 +374,7 @@ const DE: CvContent = {
       industry: 'Softwareagentur',
       location: 'Hamburg, Deutschland',
       role: 'Senior Softwareentwickler',
-      period: 'Sep 2015 – Aug 2020',
+      period: 'Sept. 2015 – Aug. 2020',
       bullets: [
         'CMS-Lösungen und individuelle Webanwendungen in C#, JavaScript und Sitecore entwickelt und betreut.',
         'Responsive Frontends, Backend-Services und Anbindung von Drittanbieter-APIs, mit Release-Versionierung und CI/CD.',
@@ -385,7 +385,7 @@ const DE: CvContent = {
       industry: 'Internationale Personalberatung',
       location: 'Dublin, Irland',
       role: 'Senior Softwareentwickler',
-      period: 'Jul 2014 – Mai 2015',
+      period: 'Jul. 2014 – Mai 2015',
       bullets: [
         'Plattform für Executive Search und Recruiting in C#, JavaScript und T-SQL entwickelt.',
         'CI/CD für kontinuierliche Auslieferung aufgebaut.',
@@ -396,18 +396,18 @@ const DE: CvContent = {
       industry: 'Software-Beratung',
       location: 'Rijeka, Kroatien',
       role: 'Teamleiter &amp; Principal Softwareentwickler',
-      period: 'Jan 2012 – Jul 2014',
+      period: 'Jan. 2012 – Jul. 2014',
       bullets: [
         'Leitung des Teams hinter Clarity Connect, einer Unified-Communications-Plattform mit Microsoft-Lync-Integration.',
-        'Technische Ausrichtung, Koordination der Sprint-Auslieferung, Definition der Engineering-Standards sowie Schulungen und Mitarbeitergespräche.',
+        'Technische Ausrichtung, Koordination der Auslieferung von Sprint-Ergebnissen, Definition der Engineering-Standards sowie Schulungen und Mitarbeitergespräche.',
       ],
     },
     {
       company: 'Erste Group Bank AG',
       industry: 'Banken &amp; Finanzen',
       location: 'Rijeka, Kroatien',
-      role: 'Leiter Satellite Application Development',
-      period: 'Jul 2008 – Jan 2012',
+      role: 'Leiter der Entwicklung von Satellitenanwendungen',
+      period: 'Jul. 2008 – Jan. 2012',
       bullets: [
         'Führung eines zehnköpfigen Entwicklerteams für Satellitenanwendungen rund um eine komplexe Kernbankenplattform: Online-Banking, Reporting und Kundenservices auf C# .NET, ASP.NET und Oracle PL/SQL.',
         'Verantwortung für technische Ausrichtung und Auslieferung des gesamten Anwendungsportfolios.',
@@ -415,10 +415,10 @@ const DE: CvContent = {
     },
   ],
   earlier: [
-    '<strong>Multilink</strong> — Senior Softwareentwickler (Dez 2004 – Jul 2008), Kroatien. Webportal und begleitende Services für T-Mobile.',
-    '<strong>Euris</strong> — Softwareentwickler (Dez 2000 – Dez 2004), vor Ort bei Allianz S.p.A., Triest, Italien. Windows-Desktopanwendungen für die Versicherungsbranche und industrielle Unterstützungssysteme; VB6, C++, MS SQL Server.',
+    '<strong>Multilink</strong> — Senior Softwareentwickler (Dez. 2004 – Jul. 2008), Kroatien. Webportal und begleitende Services für T-Mobile.',
+    '<strong>Euris</strong> — Softwareentwickler (Dez. 2000 – Dez. 2004), vor Ort bei Allianz S.p.A., Triest, Italien. Windows-Desktopanwendungen für die Versicherungsbranche und industrielle Unterstützungssysteme; VB6, C++, MS SQL Server.',
   ],
-  side: '<strong>Eigene Agenten-Werkzeuge.</strong> Arbeit außerhalb des Arbeitsplatzes: n8n-Orchestrierung für KI-Workflow-Automatisierung und Wissensmanagement sowie schnelles LLM-Prototyping auf AWS mit TypeScript.',
+  side: '<strong>Eigene Agenten-Werkzeuge.</strong> Eigenständige Projekte außerhalb der beruflichen Tätigkeit: n8n-Orchestrierung für KI-Workflow-Automatisierung und Wissensmanagement sowie schnelles LLM-Prototyping auf AWS mit TypeScript.',
 };
 
 function build(cv: CvContent, css: string): string {

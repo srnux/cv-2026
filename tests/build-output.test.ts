@@ -63,7 +63,7 @@ describe('German home page', () => {
     expect(html).toContain(`<meta property="og:url" content="${SITE}/de/">`);
     expect(html).toContain('<title>Luka Engels — Lead Software Engineer, Agentic AI &amp; LLM-Plattformen</title>');
     expect(html).toContain('"jobTitle": "Lead Software Engineer"');
-    expect(html).toContain('Unbefristete, vollständig remote Festanstellung');
+    expect(html).toContain('Unbefristete Festanstellung in Deutschland mit vollständig ortsunabhängiger Arbeit');
   });
 
   it('is prerendered in German', () => {
