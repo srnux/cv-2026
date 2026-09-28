@@ -59,13 +59,23 @@ Editorial rules that apply to everything with his name on it:
 
 ## Articles
 
-Articles are Markdown in `content/articles/<slug>.md` with YAML frontmatter (`title`, `description`, `date`, `tags`, `devtoPublished`). `pnpm articles` turns each one into three things:
+Articles are Markdown in `content/articles/<slug>.md` with YAML frontmatter: `title`, `description`, `date`, `tags`, plus the optional `coverImage` (a path under `public/`), `devtoPublished`, `devtoUrl` and `repoUrl` (linked as a second button in the home page listing). `pnpm articles` turns each one into three things:
 
 - `public/writing/<slug>/index.html`, the canonical page, served at `https://luka-engels.de/writing/<slug>/`
 - `content/devto/<slug>.md`, a dev.to-ready copy with dev.to's own frontmatter keys and `canonical_url` already pointing back here
 - `src/content/articles.json`, which `Writing.tsx` imports to render the listing on the home page
 
 **Adding an article is: drop a `.md` file in `content/articles/`, run `pnpm articles`, add the URL to `public/sitemap.xml` and `public/llms.txt`.** Everything under `public/writing/`, `content/devto/` and `src/content/articles.json` is generated; do not hand-edit it.
+
+**The slug is the canonical URL, so never rename a published article's file.** The title can change freely; `content/articles/gates-not-prompts.md` keeps that slug even though the title no longer contains those words, because `https://luka-engels.de/writing/gates-not-prompts/` is what the dev.to cross-post points at.
+
+**`coverImage` is validated.** A declared cover that is not on disk fails the build rather than shipping a broken hero image and a broken `og:image` that every share preview would silently fall back from. When set, the page gets the image as a hero, an absolute `og:image` and `twitter:image`, `summary_large_image` instead of `summary`, and an `image` entry in the JSON-LD; the listing card shows it too, and the dev.to copy gets the absolute URL.
+
+**`Writing.tsx` declares its own `Article` type rather than inferring it from the JSON.** TypeScript would otherwise type the optional fields against whatever the current articles happen to set, so `coverImage`, `repoUrl` or `devtoUrl` would stop compiling the moment no article used one. Keep that type in step with `ArticleMeta` in the generator.
+
+**The listing card is not one big anchor.** The buttons are real links, and an anchor inside an anchor is invalid HTML, so the cover, date, title and summary share one link and the buttons sit beside it.
+
+**dev.to accepts at most four tags.** The site page has no such limit, so extra tags are fine here and the generator prints a warning naming the four dev.to will keep.
 
 **luka-engels.de is canonical, dev.to is the cross-post.** The generated dev.to copy carries the canonical link, so the cross-post feeds this domain rather than competing with it. Publish here first. `devtoPublished: false` in the source keeps `published: false` in the generated copy until you flip it.
 

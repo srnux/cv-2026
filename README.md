@@ -49,7 +49,9 @@ The content model is a deliberate copy of my Word CV rather than a live import, 
 
 Articles live as Markdown in `content/articles/`. `pnpm articles` renders each into a static page under `public/writing/<slug>/`, emits a dev.to-ready copy in `content/devto/` with `canonical_url` pointing back at this site, and refreshes `src/content/articles.json`, which the Writing section on the home page reads.
 
-This site is the canonical home for anything I write; dev.to is a cross-post.
+Frontmatter takes `title`, `description`, `date` and `tags`, plus an optional `coverImage`, `devtoPublished`, `devtoUrl` and `repoUrl`. A declared cover image must exist under `public/` or the build fails.
+
+This site is the canonical home for anything I write; dev.to is a cross-post. The slug is the canonical URL, so a published article's filename never changes even when its title does.
 
 ## Contact form
 
