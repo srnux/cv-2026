@@ -168,6 +168,8 @@ function decorate(html: string): string {
   html = html.replace(/<table>/g, '<div class="table-wrap"><table>').replace(/<\/table>/g, '</table></div>');
   // External links open in a new tab and do not leak the referrer chain.
   html = html.replace(/<a href="(https?:\/\/[^"]+)"/g, '<a href="$1" target="_blank" rel="noopener noreferrer"');
+  // Body images sit below the fold; the cover is the only one worth loading eagerly.
+  html = html.replace(/<img /g, '<img loading="lazy" ');
   return html;
 }
 
@@ -217,6 +219,7 @@ const STYLES = `
   }
   .lede { font-size: 1.1875rem; color: #bdbdbd; margin: 0 0 2rem; }
   .cover { display: block; width: 100%; height: auto; margin: 0 0 2.5rem; border: 1px solid #262626; }
+  p img { display: block; max-width: 100%; height: auto; margin: 2rem 0; border: 1px solid #262626; }
   .tags { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0 0 3rem; padding: 0; list-style: none; }
   .tags li {
     font-family: 'Space Grotesk', sans-serif; font-size: 0.75rem; letter-spacing: 0.06em;
@@ -403,7 +406,8 @@ function devtoMarkdown(meta: ArticleMeta, fm: Frontmatter, body: string): string
     `canonical_url: ${SITE}${meta.url}`,
     '---',
     '',
-    body.trimStart(),
+    // Root-relative images and links would resolve against dev.to, so point them back here.
+    body.trimStart().replace(/\]\(\//g, `](${SITE}/`),
   ].join('\n');
 }
 
@@ -443,6 +447,13 @@ function metaFor(slug: string, source: Source, bodyLang: Lang, pageLang: Lang): 
     const onDisk = resolve(PUBLIC, `.${meta.coverImage}`);
     if (!existsSync(onDisk)) {
       throw new Error(`${file}: coverImage "${meta.coverImage}" not found at ${relative(ROOT, onDisk)}`);
+    }
+  }
+  // The same goes for images in the body, which would otherwise ship as broken icons.
+  for (const [, src] of content.matchAll(/!\[[^\]]*\]\((\/[^)\s]+)/g)) {
+    const onDisk = resolve(PUBLIC, `.${src}`);
+    if (!existsSync(onDisk)) {
+      throw new Error(`${file}: image "${src}" not found at ${relative(ROOT, onDisk)}`);
     }
   }
   return meta;

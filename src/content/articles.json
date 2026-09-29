@@ -1,6 +1,24 @@
 {
   "en": [
     {
+      "slug": "proptech-inquiry-agent",
+      "lang": "en",
+      "title": "A Property Inquiry Agent with React, MCP, and Hybrid RAG",
+      "description": "A TypeScript agent for property inquiries: answers backed by records, checked before delivery, with human follow-up when needed. Built with React, MCP, and hybrid RAG.",
+      "date": "2026-09-29",
+      "displayDate": "29 September 2026",
+      "tags": [
+        "ai",
+        "typescript",
+        "mcp",
+        "rag"
+      ],
+      "readingMinutes": 18,
+      "url": "/writing/proptech-inquiry-agent/",
+      "coverImage": "/images/writing/proptech-inquiry-agent-cover.jpg",
+      "repoUrl": "https://github.com/srnux/proptech-inquiry-agent"
+    },
+    {
       "slug": "gates-not-prompts",
       "lang": "en",
       "title": "Catching AI Workflow Failures with Executable Playbooks",
@@ -24,6 +42,24 @@
     }
   ],
   "de": [
+    {
+      "slug": "proptech-inquiry-agent",
+      "lang": "en",
+      "title": "A Property Inquiry Agent with React, MCP, and Hybrid RAG",
+      "description": "A TypeScript agent for property inquiries: answers backed by records, checked before delivery, with human follow-up when needed. Built with React, MCP, and hybrid RAG.",
+      "date": "2026-09-29",
+      "displayDate": "29. September 2026",
+      "tags": [
+        "ai",
+        "typescript",
+        "mcp",
+        "rag"
+      ],
+      "readingMinutes": 18,
+      "url": "/de/writing/proptech-inquiry-agent/",
+      "coverImage": "/images/writing/proptech-inquiry-agent-cover.jpg",
+      "repoUrl": "https://github.com/srnux/proptech-inquiry-agent"
+    },
     {
       "slug": "gates-not-prompts",
       "lang": "en",

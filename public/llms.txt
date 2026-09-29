@@ -17,6 +17,7 @@ Languages: Croatian (native), English (C2), Italian (C1), German (B2). Citizensh
 Currently open to permanent, fully remote roles employed in Germany, at Staff, Principal, Lead or Head of Engineering level, where agentic and LLM platform work is the core of the job. Not looking for freelance or contract engagements, hybrid or on-site roles, or relocation.
 
 ## Writing
+- [A Property Inquiry Agent with React, MCP, and Hybrid RAG](https://luka-engels.de/writing/proptech-inquiry-agent/): A TypeScript agent for property inquiries: answers backed by records, checked before delivery, with human follow-up when needed. Built with React, MCP, and hybrid RAG.
 - [Catching AI Workflow Failures with Executable Playbooks](https://luka-engels.de/writing/gates-not-prompts/): A file-based delivery procedure for Claude Code and Codex that turns workflow preconditions into executable checks, with explicit limits.
 
 ## Portfolio
