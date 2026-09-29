@@ -127,6 +127,10 @@ Fonts for the static pages are copied out of `@fontsource` into `public/fonts/` 
 
 The legal pages come in pairs: `impressum.html` / `legal-notice.html` and `datenschutz.html` / `privacy.html`. The English ones are close translations of the German ones, section for section, with no "German version prevails" line. An edit to one is an edit to both. Images are referenced with root-relative paths (e.g. `/images/luka-web-bw.jpg`).
 
+## Design system snapshot
+
+`design-system/` is the site's visual language extracted for reuse in other apps: `tokens.json` (the source of truth for that folder), a `tokens.css` generated from it, the fonts, `le-*` component CSS, a hand-written React bundle and a README of usage rules. Nothing in the build reads it, so it does not follow changes to the site on its own: when colours, type or component styling change here, update `tokens.json` and the component files there too, and regenerate `tokens.css`.
+
 ## Deployment
 
 GitHub Actions typechecks, runs `pnpm test`, builds, runs `pnpm test:build` against `dist/`, and deploys to GitHub Pages on every push to `main`. Custom domain `luka-engels.de` via `CNAME`.

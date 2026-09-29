@@ -1,0 +1,127 @@
+/* Generated from tokens.json. Edit tokens.json, then regenerate; do not edit by hand. */
+
+@font-face { font-family: "Inter"; src: url(fonts/inter-300.woff2) format("woff2"); font-weight: 300; font-style: normal; font-display: swap; }
+@font-face { font-family: "Inter"; src: url(fonts/inter-400.woff2) format("woff2"); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: "Inter"; src: url(fonts/inter-500.woff2) format("woff2"); font-weight: 500; font-style: normal; font-display: swap; }
+@font-face { font-family: "Inter"; src: url(fonts/inter-600.woff2) format("woff2"); font-weight: 600; font-style: normal; font-display: swap; }
+@font-face { font-family: "Inter"; src: url(fonts/inter-700.woff2) format("woff2"); font-weight: 700; font-style: normal; font-display: swap; }
+@font-face { font-family: "Space Grotesk"; src: url(fonts/space-grotesk-300.woff2) format("woff2"); font-weight: 300; font-style: normal; font-display: swap; }
+@font-face { font-family: "Space Grotesk"; src: url(fonts/space-grotesk-400.woff2) format("woff2"); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: "Space Grotesk"; src: url(fonts/space-grotesk-500.woff2) format("woff2"); font-weight: 500; font-style: normal; font-display: swap; }
+@font-face { font-family: "Space Grotesk"; src: url(fonts/space-grotesk-700.woff2) format("woff2"); font-weight: 700; font-style: normal; font-display: swap; }
+
+:root, [data-theme="dark"] {
+  color-scheme: dark;
+  --ground: #000000;
+  --ink: #ffffff;
+  --ink-muted: #9ca3af;
+  --ink-soft: #d1d5db;
+  --rule: var(--ink);
+  --rule-subtle: #1f2937;
+  --rule-quiet: #4b5563;
+  --solid-hover: #e5e7eb;
+  --header-scrim: rgba(0, 0, 0, 0.9);
+  --focus-ring: var(--ink);
+  --prose-ink: #e8e8e8;
+  --prose-muted: #9a9a9a;
+  --prose-lede: #bdbdbd;
+  --prose-link: #cfcfcf;
+  --prose-em: #d8d8d8;
+  --prose-hairline: #262626;
+  --tag-border: #3a3a3a;
+  --tag-ink: #b5b5b5;
+  --code-surface: #161616;
+  --code-ink: #e2e2e2;
+  --pre-surface: #0c0c0c;
+  --pre-ink: #d6d6d6;
+  --table-rule: #2a2a2a;
+  --table-head: #131313;
+  --print-banner: #1a1a1a;
+  --print-sidebar: #f2f2f2;
+  --print-ink: #222222;
+  --print-muted: #555555;
+  --print-rule: #333333;
+}
+
+[data-theme="light"] {
+  color-scheme: light;
+  --ground: #ffffff;
+  --ink: #000000;
+  --ink-muted: #6b7280;
+  --ink-soft: #374151;
+  --rule: var(--ink);
+  --rule-subtle: #e5e7eb;
+  --rule-quiet: #6b7280;
+  --solid-hover: #1f2937;
+  --header-scrim: rgba(0, 0, 0, 0.9);
+  --focus-ring: var(--ink);
+  --prose-ink: #1a1a1a;
+  --prose-muted: #5e5e5e;
+  --prose-lede: #404040;
+  --prose-link: #333333;
+  --prose-em: #2a2a2a;
+  --prose-hairline: #e0e0e0;
+  --tag-border: #c4c4c4;
+  --tag-ink: #4a4a4a;
+  --code-surface: #f3f3f3;
+  --code-ink: #1f1f1f;
+  --pre-surface: #f7f7f7;
+  --pre-ink: #262626;
+  --table-rule: #dcdcdc;
+  --table-head: #f0f0f0;
+  --print-banner: #1a1a1a;
+  --print-sidebar: #f2f2f2;
+  --print-ink: #222222;
+  --print-muted: #555555;
+  --print-rule: #333333;
+}
+
+:root {
+  --space-1: 4px;
+  --space-1-5: 6px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+  --section-pad-y: 64px;
+  --section-pad-x: 96px;
+  --radius-none: 0;
+  --radius-code: 2px;
+  --border-hairline: 1px;
+  --border-quote: 2px;
+  --measure-prose: 48rem;
+  --measure-list: 56rem;
+  --measure-intro: 42rem;
+  --container-max: 1536px;
+  --opacity-disabled: 0.5;
+  --opacity-icon-hover: 0.7;
+  --font-display: "Space Grotesk", Arial, Helvetica, sans-serif;
+  --font-body: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, Helvetica, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  --font-print: Arial, Helvetica, sans-serif;
+}
+
+.le-display-name { font-family: var(--font-display); font-size: 48px; line-height: 1; font-weight: 300; letter-spacing: 0.05em; }
+.le-section-title { font-family: var(--font-display); font-size: 48px; line-height: 1; font-weight: 300; }
+.le-hero-title { font-family: var(--font-display); font-size: 30px; line-height: 36px; font-weight: 300; }
+.le-card-title { font-family: var(--font-display); font-size: 24px; line-height: 32px; font-weight: 500; }
+.le-item-title { font-family: var(--font-display); font-size: 20px; line-height: 28px; font-weight: 500; }
+.le-tagline { font-family: var(--font-display); font-size: 18px; line-height: 28px; font-weight: 300; letter-spacing: 0.025em; }
+.le-label { font-family: var(--font-display); font-size: 14px; line-height: 20px; font-weight: 300; letter-spacing: 0.05em; }
+.le-body-lg { font-family: var(--font-body); font-size: 18px; line-height: 1.625; font-weight: 300; }
+.le-body { font-family: var(--font-body); font-size: 16px; line-height: 24px; font-weight: 300; }
+.le-small { font-family: var(--font-body); font-size: 14px; line-height: 20px; font-weight: 300; }
+.le-article-h1 { font-family: var(--font-display); font-size: 44px; line-height: 1.15; font-weight: 500; letter-spacing: -0.01em; }
+.le-article-h2 { font-family: var(--font-display); font-size: 26px; line-height: 1.25; font-weight: 500; }
+.le-article-h3 { font-family: var(--font-display); font-size: 20px; line-height: 1.25; font-weight: 500; }
+.le-pull-quote { font-family: var(--font-display); font-size: 19px; line-height: 1.5; font-weight: 400; }
+.le-eyebrow { font-family: var(--font-display); font-size: 13px; line-height: 20px; font-weight: 400; letter-spacing: 0.08em; }
+.le-tag { font-family: var(--font-display); font-size: 12px; line-height: 18px; font-weight: 400; letter-spacing: 0.06em; }
+.le-prose { font-family: var(--font-body); font-size: 17px; line-height: 1.75; font-weight: 400; }
+.le-lede { font-family: var(--font-body); font-size: 19px; line-height: 1.75; font-weight: 400; }
+.le-code { font-family: var(--font-mono); font-size: 13px; line-height: 1.55; font-weight: 400; }
+.le-print-body { font-family: var(--font-print); font-size: 8.5pt; line-height: 1.4; font-weight: 400; }
+.le-print-section { font-family: var(--font-print); font-size: 8.5pt; line-height: 1.4; font-weight: 700; letter-spacing: 1.5px; }
+.le-print-name { font-family: var(--font-print); font-size: 35pt; line-height: 1; font-weight: 700; letter-spacing: 2px; }
