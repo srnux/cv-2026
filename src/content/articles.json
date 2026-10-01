@@ -13,9 +13,10 @@
         "mcp",
         "rag"
       ],
-      "readingMinutes": 18,
+      "readingMinutes": 22,
       "url": "/writing/proptech-inquiry-agent/",
       "coverImage": "/images/writing/proptech-inquiry-agent-cover.jpg",
+      "devtoUrl": "https://dev.to/srnux/a-property-inquiry-agent-with-react-mcp-and-hybrid-rag-34cb",
       "repoUrl": "https://github.com/srnux/proptech-inquiry-agent"
     },
     {
@@ -55,9 +56,10 @@
         "mcp",
         "rag"
       ],
-      "readingMinutes": 18,
+      "readingMinutes": 22,
       "url": "/de/writing/proptech-inquiry-agent/",
       "coverImage": "/images/writing/proptech-inquiry-agent-cover.jpg",
+      "devtoUrl": "https://dev.to/srnux/a-property-inquiry-agent-with-react-mcp-and-hybrid-rag-34cb",
       "repoUrl": "https://github.com/srnux/proptech-inquiry-agent"
     },
     {
