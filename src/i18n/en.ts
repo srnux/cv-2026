@@ -25,7 +25,7 @@ export const en: Messages = {
     about: 'About',
     experience: 'Experience',
     skills: 'Skills',
-    writing: 'Writing',
+    writing: 'Articles',
     contact: 'Contact',
     portfolio: 'Portfolio',
     more: 'More',
@@ -300,8 +300,8 @@ export const en: Messages = {
   },
 
   writing: {
-    heading: 'Writing',
-    intro: 'Longer pieces, written up properly rather than left as notes.',
+    heading: 'Articles',
+    intro: 'On technology, work, and the ideas shaping both.',
     minRead: minutes => `${minutes} min read`,
     read: 'Read the article',
     repo: 'GitHub Repo',

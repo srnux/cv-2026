@@ -117,7 +117,7 @@ const CHROME: Record<Lang, {
     byline: `Written by ${AUTHOR}, Lead Software Engineer in Hamburg.`,
     devto: url => `Also published <a href="${url}" target="_blank" rel="noopener noreferrer">on dev.to</a>.`,
     backToSite: 'Back to the site',
-    moreWriting: 'More writing',
+    moreWriting: 'More articles',
     getInTouch: 'Get in touch',
     switchLanguage: 'Language',
     englishOnly: '',
