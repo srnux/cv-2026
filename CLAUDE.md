@@ -70,6 +70,7 @@ Editorial rules that apply to everything with his name on it:
 - **Collective voice for delivery claims.** "we" / "our team" for anything the team shipped. First person singular only for his title, leadership scope, what he is looking for, and his working style.
 - Headline everywhere: `Lead Software Engineer · Agentic AI & LLM Platforms · TypeScript / AWS`. Python is deliberately not in the headline.
 - Citizenship (German and Croatian) is stated on the site and in both CV pages.
+- **No career length or age signals (decided 5 Oct 2026).** Never write a total number of years ("25 years", "two decades", "Berufsjahre") or anything that implies it. Lead with scope and industries instead. Dated history starts at Clarity Consulting (2012); Erste Group, Multilink and Euris appear as earlier roles without dates, and the degree is shown without study years. An empty `period` is valid and the components skip it.
 - He is looking for permanent, fully remote employment only. Never describe him as available for freelance, contract or project work, and never claim immediate availability.
 
 ## Articles

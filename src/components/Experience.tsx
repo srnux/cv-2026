@@ -15,7 +15,7 @@ const Experience = () => {
                 <h3 className="text-2xl font-medium">{exp.title}</h3>
                 <p className="text-xl font-light">{exp.company}</p>
                 <p className="text-lg font-light text-gray-400">{exp.location}</p>
-                <p className="text-lg font-light text-gray-400">{exp.period}</p>
+                {exp.period && <p className="text-lg font-light text-gray-400">{exp.period}</p>}
               </div>
               <div className="w-full md:w-2/3">
                 <p className="text-sm font-light text-gray-400 mb-3">{exp.context}</p>

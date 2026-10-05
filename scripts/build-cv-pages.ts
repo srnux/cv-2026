@@ -21,8 +21,8 @@ import { fileURLToPath } from 'node:url';
 import { dirname, resolve, relative } from 'node:path';
 
 const SYNCED_FROM = {
-  document: 'Luka_Engels_CV_13.docx',
-  date: '2026-08-28',
+  document: 'Luka_Engels_CV_15.docx',
+  date: '2026-10-05',
 };
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
@@ -67,7 +67,7 @@ type CvContent = {
   citizenship: string;
   languages: Language[];
   skillGroups: SkillGroup[];
-  education: { period: string; degree: string; school: string; desc: string };
+  education: { period?: string; degree: string; school: string; desc: string };
   certifications: string[];
   profile: string;
   keyProject: { heading: string; lines: KeyProjectLine[] };
@@ -171,14 +171,13 @@ const EN: CvContent = {
     },
   ],
   education: {
-    period: '1998 – 2007',
     degree: 'Master of Economics',
     school: 'University of Rijeka',
     desc: 'Studied part-time alongside employment. Human resource management, accounting, information technology and marketing, building the analytical and organisational foundations that bridge business strategy and technical delivery.',
   },
   certifications: ['MCSD: Web Applications', 'MCSA: Web Applications'],
   profile:
-    'Lead Software Engineer with 25 years building production software across real estate SaaS, banking, insurance and telecommunications, the last six fully remote across immowelt, Empro and now Whise. My team builds and maintains an agentic SDLC platform of AI agents on large language models (LLMs), with a harness of Claude skills, commands, hooks and rules that engineers work through daily. That background is why it holds up in production: domain-driven design and event-driven serverless architecture on AWS, alongside Azure Kubernetes and PostgreSQL.',
+    'Lead Software Engineer with a background in full-stack development and software architecture across real estate SaaS, banking, insurance and telecommunications. Working fully remotely since 2020, initially at immowelt and now at Empro, part of Whise Group. My team builds and maintains an agentic SDLC platform of AI agents powered by large language models (LLMs), with a harness of Claude skills, commands, hooks and rules that engineers work through daily. The platform’s reliability rests on sound engineering practices: domain-driven design and event-driven serverless architecture on AWS, alongside Azure Kubernetes Service and PostgreSQL.',
   keyProject: {
     heading: 'AI-assisted build of a real estate CRM',
     lines: [
@@ -248,21 +247,11 @@ const EN: CvContent = {
         'Drove technical direction, coordinated sprint delivery, defined engineering standards, and ran training and performance reviews.',
       ],
     },
-    {
-      company: 'Erste Group Bank AG',
-      industry: 'Banking &amp; finance',
-      location: 'Rijeka, Croatia',
-      role: 'Head of Satellite Application Development',
-      period: 'Jul 2008 – Jan 2012',
-      bullets: [
-        'Led a team of 10 developers building satellite applications around a complex core banking platform: online banking, reporting and customer services on C# .NET, ASP.NET and Oracle PL/SQL.',
-        'Owned technical direction and delivery across the satellite application portfolio.',
-      ],
-    },
   ],
   earlier: [
-    '<strong>Multilink</strong> — Senior Software Developer (Dec 2004 – Jul 2008), Croatia. Web portal and supporting services for T-Mobile.',
-    '<strong>Euris</strong> — Software Developer (Dec 2000 – Dec 2004), on-site at Allianz S.p.A., Trieste, Italy. Windows desktop applications for the insurance sector and industrial support systems; VB6, C++, MS SQL Server.',
+    '<strong>Erste Group Bank AG</strong> — Head of Satellite Application Development, Rijeka, Croatia. Led a team of 10 developers building satellite applications around a complex core banking platform: online banking, reporting and customer services on C# .NET, ASP.NET and Oracle PL/SQL.',
+    '<strong>Multilink</strong> — Senior Software Developer, Croatia. Web portal and supporting services for T-Mobile.',
+    '<strong>Euris</strong> — Software Developer, on-site at Allianz S.p.A., Trieste, Italy. Windows desktop applications for the insurance sector and industrial support systems; VB6, C++, MS SQL Server.',
   ],
   side: '<strong>Personal agent tooling.</strong> Self-directed work outside the workplace: n8n orchestration for AI workflow automation and knowledge management, and rapid LLM prototyping on AWS with TypeScript.',
 };
@@ -325,14 +314,13 @@ const DE: CvContent = {
     },
   ],
   education: {
-    period: '1998 – 2007',
     degree: 'Master of Economics',
     school: 'Universität Rijeka',
     desc: 'Berufsbegleitend studiert. Personalmanagement, Rechnungswesen, Informationstechnologie und Marketing als Grundlage für die Verbindung von Geschäftsstrategie und technischer Umsetzung.',
   },
   certifications: ['MCSD: Web Applications', 'MCSA: Web Applications'],
   profile:
-    'Lead Software Engineer mit 25 Jahren Erfahrung mit produktiv eingesetzter Software für Immobilien-SaaS, Banken, Versicherungen und Telekommunikation, davon die letzten sechs Jahre vollständig remote bei immowelt, Empro und jetzt Whise. Unser Team entwickelt und betreibt eine agentische SDLC-Plattform aus KI-Agenten auf Basis von Large Language Models (LLMs), mit einem Harness aus Claude Skills, Commands, Hooks und Rules, mit dem die Entwickler täglich arbeiten. Dass sie sich im Produktivbetrieb bewährt, liegt an ihrer Grundlage: Domain-Driven Design und ereignisgesteuerte Serverless-Architektur auf AWS, dazu Azure Kubernetes und PostgreSQL.',
+    'Lead Software Engineer mit Erfahrung in Full-Stack-Entwicklung und Softwarearchitektur für Immobilien-SaaS, Banken, Versicherungen und Telekommunikation. Seit 2020 vollständig remote tätig, zunächst bei immowelt und heute bei Empro, einem Unternehmen der Whise Group. Unser Team entwickelt und betreibt eine agentische SDLC-Plattform aus KI-Agenten auf Basis von Large Language Models (LLMs), mit einem Harness aus Claude Skills, Commands, Hooks und Rules, mit dem die Entwickler täglich arbeiten. Die Zuverlässigkeit der Plattform beruht auf soliden Engineering-Praktiken: Domain-Driven Design und ereignisgesteuerte Serverless-Architektur auf AWS, dazu Azure Kubernetes Service und PostgreSQL.',
   keyProject: {
     heading: 'KI-gestützte Entwicklung eines Immobilien-CRM',
     lines: [
@@ -402,21 +390,11 @@ const DE: CvContent = {
         'Technische Ausrichtung, Koordination der Auslieferung von Sprint-Ergebnissen, Definition der Engineering-Standards sowie Schulungen und Mitarbeitergespräche.',
       ],
     },
-    {
-      company: 'Erste Group Bank AG',
-      industry: 'Banken &amp; Finanzen',
-      location: 'Rijeka, Kroatien',
-      role: 'Leiter der Entwicklung von Satellitenanwendungen',
-      period: 'Jul. 2008 – Jan. 2012',
-      bullets: [
-        'Führung eines zehnköpfigen Entwicklerteams für Satellitenanwendungen rund um eine komplexe Kernbankenplattform: Online-Banking, Reporting und Kundenservices auf C# .NET, ASP.NET und Oracle PL/SQL.',
-        'Verantwortung für technische Ausrichtung und Auslieferung des gesamten Anwendungsportfolios.',
-      ],
-    },
   ],
   earlier: [
-    '<strong>Multilink</strong> — Senior Softwareentwickler (Dez. 2004 – Jul. 2008), Kroatien. Webportal und begleitende Services für T-Mobile.',
-    '<strong>Euris</strong> — Softwareentwickler (Dez. 2000 – Dez. 2004), vor Ort bei Allianz S.p.A., Triest, Italien. Windows-Desktopanwendungen für die Versicherungsbranche und industrielle Unterstützungssysteme; VB6, C++, MS SQL Server.',
+    '<strong>Erste Group Bank AG</strong> — Leiter der Entwicklung von Satellitenanwendungen, Rijeka, Kroatien. Führung eines zehnköpfigen Entwicklerteams für Satellitenanwendungen rund um eine komplexe Kernbankenplattform: Online-Banking, Reporting und Kundenservices auf C# .NET, ASP.NET und Oracle PL/SQL.',
+    '<strong>Multilink</strong> — Senior Softwareentwickler, Kroatien. Webportal und begleitende Services für T-Mobile.',
+    '<strong>Euris</strong> — Softwareentwickler, vor Ort bei Allianz S.p.A., Triest, Italien. Windows-Desktopanwendungen für die Versicherungsbranche und industrielle Unterstützungssysteme; VB6, C++, MS SQL Server.',
   ],
   side: '<strong>Eigene Agenten-Werkzeuge.</strong> Eigenständige Projekte außerhalb der beruflichen Tätigkeit: n8n-Orchestrierung für KI-Workflow-Automatisierung und Wissensmanagement sowie schnelles LLM-Prototyping auf AWS mit TypeScript.',
 };
@@ -516,7 +494,7 @@ ${EXTRA_CSS}
 
       <div>
         <div class="section-title">${t.education}</div>
-        <div class="edu-period">${cv.education.period}</div>
+        ${cv.education.period ? `<div class="edu-period">${cv.education.period}</div>` : ''}
         <div class="edu-degree">${cv.education.degree}</div>
         <div class="edu-school">${cv.education.school}</div>
         <div class="edu-desc">${cv.education.desc}</div>

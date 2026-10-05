@@ -4,17 +4,18 @@ export const en: Messages = {
   meta: {
     title: 'Luka Engels — Lead Software Engineer, Agentic AI & LLM Platforms',
     description:
-      'Luka Engels, Lead Software Engineer in Hamburg, fully remote. 25 years of production software. Builds agentic SDLC platforms on Claude skills, MCP servers and RAG, with TypeScript, Node.js and AWS.',
+      'Luka Engels, Lead Software Engineer in Hamburg, fully remote. Builds agentic SDLC platforms on Claude skills, MCP servers and RAG, with TypeScript, Node.js and AWS.',
     ogTitle: 'Luka Engels — Lead Software Engineer, Agentic AI & LLM Platforms',
     ogDescription:
-      '25 years of production software. Builds agentic SDLC platforms on Claude skills, MCP servers and RAG, with TypeScript, Node.js and AWS. Hamburg, fully remote.',
+      'Builds agentic SDLC platforms on Claude skills, MCP servers and RAG, with TypeScript, Node.js and AWS. Hamburg, fully remote.',
     ogLocale: 'en_GB',
     imageAlt: 'Portrait of Luka Engels',
     jsonLd: {
       description:
-        'Lead Software Engineer with 25 years of production software experience across real estate SaaS, banking, insurance and telecommunications. Builds and maintains an agentic SDLC platform of AI agents on large language models, with a harness of Claude skills, slash commands, hooks and rules, Model Context Protocol servers and RAG retrieval. Domain-driven design and event-driven serverless architecture on AWS, with TypeScript as the lead language.',
+        'Lead Software Engineer with a background in full-stack development and software architecture across real estate SaaS, banking, insurance and telecommunications. Builds and maintains an agentic SDLC platform of AI agents powered by large language models, with a harness of Claude skills, slash commands, hooks and rules, Model Context Protocol servers and RAG retrieval. Domain-driven design and event-driven serverless architecture on AWS, with TypeScript as the primary programming language.',
       jobTitle: 'Lead Software Engineer',
-      seeks: 'Permanent, fully remote Staff, Principal, Lead or Head of Engineering roles employed in Germany',
+      seeks:
+        'Permanent, fully remote Staff, Principal, Lead or Head of Engineering roles employed in Germany',
       nationality: ['Germany', 'Croatia'],
       languages: ['Croatian', 'English', 'Italian', 'German'],
     },
@@ -36,9 +37,10 @@ export const en: Messages = {
   hero: {
     imageAlt: 'Luka Engels, Lead Software Engineer, Hamburg',
     title: 'Lead Software Engineer',
-    tagline: 'Agentic AI & LLM Platforms · TypeScript / AWS · Hamburg, fully remote',
+    tagline:
+      'Agentic AI & LLM Platforms · TypeScript / AWS · Hamburg, fully remote',
     intro:
-      '25 years of production software across real estate SaaS, banking, insurance and telecommunications, the last six fully remote. Today my team builds and maintains an agentic SDLC platform: AI agents on large language models, with a harness of Claude skills, commands, hooks and rules that our engineers work through every day. It holds up in production because the foundation underneath is ordinary engineering discipline, domain-driven design and event-driven serverless architecture on AWS.',
+      'My background spans software development and technical leadership in real estate SaaS, banking, insurance and telecommunications. I have worked fully remotely since 2020. Today my team builds and maintains an agentic SDLC platform: AI agents powered by large language models, with a harness of Claude skills, commands, hooks and rules that our engineers work through every day. It holds up in production because the foundation underneath is ordinary engineering discipline, domain-driven design and event-driven serverless architecture on AWS.',
     focusAreas: [
       { label: 'Agentic AI', href: '#skills-ai-agents' },
       { label: 'LLM platforms', href: '#skills-ai-agents' },
@@ -59,10 +61,10 @@ export const en: Messages = {
   about: {
     heading: 'About Me',
     paragraphs: [
-      '25 years in software development and team leadership, across real estate SaaS, banking, insurance and telecommunications. As Lead Software Engineer I hold the technical direction for a modern SaaS CRM for real estate brokers and I lead six developers inside an eleven-person cross-functional team.',
+      "Software development and team leadership across real estate SaaS, banking, insurance and telecommunications, from banking applications to one of Germany's largest property portals. As Lead Software Engineer, I set the technical direction for a modern SaaS CRM for real estate brokers and lead six developers within an eleven-person cross-functional team.",
       'Our team builds and maintains the agentic SDLC that delivers that product. The harness layer is the set of Claude skills, slash commands, hooks and rules the team works through, with Model Context Protocol servers and RAG retrieval connecting agents to our repositories, pipelines and issue tracking. A stakeholder-approved prototype enters the pipeline through specification extraction; agents then groom, implement, review and test, while hooks and rules enforce our standards so throughput does not turn into verification debt.',
       'We also took that capability into the product itself, shipping a customer-facing agentic UI on the Agno framework. None of it would survive contact with production without ordinary engineering discipline underneath.',
-      'That discipline is where most of the 25 years went, and the work has always spanned both ends of the stack: Angular and React interfaces, Node.js, NestJS and .NET Core services behind them, and the schemas, queues and indexes underneath. Today that means domain-driven design and event-driven serverless architecture on AWS, using Lambda, DynamoDB, S3, CloudFront and CDK, alongside Azure Kubernetes Service, PostgreSQL and Elasticsearch, with infrastructure as code, tests that mean something, and CI/CD people actually trust. Our team also owns an Angular design system of 87 components in an Nx monorepo.',
+      'Sound engineering practices underpin my work across the full stack: Angular and React interfaces, Node.js, NestJS and .NET Core services, and the underlying schemas, queues and indexes. Today that means domain-driven design and event-driven serverless architecture on AWS, using Lambda, DynamoDB, S3, CloudFront and CDK, alongside Azure Kubernetes Service, PostgreSQL and Elasticsearch, with infrastructure as code, meaningful tests and reliable CI/CD pipelines. Our team also owns an Angular design system of 87 components in an Nx monorepo.',
     ],
     facts: [
       {
@@ -77,12 +79,13 @@ export const en: Messages = {
       },
       {
         figure: '6,000+ customers',
-        detail: 'The real estate CRM we build serves more than 95,000 users and over 4.2 million managed properties.',
+        detail:
+          'The real estate CRM we build serves more than 95,000 users and over 4.2 million managed properties.',
       },
       {
         figure: '11-person team',
         detail:
-          'Six developers, two QA engineers, two product owners and a scrum master. I hold the technical direction and lead the developers.',
+          'Six developers, two QA engineers, two product owners and a scrum master. I set the technical direction and lead the developers.',
       },
     ],
   },
@@ -154,7 +157,7 @@ export const en: Messages = {
         company: 'Erste Group Bank AG',
         context: 'Banking and finance.',
         location: 'Rijeka, Croatia',
-        period: 'Jul 2008 – Jan 2012',
+        period: '',
         description:
           'Leading a team of 10 developers building satellite applications around a complex core banking platform: online banking, reporting and customer services on C# .NET, ASP.NET and Oracle PL/SQL. Owning technical direction and delivery across the satellite application portfolio.',
       },
@@ -163,7 +166,7 @@ export const en: Messages = {
         company: 'Multilink',
         context: 'Telecommunications.',
         location: 'Croatia',
-        period: 'Dec 2004 – Jul 2008',
+        period: '',
         description:
           'Building a web portal and supporting services for T-Mobile, handling client requirements analysis and full-stack feature delivery.',
       },
@@ -172,7 +175,7 @@ export const en: Messages = {
         company: 'Euris',
         context: 'On-site at Allianz S.p.A.',
         location: 'Trieste, Italy',
-        period: 'Dec 2000 – Dec 2004',
+        period: '',
         description:
           'Building Windows desktop applications for the insurance sector and industrial support systems using VB6, C++ and MS SQL Server.',
       },
@@ -181,7 +184,8 @@ export const en: Messages = {
 
   skills: {
     heading: 'Technical Expertise',
-    intro: 'Everything below is in daily or recent production use, not a wish list.',
+    intro:
+      'Everything below is in daily or recent production use, not a wish list.',
     categories: [
       {
         id: 'skills-ai-agents',
@@ -204,17 +208,36 @@ export const en: Messages = {
       {
         id: 'skills-languages',
         category: 'Languages',
-        skills: ['TypeScript', 'JavaScript', 'C#', 'Python', 'SQL', 'Elasticsearch Query Language', 'HTML / CSS / Sass'],
+        skills: [
+          'TypeScript',
+          'JavaScript',
+          'C#',
+          'Python',
+          'SQL',
+          'Elasticsearch Query Language',
+          'HTML / CSS / Sass',
+        ],
       },
       {
         id: 'skills-frontend',
         category: 'Frontend',
-        skills: ['Angular', 'React', 'Design systems and component libraries', 'Nx monorepos'],
+        skills: [
+          'Angular',
+          'React',
+          'Design systems and component libraries',
+          'Nx monorepos',
+        ],
       },
       {
         id: 'skills-backend',
         category: 'Backend',
-        skills: ['Node.js', 'NestJS', '.NET Core', 'REST', 'Event-driven services'],
+        skills: [
+          'Node.js',
+          'NestJS',
+          '.NET Core',
+          'REST',
+          'Event-driven services',
+        ],
       },
       {
         id: 'skills-cloud-devops',
@@ -233,7 +256,13 @@ export const en: Messages = {
       {
         id: 'skills-practices',
         category: 'Practices',
-        skills: ['Domain-Driven Design', 'Microservices', 'TDD', 'Agile / Scrum', 'Technical leadership and mentoring'],
+        skills: [
+          'Domain-Driven Design',
+          'Microservices',
+          'TDD',
+          'Agile / Scrum',
+          'Technical leadership and mentoring',
+        ],
       },
     ],
   },
@@ -245,7 +274,7 @@ export const en: Messages = {
       {
         degree: 'Master of Economics',
         institution: 'University of Rijeka',
-        period: '1998 – 2007',
+        period: '',
         description:
           'Studied part-time alongside employment. A broad economics curriculum covering human resource management, accounting, information technology and marketing, which built the analytical and organisational foundations that bridge business strategy and technical delivery.',
       },
@@ -261,10 +290,12 @@ export const en: Messages = {
     ],
     citizenshipHeading: 'Citizenship',
     citizenship: 'German and Croatian',
-    citizenshipNote: 'No work authorisation or visa sponsorship needed anywhere in the EU.',
+    citizenshipNote:
+      'No work authorisation or visa sponsorship needed anywhere in the EU.',
     baseHeading: 'Base',
     base: 'Hamburg, Germany',
-    baseNote: 'Fully remote since 2020, comfortable across European time zones.',
+    baseNote:
+      'Fully remote since 2020, comfortable across European time zones.',
   },
 
   projects: {
@@ -276,25 +307,56 @@ export const en: Messages = {
         title: 'Agentic SDLC platform',
         description:
           'The delivery platform our team built and maintains for the CRM below. A harness of Claude skills, slash commands, hooks and rules that engineers work through daily, with MCP servers and RAG retrieval connecting agents to repositories, pipelines and issue tracking. Used every day by an eleven-person cross-functional team.',
-        technologies: ['Claude skills, hooks & rules', 'MCP servers', 'RAG', 'TypeScript', 'Python', 'GitHub Actions'],
+        technologies: [
+          'Claude skills, hooks & rules',
+          'MCP servers',
+          'RAG',
+          'TypeScript',
+          'Python',
+          'GitHub Actions',
+        ],
       },
       {
         title: 'Empro — Real estate CRM',
         description:
           'A modern SaaS CRM for real estate brokers, serving over 6,000 customers, 95,000 users and 4.2 million managed properties. We deliver LLM-powered inquiry automation, search profile matching, AI-generated property descriptions, Elasticsearch-based search, and calendar and email integrations, alongside a customer-facing agentic UI built on the Agno framework.',
-        technologies: ['Angular', 'TypeScript', 'NestJS', 'AWS CDK', 'DynamoDB', 'Elasticsearch', 'Agno', 'Azure AKS', 'PostgreSQL'],
+        technologies: [
+          'Angular',
+          'TypeScript',
+          'NestJS',
+          'AWS CDK',
+          'DynamoDB',
+          'Elasticsearch',
+          'Agno',
+          'Azure AKS',
+          'PostgreSQL',
+        ],
       },
       {
         title: 'immowelt — Property portal',
         description:
           "Scalable microservices and web applications for one of Germany's largest property portals. We built cloud services on AWS following domain-driven design, with functional, unit and integration test coverage, and contributed to the CI/CD pipelines that shipped them.",
-        technologies: ['TypeScript', 'Node.js', 'AWS', 'Microservices', 'DDD', 'CI/CD'],
+        technologies: [
+          'TypeScript',
+          'Node.js',
+          'AWS',
+          'Microservices',
+          'DDD',
+          'CI/CD',
+        ],
       },
       {
         title: 'Nivea — Portal & Web Shop',
         description:
           'Feature development for the Nivea customer portal and web shop. We built product catalogue pages, shopping cart functionality, loyalty programme integration, and CMS-driven content management across multiple markets, on Sitecore and .NET with Azure underneath.',
-        technologies: ['Sitecore CMS', '.NET', 'C#', 'SCSS', 'REST API', 'Azure'],
+        technologies: [
+          'Sitecore CMS',
+          '.NET',
+          'C#',
+          'SCSS',
+          'REST API',
+          'Azure',
+        ],
       },
     ],
   },
@@ -302,7 +364,7 @@ export const en: Messages = {
   writing: {
     heading: 'Articles',
     intro: 'On technology, work, and the ideas shaping both.',
-    minRead: minutes => `${minutes} min read`,
+    minRead: (minutes) => `${minutes} min read`,
     read: 'Read the article',
     repo: 'GitHub Repo',
     englishOnly: 'Article in English',

@@ -16,9 +16,9 @@ const Education = () => {
               {m.items.map((item, index) => <div key={index} className="mb-6">
                   <h4 className="text-xl font-medium">{item.degree}</h4>
                   <p className="text-lg font-light">{item.institution}</p>
-                  <p className="text-md font-light text-gray-400 mb-2">
+                  {item.period && <p className="text-md font-light text-gray-400 mb-2">
                     {item.period}
-                  </p>
+                  </p>}
                   <p className="font-light">{item.description}</p>
                 </div>)}
             </div>

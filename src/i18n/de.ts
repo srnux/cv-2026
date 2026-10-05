@@ -9,15 +9,15 @@ export const de: Messages = {
   meta: {
     title: 'Luka Engels — Lead Software Engineer, Agentic AI & LLM-Plattformen',
     description:
-      'Luka Engels, Lead Software Engineer in Hamburg, vollständig remote. 25 Jahre Erfahrung mit Software im Produktivbetrieb. Baut agentische SDLC-Plattformen auf Claude Skills, MCP-Servern und RAG, mit TypeScript, Node.js und AWS.',
+      'Luka Engels, Lead Software Engineer in Hamburg, vollständig remote. Baut agentische SDLC-Plattformen auf Claude Skills, MCP-Servern und RAG, mit TypeScript, Node.js und AWS.',
     ogTitle: 'Luka Engels — Lead Software Engineer, Agentic AI & LLM-Plattformen',
     ogDescription:
-      '25 Jahre Erfahrung mit Software im Produktivbetrieb. Baut agentische SDLC-Plattformen auf Claude Skills, MCP-Servern und RAG, mit TypeScript, Node.js und AWS. Hamburg, vollständig remote.',
+      'Baut agentische SDLC-Plattformen auf Claude Skills, MCP-Servern und RAG, mit TypeScript, Node.js und AWS. Hamburg, vollständig remote.',
     ogLocale: 'de_DE',
     imageAlt: 'Porträt von Luka Engels',
     jsonLd: {
       description:
-        'Lead Software Engineer mit 25 Jahren Erfahrung mit Software im Produktivbetrieb für Immobilien-SaaS, Banken, Versicherungen und Telekommunikation. Entwickelt und betreibt eine agentische SDLC-Plattform aus KI-Agenten auf Basis von Large Language Models, mit einem Harness aus Claude Skills, Slash Commands, Hooks und Rules, Model-Context-Protocol-Servern und RAG-Retrieval. Domain-Driven Design und ereignisgesteuerte Serverless-Architektur auf AWS, mit TypeScript als Hauptprogrammiersprache.',
+        'Lead Software Engineer mit Erfahrung in Full-Stack-Entwicklung und Softwarearchitektur für Immobilien-SaaS, Banken, Versicherungen und Telekommunikation. Entwickelt und betreibt eine agentische SDLC-Plattform aus KI-Agenten auf Basis von Large Language Models, mit einem Harness aus Claude Skills, Slash Commands, Hooks und Rules, Model-Context-Protocol-Servern und RAG-Retrieval. Domain-Driven Design und ereignisgesteuerte Serverless-Architektur auf AWS, mit TypeScript als Hauptprogrammiersprache.',
       jobTitle: 'Lead Software Engineer',
       seeks: 'Unbefristete Festanstellung in Deutschland mit vollständig ortsunabhängiger Arbeit als Staff, Principal, Lead oder Head of Engineering',
       nationality: ['Deutschland', 'Kroatien'],
@@ -43,7 +43,7 @@ export const de: Messages = {
     title: 'Lead Software Engineer',
     tagline: 'Agentic AI & LLM-Plattformen · TypeScript / AWS · Hamburg, vollständig remote',
     intro:
-      '25 Jahre Erfahrung mit Software im Produktivbetrieb für Immobilien-SaaS, Banken, Versicherungen und Telekommunikation, die letzten sechs davon vollständig remote. Heute entwickelt und betreibt mein Team eine agentische SDLC-Plattform: KI-Agenten auf Basis von Large Language Models, mit einem Harness aus Claude Skills, Commands, Hooks und Rules, mit dem unsere Entwickler jeden Tag arbeiten. Dass sie sich im Produktivbetrieb bewährt, liegt an ihrer Grundlage: solides Engineering-Handwerk, Domain-Driven Design und ereignisgesteuerte Serverless-Architektur auf AWS.',
+      'Mein Hintergrund umfasst Softwareentwicklung und technische Führung für Immobilien-SaaS, Banken, Versicherungen und Telekommunikation. Seit 2020 arbeite ich vollständig remote. Heute entwickelt und betreibt mein Team eine agentische SDLC-Plattform: KI-Agenten auf Basis von Large Language Models, mit einem Harness aus Claude Skills, Commands, Hooks und Rules, mit dem unsere Entwickler jeden Tag arbeiten. Dass sie sich im Produktivbetrieb bewährt, liegt an ihrer Grundlage: solides Engineering-Handwerk, Domain-Driven Design und ereignisgesteuerte Serverless-Architektur auf AWS.',
     focusAreas: [
       { label: 'Agentic AI', href: '#skills-ai-agents' },
       { label: 'LLM-Plattformen', href: '#skills-ai-agents' },
@@ -64,10 +64,10 @@ export const de: Messages = {
   about: {
     heading: 'Über mich',
     paragraphs: [
-      '25 Jahre in Softwareentwicklung und Teamführung, in Immobilien-SaaS, Banken, Versicherungen und Telekommunikation. Als Lead Software Engineer verantworte ich die technische Ausrichtung eines modernen SaaS-CRM für Immobilienmakler und führe sechs Entwickler in einem elfköpfigen funktionsübergreifenden Team.',
+      'Softwareentwicklung und Teamführung für Immobilien-SaaS, Banken, Versicherungen und Telekommunikation, von Bankanwendungen bis zu einem der größten Immobilienportale Deutschlands. Als Lead Software Engineer verantworte ich die technische Ausrichtung eines modernen SaaS-CRM für Immobilienmakler und führe sechs Entwickler in einem elfköpfigen funktionsübergreifenden Team.',
       'Unser Team entwickelt und betreibt den agentischen SDLC, der dieses Produkt ausliefert. Die Harness-Ebene besteht aus den Claude Skills, Slash Commands, Hooks und Rules, mit denen das Team arbeitet, dazu Model-Context-Protocol-Server und RAG-Retrieval, die Agenten mit unseren Repositories, Pipelines und dem Issue-Tracking verbinden. Ein von den Stakeholdern freigegebener Prototyp gelangt über Spezifikationsextraktion in die Pipeline; Agenten präzisieren die Anforderungen, implementieren, prüfen und testen anschließend, während Hooks und Rules unsere Standards durchsetzen, damit höherer Durchsatz nicht zu einem Rückstau ungeprüfter Änderungen führt.',
       'Diese Möglichkeiten haben wir auch in das Produkt integriert und eine agentische Benutzeroberfläche für Kunden auf dem Agno-Framework ausgeliefert. Die Grundlage für den zuverlässigen Produktivbetrieb ist solides Engineering-Handwerk.',
-      'Dieses Handwerk hat den Großteil meiner 25 Berufsjahre geprägt. Meine Arbeit hat dabei immer den gesamten Stack umfasst: Oberflächen in Angular und React, dahinter Services in Node.js, NestJS und .NET Core, darunter die Schemata, Queues und Indizes. Heute heißt das Domain-Driven Design und ereignisgesteuerte Serverless-Architektur auf AWS mit Lambda, DynamoDB, S3, CloudFront und CDK, dazu Azure Kubernetes Service, PostgreSQL und Elasticsearch, mit Infrastructure as Code, aussagekräftigen Tests und zuverlässigen CI/CD-Prozessen. Außerdem verantwortet unser Team ein Angular-Design-System mit 87 Komponenten in einem Nx-Monorepo.',
+      'Solide Softwareentwicklung bildet die Grundlage meiner Arbeit im gesamten Stack: Oberflächen mit Angular und React, Services mit Node.js, NestJS und .NET Core sowie die zugrunde liegenden Schemata, Queues und Indizes. Heute heißt das Domain-Driven Design und ereignisgesteuerte Serverless-Architektur auf AWS mit Lambda, DynamoDB, S3, CloudFront und CDK, dazu Azure Kubernetes Service, PostgreSQL und Elasticsearch, mit Infrastructure as Code, aussagekräftigen Tests und zuverlässigen CI/CD-Prozessen. Außerdem verantwortet unser Team ein Angular-Design-System mit 87 Komponenten in einem Nx-Monorepo.',
     ],
     facts: [
       {
@@ -159,7 +159,7 @@ export const de: Messages = {
         company: 'Erste Group Bank AG',
         context: 'Banken und Finanzen.',
         location: 'Rijeka, Kroatien',
-        period: 'Jul. 2008 – Jan. 2012',
+        period: '',
         description:
           'Führung eines zehnköpfigen Entwicklerteams für Satellitenanwendungen rund um eine komplexe Kernbankenplattform: Online-Banking, Reporting und Kundenservices auf C# .NET, ASP.NET und Oracle PL/SQL. Verantwortung für technische Ausrichtung und Auslieferung des gesamten Portfolios an Satellitenanwendungen.',
       },
@@ -168,7 +168,7 @@ export const de: Messages = {
         company: 'Multilink',
         context: 'Telekommunikation.',
         location: 'Kroatien',
-        period: 'Dez. 2004 – Jul. 2008',
+        period: '',
         description:
           'Entwicklung eines Webportals und begleitender Services für T-Mobile, von der Anforderungsanalyse mit dem Kunden bis zur Full-Stack-Umsetzung der Features.',
       },
@@ -177,7 +177,7 @@ export const de: Messages = {
         company: 'Euris',
         context: 'Vor Ort bei Allianz S.p.A.',
         location: 'Triest, Italien',
-        period: 'Dez. 2000 – Dez. 2004',
+        period: '',
         description:
           'Entwicklung von Windows-Desktopanwendungen für die Versicherungsbranche und industrielle Unterstützungssysteme mit VB6, C++ und MS SQL Server.',
       },
@@ -250,7 +250,7 @@ export const de: Messages = {
       {
         degree: 'Master of Economics',
         institution: 'Universität Rijeka',
-        period: '1998 – 2007',
+        period: '',
         description:
           'Berufsbegleitend studiert. Ein breites wirtschaftswissenschaftliches Studium mit Personalmanagement, Rechnungswesen, Informationstechnologie und Marketing, das die analytischen und organisatorischen Grundlagen für die Verbindung von Geschäftsstrategie und technischer Umsetzung geschaffen hat.',
       },
