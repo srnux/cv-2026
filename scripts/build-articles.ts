@@ -213,7 +213,7 @@ const STYLES = `
     font-size: 1.0625rem;
     -webkit-font-smoothing: antialiased;
   }
-  .wrap { max-width: 48rem; margin: 0 auto; padding: 3rem 1.25rem 6rem; }
+  .wrap { max-width: 56rem; margin: 0 auto; padding: 3rem 1.25rem 6rem; }
 
   a { color: #fff; text-underline-offset: 3px; }
   a:hover { text-decoration: none; }
