@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600" width="1200" height="600" role="img" aria-labelledby="t d">
+<title id="t">Saga coordination: choreography versus orchestration</title><desc id="d">Left: services react to events on a shared event bus. Right: a central orchestrator sends commands to each service and receives replies.</desc>
+<defs><marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M1 1L9 5L1 9z" fill="#9a9a9a"/></marker></defs>
+<style>
+text{font-family:Inter,system-ui,"Segoe UI",sans-serif;fill:#ffffff}
+.h{font-size:24px;font-weight:700}.sub{font-size:15px;fill:#9a9a9a}
+.bt{font-size:16px;font-weight:600}.sm{font-size:14px;fill:#cfcfcf}
+.svc{fill:#0c0c0c;stroke:#3a3a3a;stroke-width:1.5}
+.bus{fill:#0b1730;stroke:#6b9cff;stroke-width:1.5}
+.orc{fill:#16123a;stroke:#9d8ff5;stroke-width:1.5}
+.ln{stroke:#9a9a9a;stroke-width:1.8;fill:none}
+.dl{stroke:#9a9a9a;stroke-width:1.8;fill:none;stroke-dasharray:6 5}
+.panel{fill:#0a0a0a;stroke:#262626;stroke-width:1.5}
+.good{fill:#4cc38a;font-size:14px}.bad{fill:#ff7070;font-size:14px}
+</style>
+<rect x="0" y="0" width="1200" height="600" fill="#0c0c0c"/>
+<rect class="panel" x="16" y="16" width="576" height="568" rx="16"/><rect class="panel" x="608" y="16" width="576" height="568" rx="16"/>
+<text class="h" x="44" y="58">Choreography</text><text class="sub" x="44" y="82">Services react to each other's events</text>
+<rect class="svc" x="60" y="120" width="150" height="60" rx="10"/><text class="bt" x="135" y="156" text-anchor="middle">Order</text>
+<path class="ln" d="M110 182V262" marker-end="url(#ar)"/><path class="dl" d="M160 262V184" marker-end="url(#ar)"/>
+<rect class="svc" x="229" y="120" width="150" height="60" rx="10"/><text class="bt" x="304" y="156" text-anchor="middle">Inventory</text>
+<path class="ln" d="M279 182V262" marker-end="url(#ar)"/><path class="dl" d="M329 262V184" marker-end="url(#ar)"/>
+<rect class="svc" x="398" y="120" width="150" height="60" rx="10"/><text class="bt" x="473" y="156" text-anchor="middle">Payment</text>
+<path class="ln" d="M448 182V262" marker-end="url(#ar)"/><path class="dl" d="M498 262V184" marker-end="url(#ar)"/>
+<rect class="bus" x="44" y="266" width="520" height="46" rx="10"/><text class="bt" x="304" y="295" text-anchor="middle" style="fill:#6b9cff">Event bus (EventBridge, Kafka)</text>
+<text class="sm" x="102" y="216" text-anchor="end">publish</text><text class="sm" x="510" y="216">subscribe</text>
+<text class="sm" x="44" y="358">1  Order publishes OrderCreated</text>
+<text class="sm" x="44" y="386">2  Inventory reserves stock, publishes StockReserved</text>
+<text class="sm" x="44" y="414">3  Payment fails, publishes PaymentFailed</text>
+<text class="sm" x="44" y="442">4  Inventory releases stock, Order cancels</text>
+<text class="good" x="44" y="490">+ Loose coupling, no central component</text><text class="good" x="44" y="514">+ Good for short flows of 2 to 4 steps</text>
+<text class="bad" x="44" y="538">− The flow is implicit and hard to trace</text><text class="bad" x="44" y="562">− Adding a step changes several services</text>
+<text class="h" x="636" y="58">Orchestration</text><text class="sub" x="636" y="82">A coordinator drives every step</text>
+<rect class="orc" x="796" y="110" width="200" height="64" rx="10"/><text class="bt" x="896" y="138" text-anchor="middle" style="fill:#9d8ff5">Saga orchestrator</text><text class="sm" x="896" y="160" text-anchor="middle">holds the state machine</text>
+<rect class="svc" x="652" y="252" width="150" height="60" rx="10"/><text class="bt" x="727" y="288" text-anchor="middle">Order</text>
+<path class="ln" d="M838 176 L713 248" marker-end="url(#ar)"/><path class="dl" d="M741 248 L854 178" marker-end="url(#ar)"/>
+<rect class="svc" x="821" y="252" width="150" height="60" rx="10"/><text class="bt" x="896" y="288" text-anchor="middle">Inventory</text>
+<path class="ln" d="M888 176 L882 248" marker-end="url(#ar)"/><path class="dl" d="M910 248 L904 178" marker-end="url(#ar)"/>
+<rect class="svc" x="990" y="252" width="150" height="60" rx="10"/><text class="bt" x="1065" y="288" text-anchor="middle">Payment</text>
+<path class="ln" d="M938 176 L1051 248" marker-end="url(#ar)"/><path class="dl" d="M1079 248 L954 178" marker-end="url(#ar)"/>
+<text class="sm" x="660" y="214">command</text><text class="sm" x="1100" y="214">reply</text>
+<text class="sm" x="636" y="358">1  Orchestrator: create order</text>
+<text class="sm" x="636" y="386">2  Orchestrator: reserve stock</text>
+<text class="sm" x="636" y="414">3  Payment replies: failed</text>
+<text class="sm" x="636" y="442">4  Orchestrator: release stock, cancel order</text>
+<text class="good" x="636" y="490">+ The whole flow is visible in one place</text><text class="good" x="636" y="514">+ Timeouts, branching and human steps</text>
+<text class="bad" x="636" y="538">− One more component to run</text><text class="bad" x="636" y="562">− Risk of a "god orchestrator"</text>
+</svg>

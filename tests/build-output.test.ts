@@ -144,6 +144,16 @@ describe('articles', () => {
     },
   );
 
+  // <!-- site-only --> and <!-- devto-only --> blocks: each target gets its own, the markers ship nowhere.
+  it.each(listing.en.map(a => a.slug))('%s: target-only blocks are resolved for the site and for dev.to', slug => {
+    const page = read(`writing/${slug}/index.html`);
+    const devto = readFileSync(resolve(import.meta.dirname, '..', 'content/devto', `${slug}.md`), 'utf8');
+    expect(page).not.toMatch(/<!-- \/?(site|devto)-only -->/);
+    expect(devto).not.toMatch(/<!-- \/?(site|devto)-only -->/);
+    // dev.to runs no custom JavaScript, so a script tag there is always a leak from a site-only block.
+    expect(devto).not.toMatch(/<script[\s>]/);
+  });
+
   it('German home listing marks English-only articles', () => {
     const root = rootOf(read('de/index.html'));
     if (listing.de.some(a => a.lang === 'en')) expect(root).toContain('Artikel auf Englisch');

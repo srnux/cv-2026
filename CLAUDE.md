@@ -75,7 +75,7 @@ Editorial rules that apply to everything with his name on it:
 
 ## Articles
 
-Articles are Markdown in `content/articles/<slug>.md` with YAML frontmatter: `title`, `description`, `date`, `tags`, plus the optional `coverImage` (a path under `public/`), `devtoPublished`, `devtoUrl` and `repoUrl` (linked as a second button in the home page listing). `pnpm articles` turns each one into:
+Articles are Markdown in `content/articles/<slug>.md` with YAML frontmatter: `title`, `description`, `date`, `tags`, plus the optional `coverImage` (a path under `public/`), `devtoPublished`, `devtoUrl`, `repoUrl` (linked as a second button in the home page listing) and `series` (dev.to only: posts with the same series name are linked there). `pnpm articles` turns each one into:
 
 - `public/writing/<slug>/index.html`, the canonical page, served at `https://luka-engels.de/writing/<slug>/`
 - `public/de/writing/<slug>/index.html`, always, so a visitor redirected to `/de` + path never lands on a 404 (see below)
@@ -94,6 +94,8 @@ Articles are Markdown in `content/articles/<slug>.md` with YAML frontmatter: `ti
 **`Writing.tsx` declares its own `Article` type rather than inferring it from the JSON.** TypeScript would otherwise type the optional fields against whatever the current articles happen to set, so `coverImage`, `repoUrl` or `devtoUrl` would stop compiling the moment no article used one. Keep that type in step with `ArticleMeta` in the generator.
 
 **The listing card is not one big anchor.** The buttons are real links, and an anchor inside an anchor is invalid HTML, so the cover, date, title and summary share one link and the buttons sit beside it.
+
+**One source, two targets.** dev.to runs no custom JavaScript and drops most raw HTML, so a block wrapped in `<!-- site-only -->…<!-- /site-only -->` ships only on the site page (an interactive embed, a `<script>`, a `<figure>`), and one wrapped in `<!-- devto-only -->…<!-- /devto-only -->` only in the dev.to copy (its static Markdown stand-in). The markers never ship, and an unbalanced marker fails the build. Raw HTML `src`/`href` paths to images and scripts are checked against `public/` like Markdown images. Interactive scripts live in `public/js/` and are loaded only by the article that uses them (`saga-stepper.js` for `saga-pattern`).
 
 **dev.to accepts at most four tags.** The site page has no such limit, so extra tags are fine here and the generator prints a warning naming the four dev.to will keep.
 

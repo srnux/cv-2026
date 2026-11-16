@@ -17,6 +17,8 @@ Languages: Croatian (native), English (C2), Italian (C1), German (B2). Citizensh
 Currently open to permanent, fully remote roles employed in Germany, at Staff, Principal, Lead or Head of Engineering level, where agentic and LLM platform work is the core of the job. Not looking for freelance or contract engagements, hybrid or on-site roles, or relocation.
 
 ## Writing
+- [The Saga pattern in practice: compensations, pivots and the hard parts](https://luka-engels.de/writing/saga-pattern/): How the Saga pattern replaces one database transaction with a chain of local ones, why the pivot step matters most, and what goes wrong in production, with an AWS (Amazon Web Services) Step Functions example.
+- [20 cloud design patterns, grouped by the problem they solve](https://luka-engels.de/writing/cloud-design-patterns/): Twenty cloud design patterns sorted into six groups by the problem they solve, with when to use each one, where it shows up in real cloud services, and how they combine.
 - [A Property Inquiry Agent with React, MCP, and Hybrid RAG](https://luka-engels.de/writing/proptech-inquiry-agent/): A TypeScript agent for property inquiries: answers backed by records, checked before delivery, with human follow-up when needed. Built with React, MCP, and hybrid RAG.
 - [Catching AI Workflow Failures with Executable Playbooks](https://luka-engels.de/writing/gates-not-prompts/): A file-based delivery procedure for Claude Code and Codex that turns workflow preconditions into executable checks, with explicit limits.
 

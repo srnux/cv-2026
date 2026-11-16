@@ -71,7 +71,29 @@ type Frontmatter = {
   devtoUrl?: string;
   /** Source repository the article is about, linked from the home page listing. */
   repoUrl?: string;
+  /** dev.to series name; dev.to links every post that carries the same one. */
+  series?: string;
 };
+
+/**
+ * One source, two targets. dev.to runs no custom JavaScript and strips most
+ * raw HTML, so an article can mark a block for one target only:
+ *
+ *   <!-- site-only -->  interactive embed, <picture>, <script>  <!-- /site-only -->
+ *   <!-- devto-only --> static Markdown stand-in                <!-- /devto-only -->
+ *
+ * The block for the other target is dropped and the markers themselves never ship.
+ */
+type Target = 'site' | 'devto';
+const TARGET_BLOCK = /<!-- (site|devto)-only -->\r?\n?([\s\S]*?)<!-- \/\1-only -->\r?\n?/g;
+
+function forTarget(content: string, target: Target): string {
+  const out = content.replace(TARGET_BLOCK, (_m, which: Target, inner: string) => (which === target ? inner : ''));
+  if (/<!-- \/?(site|devto)-only -->/.test(out)) {
+    throw new Error('unbalanced <!-- site-only --> / <!-- devto-only --> marker');
+  }
+  return out;
+}
 
 /**
  * Keep in step with the Article type in src/components/Writing.tsx.
@@ -220,6 +242,11 @@ const STYLES = `
   .lede { font-size: 1.1875rem; color: #bdbdbd; margin: 0 0 2rem; }
   .cover { display: block; width: 100%; height: auto; margin: 0 0 2.5rem; border: 1px solid #262626; }
   p img { display: block; max-width: 100%; height: auto; margin: 2rem 0; border: 1px solid #262626; }
+  figure { margin: 2.25rem 0; }
+  figure img { display: block; width: 100%; height: auto; border: 1px solid #262626; }
+  figcaption { font-size: 0.875rem; color: #9a9a9a; margin-top: 0.75rem; }
+  .toc { border: 1px solid #262626; padding: 1rem 1.25rem; margin: 0 0 2.5rem; font-size: 0.9375rem; }
+  .toc ol { margin: 0; }
   .tags { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0 0 3rem; padding: 0; list-style: none; }
   .tags li {
     font-family: 'Space Grotesk', sans-serif; font-size: 0.75rem; letter-spacing: 0.06em;
@@ -404,6 +431,7 @@ function devtoMarkdown(meta: ArticleMeta, fm: Frontmatter, body: string): string
     `tags: ${meta.tags.join(', ')}`,
     `cover_image: ${meta.coverImage ? SITE + meta.coverImage : ''}`,
     `canonical_url: ${SITE}${meta.url}`,
+    ...(fm.series ? [`series: ${JSON.stringify(fm.series)}`] : []),
     '---',
     '',
     // Root-relative images and links would resolve against dev.to, so point them back here.
@@ -425,7 +453,7 @@ function readSource(file: string, required: readonly (keyof Frontmatter)[]): Sou
 function metaFor(slug: string, source: Source, bodyLang: Lang, pageLang: Lang): ArticleMeta {
   const { file, fm, content } = source;
   const date = new Date(fm.date).toISOString().slice(0, 10);
-  const words = content.split(/\s+/).filter(Boolean).length;
+  const words = forTarget(content, 'site').split(/\s+/).filter(Boolean).length;
   const meta: ArticleMeta = {
     slug,
     lang: bodyLang,
@@ -450,7 +478,12 @@ function metaFor(slug: string, source: Source, bodyLang: Lang, pageLang: Lang): 
     }
   }
   // The same goes for images in the body, which would otherwise ship as broken icons.
-  for (const [, src] of content.matchAll(/!\[[^\]]*\]\((\/[^)\s]+)/g)) {
+  // Raw HTML too: a <picture>, a figure linking the full-size file, or an embed's script.
+  const assets = [
+    ...content.matchAll(/!\[[^\]]*\]\((\/[^)\s]+)/g),
+    ...content.matchAll(/\b(?:src|srcset|href)="(\/[^"\s#?]+\.(?:png|jpe?g|gif|svg|webp|js))"/g),
+  ];
+  for (const [, src] of assets) {
     const onDisk = resolve(PUBLIC, `.${src}`);
     if (!existsSync(onDisk)) {
       throw new Error(`${file}: image "${src}" not found at ${relative(ROOT, onDisk)}`);
@@ -460,7 +493,7 @@ function metaFor(slug: string, source: Source, bodyLang: Lang, pageLang: Lang): 
 }
 
 function writePage(meta: ArticleMeta, source: Source, opts: PageOptions): void {
-  const bodyHtml = decorate(marked.parse(source.content, { async: false }) as string);
+  const bodyHtml = decorate(marked.parse(forTarget(source.content, 'site'), { async: false }) as string);
   const outDir = resolve(PUBLIC, `.${meta.url}`);
   mkdirSync(outDir, { recursive: true });
   writeFileSync(resolve(outDir, 'index.html'), page(meta, bodyHtml, opts), 'utf8');
@@ -538,7 +571,7 @@ for (const slug of englishSlugs) {
     alternates,
     urls,
   });
-  writeFileSync(resolve(DEVTO_DIR, `${slug}.md`), devtoMarkdown(enMeta, en.fm, en.content), 'utf8');
+  writeFileSync(resolve(DEVTO_DIR, `${slug}.md`), devtoMarkdown(enMeta, en.fm, forTarget(en.content, 'devto')), 'utf8');
 
   listing.en.push(enMeta);
   listing.de.push(deMeta);
