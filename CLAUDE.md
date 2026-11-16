@@ -19,7 +19,7 @@ pnpm lint         # ESLint (TypeScript + React); currently broken, ESLint 10 no 
 
 Everything in this repo is TypeScript, the two build scripts included; they run through `tsx`. Do not add build scripts in another language.
 
-> pnpm is what CI uses; npm works locally too. Both lockfiles are kept in sync; if you change dependencies, update `pnpm-lock.yaml` too or the GitHub Actions build fails on `--frozen-lockfile`.
+> pnpm only. `pnpm-lock.yaml` is the single lockfile; do not run `npm install` or add a `package-lock.json`. CI installs with `--frozen-lockfile`, so a dependency change without an updated `pnpm-lock.yaml` fails the build.
 
 ## Architecture
 
