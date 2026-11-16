@@ -79,13 +79,13 @@
   "de": [
     {
       "slug": "cloud-design-patterns",
-      "lang": "en",
-      "title": "20 cloud design patterns, grouped by the problem they solve",
-      "description": "Twenty cloud design patterns sorted into six groups by the problem they solve, with when to use each one, where it shows up in real cloud services, and how they combine.",
+      "lang": "de",
+      "title": "20 Cloud Design Patterns, gruppiert nach dem Problem, das sie lösen",
+      "description": "Zwanzig Cloud Design Patterns in sechs Gruppen, sortiert nach dem Problem, das sie lösen: wann jedes hilft, wo es in echten Cloud-Diensten vorkommt und wie die Patterns zusammenspielen.",
       "date": "2026-11-16",
       "displayDate": "16. November 2026",
       "tags": [
-        "architecture",
+        "architektur",
         "cloud",
         "aws",
         "microservices"
@@ -96,18 +96,18 @@
     },
     {
       "slug": "saga-pattern",
-      "lang": "en",
-      "title": "The Saga pattern in practice: compensations, pivots and the hard parts",
-      "description": "How the Saga pattern replaces one database transaction with a chain of local ones, why the pivot step matters most, and what goes wrong in production, with an AWS (Amazon Web Services) Step Functions example.",
+      "lang": "de",
+      "title": "Das Saga Pattern in der Praxis: Kompensationen, Pivots und die schwierigen Stellen",
+      "description": "Wie das Saga Pattern eine Datenbanktransaktion durch eine Kette lokaler Transaktionen ersetzt, warum der Pivot-Schritt am wichtigsten ist und was im Produktivbetrieb schiefgeht, mit einem Beispiel in AWS (Amazon Web Services) Step Functions.",
       "date": "2026-11-16",
       "displayDate": "16. November 2026",
       "tags": [
-        "architecture",
+        "architektur",
         "aws",
         "microservices",
         "serverless"
       ],
-      "readingMinutes": 11,
+      "readingMinutes": 10,
       "url": "/de/writing/saga-pattern/",
       "coverImage": "/images/writing/saga-pattern-cover.jpg"
     },
