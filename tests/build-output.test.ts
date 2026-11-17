@@ -27,6 +27,15 @@ const rootOf = (html: string): string => {
 
 const count = (haystack: string, needle: string): number => haystack.split(needle).length - 1;
 
+/** Same four replacements as the generator, so a title is matched as it appears in the HTML. */
+const escapeHtml = (s: string): string =>
+  s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+
+const listing = JSON.parse(readFileSync(resolve(import.meta.dirname, '..', 'src/content/articles.json'), 'utf8')) as Record<
+  'en' | 'de',
+  { slug: string; url: string; lang: string; title: string }[]
+>;
+
 describe('English home page', () => {
   const html = read('index.html');
 
@@ -112,11 +121,6 @@ describe('localised links', () => {
 });
 
 describe('articles', () => {
-  const listing = JSON.parse(readFileSync(resolve(import.meta.dirname, '..', 'src/content/articles.json'), 'utf8')) as Record<
-    'en' | 'de',
-    { slug: string; url: string; lang: string }[]
-  >;
-
   it('lists every article in both languages', () => {
     expect(listing.de.map(a => a.slug)).toEqual(listing.en.map(a => a.slug));
   });
@@ -127,7 +131,8 @@ describe('articles', () => {
     const de = read(`de/writing/${slug}/index.html`);
     expect(en).toContain('<html lang="en-GB">');
     expect(de).toContain('<html lang="de-DE">');
-    expect(de).toContain('<a class="back" href="/de/#writing">');
+    expect(en).toContain('<a class="back" href="/writing/">');
+    expect(de).toContain('<a class="back" href="/de/writing/">');
     expect(de).toContain('Min. Lesezeit');
   });
 
@@ -158,6 +163,40 @@ describe('articles', () => {
     const root = rootOf(read('de/index.html'));
     if (listing.de.some(a => a.lang === 'en')) expect(root).toContain('Artikel auf Englisch');
     expect(root).toContain('href="/de/writing/');
+  });
+});
+
+describe('writing index', () => {
+  it.each([
+    ['en', 'writing/index.html', 'en-GB'],
+    ['de', 'de/writing/index.html', 'de-DE'],
+  ] as const)('%s index page exists, is in its language and links every article', (lang, path, htmlLang) => {
+    const html = read(path);
+    expect(html).toContain(`<html lang="${htmlLang}">`);
+    for (const a of listing[lang]) {
+      expect(html).toContain(`href="${a.url}"`);
+      expect(html).toContain(escapeHtml(a.title));
+    }
+  });
+
+  it('index pages are hreflang alternates with their own canonicals', () => {
+    const en = read('writing/index.html');
+    const de = read('de/writing/index.html');
+    expect(en).toContain(`<link rel="canonical" href="${SITE}/writing/">`);
+    expect(de).toContain(`<link rel="canonical" href="${SITE}/de/writing/">`);
+    expect(en).toContain(`<link rel="alternate" hreflang="de-DE" href="${SITE}/de/writing/">`);
+    expect(de).toContain(`<link rel="alternate" hreflang="en-GB" href="${SITE}/writing/">`);
+  });
+
+  it('German index marks English-only articles', () => {
+    const de = read('de/writing/index.html');
+    if (listing.de.some(a => a.lang === 'en')) expect(de).toContain('Artikel auf Englisch');
+  });
+
+  it('sitemap lists both index pages', () => {
+    const xml = read('sitemap.xml');
+    expect(xml).toContain(`<loc>${SITE}/writing/</loc>`);
+    expect(xml).toContain(`<loc>${SITE}/de/writing/</loc>`);
   });
 });
 
