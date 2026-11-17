@@ -113,43 +113,41 @@
     },
     {
       "slug": "proptech-inquiry-agent",
-      "lang": "en",
-      "title": "A Property Inquiry Agent with React, MCP, and Hybrid RAG",
-      "description": "A TypeScript agent for property inquiries: answers backed by records, checked before delivery, with human follow-up when needed. Built with React, MCP, and hybrid RAG.",
+      "lang": "de",
+      "title": "Ein Agent für Immobilienanfragen mit React, MCP und Hybrid-RAG",
+      "description": "Ein TypeScript-Agent für Immobilienanfragen: Antworten, die auf den Objektdaten beruhen und vor der Auslieferung geprüft werden, mit Übergabe an einen Menschen, wo es nötig ist. Gebaut mit React, MCP und Hybrid-RAG.",
       "date": "2026-09-29",
       "displayDate": "29. September 2026",
       "tags": [
-        "ai",
+        "ki",
         "typescript",
         "mcp",
         "rag"
       ],
-      "readingMinutes": 22,
+      "readingMinutes": 23,
       "url": "/de/writing/proptech-inquiry-agent/",
       "coverImage": "/images/writing/proptech-inquiry-agent-cover.jpg",
-      "devtoUrl": "https://dev.to/srnux/a-property-inquiry-agent-with-react-mcp-and-hybrid-rag-34cb",
       "repoUrl": "https://github.com/srnux/proptech-inquiry-agent"
     },
     {
       "slug": "gates-not-prompts",
-      "lang": "en",
-      "title": "Catching AI Workflow Failures with Executable Playbooks",
-      "description": "A file-based delivery procedure for Claude Code and Codex that turns workflow preconditions into executable checks, with explicit limits.",
+      "lang": "de",
+      "title": "Fehler in KI-Workflows mit ausführbaren Playbooks abfangen",
+      "description": "Ein dateibasierter Ablauf für die Auslieferung mit Claude Code und Codex, der Vorbedingungen im Workflow in ausführbare Prüfungen übersetzt, mit klar benannten Grenzen.",
       "date": "2026-09-25",
       "displayDate": "25. September 2026",
       "tags": [
-        "ai",
-        "productivity",
-        "architecture",
+        "ki",
+        "produktivität",
+        "architektur",
         "webdev",
         "claude-code",
         "codex",
         "playbooks"
       ],
-      "readingMinutes": 11,
+      "readingMinutes": 12,
       "url": "/de/writing/gates-not-prompts/",
       "coverImage": "/images/writing/gates-not-prompts-cover.jpg",
-      "devtoUrl": "https://dev.to/srnux/stop-asking-your-coding-agent-to-behave-gates-not-prompts-daa",
       "repoUrl": "https://github.com/srnux/sdlc-playbooks"
     }
   ]
