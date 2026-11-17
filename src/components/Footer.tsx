@@ -1,7 +1,9 @@
-import { useMessages } from '../i18n/context';
+import { useLang, useMessages } from '../i18n/context';
+import { writingPath } from '../i18n/paths';
 
 const Footer = () => {
   const m = useMessages();
+  const lang = useLang();
   return <footer className="bg-black text-white py-12">
       <div className="container mx-auto px-4">
         <div className="flex flex-col md:flex-row justify-between items-center">
@@ -40,7 +42,7 @@ const Footer = () => {
                 </a>
               </li>
               <li>
-                <a href="#writing" className="hover:underline">
+                <a href={writingPath(lang)} className="hover:underline">
                   {m.nav.writing}
                 </a>
               </li>

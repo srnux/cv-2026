@@ -307,9 +307,6 @@ export const de: Messages = {
   writing: {
     heading: 'Artikel',
     intro: 'Über Technologie, Arbeit und die Ideen, die beide prägen.',
-    minRead: minutes => `${minutes} Min. Lesezeit`,
-    read: 'Artikel lesen',
-    repo: 'GitHub-Repo',
     englishOnly: 'Artikel auf Englisch',
   },
 

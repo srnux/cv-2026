@@ -200,6 +200,32 @@ describe('writing index', () => {
   });
 });
 
+describe('home writing list', () => {
+  it.each([
+    ['en', 'index.html'],
+    ['de', 'de/index.html'],
+  ] as const)('%s home lists every article compactly', (lang, path) => {
+    const root = rootOf(read(path));
+    // Old links to /#writing (dev.to, shared URLs) must still land on the section.
+    expect(root).toContain('id="writing"');
+    for (const a of listing[lang]) {
+      expect(root).toContain(`href="${a.url}"`);
+      expect(root).toContain(escapeHtml(a.title));
+    }
+    // Covers, tags and buttons live on the index page, not on the CV page.
+    expect(root).not.toMatch(/<img[^>]+src="\/images\/writing\//);
+    expect(root).not.toContain('Read the article');
+    expect(root).not.toContain('Artikel lesen');
+  });
+
+  it('nav links go to the index page in the page language', () => {
+    expect(rootOf(read('index.html'))).toContain('href="/writing/"');
+    const de = rootOf(read('de/index.html'));
+    expect(de).toContain('href="/de/writing/"');
+    expect(de).not.toContain('href="/writing/"');
+  });
+});
+
 describe('sitemap', () => {
   const xml = read('sitemap.xml');
 

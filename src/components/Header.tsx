@@ -1,7 +1,7 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import { useLang, useMessages } from '../i18n/context';
 import { HTML_LANG, LANGS } from '../i18n/lang';
-import { homePath } from '../i18n/paths';
+import { homePath, writingPath } from '../i18n/paths';
 import { storeLang } from '../i18n/preference';
 
 const Header: React.FC = () => {
@@ -63,7 +63,7 @@ const Header: React.FC = () => {
               </a>
             </li>
             <li>
-              <a href="#writing" className="hover:underline">
+              <a href={writingPath(lang)} className="hover:underline">
                 {m.writing}
               </a>
             </li>

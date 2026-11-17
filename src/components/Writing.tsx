@@ -14,9 +14,9 @@ import { useLang, useMessages } from '../i18n/context';
  * article used one. This mirrors ArticleMeta in the generator, except that
  * `lang` is a plain string here: JSON imports widen string literals.
  *
- * The card is not one big link: the action buttons are real anchors, and an
- * anchor inside an anchor is invalid HTML. The cover, date, title and summary
- * share one link to the article; the buttons sit beside it as siblings.
+ * The home page is the CV, so this is a compact list: every article, all
+ * visible, as date, title and summary in one link. Covers, tags and the
+ * repository buttons live on the generated index page at /writing/.
  */
 type Article = {
   slug: string;
@@ -50,52 +50,24 @@ const Writing = () => {
           {m.intro}
         </p>
 
-        <div className="max-w-4xl mx-auto space-y-8">
-          {articles.map(article => <article key={article.slug} className="border-t border-white pt-8">
-              <a href={article.url} className="group block">
-                {article.coverImage && <img
-                  src={article.coverImage}
-                  alt=""
-                  width={1200}
-                  height={500}
-                  loading="lazy"
-                  className="w-full h-auto mb-6 border border-gray-800"
-                />}
-                <p className="text-sm font-light text-gray-400 font-grotesk tracking-wider mb-3">
-                  {article.displayDate} · {m.minRead(article.readingMinutes)}{article.lang !== lang && <> · {m.englishOnly}</>}
-                </p>
-                <h3 lang={article.lang !== lang ? article.lang : undefined} className="text-2xl md:text-3xl font-medium mb-4 group-hover:underline">
-                  {article.title}
-                </h3>
-                <p lang={article.lang !== lang ? article.lang : undefined} className="text-lg font-light leading-relaxed text-gray-300 mb-4">
-                  {article.description}
-                </p>
-              </a>
-
-              <ul className="flex flex-wrap gap-2 mb-4">
-                {article.tags.map(tag => <li key={tag} className="border border-gray-600 px-3 py-1 text-sm font-light text-gray-400">
-                    {tag}
-                  </li>)}
-              </ul>
-
-              <div className="flex flex-wrap gap-3 font-grotesk">
-                <a href={article.url} className="inline-block border px-4 py-1.5 text-sm font-light tracking-wider hover:bg-white hover:text-black transition">
-                  {m.read}
+        <ul className="max-w-4xl mx-auto">
+          {articles.map(article => {
+            const foreign = article.lang !== lang ? article.lang : undefined;
+            return <li key={article.slug} className="border-t border-gray-800 last:border-b">
+                <a href={article.url} className="group block py-6">
+                  <p className="text-sm font-light text-gray-400 font-grotesk tracking-wider mb-2">
+                    {article.displayDate}{foreign && <> · {m.englishOnly}</>}
+                  </p>
+                  <h3 lang={foreign} className="text-xl md:text-2xl font-medium mb-2 group-hover:underline">
+                    {article.title}
+                  </h3>
+                  <p lang={foreign} className="text-base font-light leading-relaxed text-gray-300">
+                    {article.description}
+                  </p>
                 </a>
-                {article.repoUrl && <a
-                  href={article.repoUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 border border-gray-600 px-4 py-1.5 text-sm font-light tracking-wider text-gray-300 hover:bg-white hover:text-black hover:border-white transition"
-                >
-                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                    <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
-                  </svg>
-                  {m.repo}
-                </a>}
-              </div>
-            </article>)}
-        </div>
+              </li>;
+          })}
+        </ul>
       </div>
     </section>;
 };
