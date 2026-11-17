@@ -43,7 +43,7 @@ Ausfälle überstehen, ohne dass das ganze System mitfällt.
 ### A3. Bulkhead
 
 - **Was:** Teilt Ressourcen in isolierte Pools auf, etwa getrennte Thread-Pools, Connection-Pools, Queues oder Cluster, damit ein einzelner Fehler nicht alles versenkt. Der Name kommt von den wasserdichten Schotten eines Schiffs.
-- **Wann:** Mehrere Funktionen oder Mandanten teilen sich Infrastruktur, und ein lauter Verbraucher könnte die übrigen aushungern.
+- **Wann:** Mehrere Funktionen oder Mandanten teilen sich Infrastruktur, und ein besonders ressourcenhungriger Verbraucher könnte den übrigen die Ressourcen entziehen.
 - **Wo:** Getrennte Reserved Concurrency pro Lambda-Funktion, getrennte Node-Pools in Azure Kubernetes Service, ein eigener Datenbank-Connection-Pool für Reporting neben dem für Transaktionen.
 - **Verbindungen:** Circuit Breaker stoppt die Aufrufe, Bulkhead begrenzt den Schaden. Sharding wirkt als Bulkhead auf Datenebene.
 
@@ -97,24 +97,24 @@ Speicher skalieren und dabei Lesezugriffe schnell und Daten konsistent halten.
 - **Was:** Getrennte Modelle, oft auch getrennte Speicher, für Schreibzugriffe (Commands) und Lesezugriffe (Queries). Jede Seite lässt sich für sich optimieren und skalieren.
 - **Wann:** Lesezugriffe überwiegen Schreibzugriffe deutlich, die Leseformen weichen stark vom Schreibmodell ab, oder eine komplexe Domäne hat umfangreiche Geschäftsregeln auf der Schreibseite.
 - **Wo:** Schreiben in PostgreSQL, Lesen aus OpenSearch oder einer denormalisierten DynamoDB-Tabelle. NestJS bietet ein Modul `@nestjs/cqrs`.
-- **Vorsicht:** Die Leseseite ist nur letztendlich konsistent (Eventual Consistency), und es gibt mehr bewegliche Teile. Für einfache Anwendungen, die nur anlegen, lesen, ändern und löschen, ist es nicht gedacht.
+- **Vorsicht:** Die Leseseite ist meist nur letztendlich konsistent (Eventual Consistency), und es gibt mehr bewegliche Teile. Für einfache Anwendungen, die nur anlegen, lesen, ändern und löschen, ist es nicht gedacht.
 - **Verbindungen:** Sehr oft kombiniert mit Event Sourcing, dessen Ereignisse die Lesemodelle aufbauen, und mit Publisher-Subscriber, das diese Ereignisse transportiert.
 
 ### C3. Event Sourcing
 
 - **Was:** Speichert jede Zustandsänderung als unveränderliches Ereignis („PriceChanged“, „ListingPublished“) statt nur des aktuellen Zustands. Der aktuelle Zustand entsteht durch Abspielen der Ereignisse.
 - **Wann:** Sie brauchen einen vollständigen Audit-Trail, zeitbezogene Abfragen („wie sah das letzten Dienstag aus?“) oder die Möglichkeit, später neue Projektionen aufzubauen. Typische Domänen sind Banken, Versicherungsschäden und stark regulierte Systeme.
-- **Wo:** EventStoreDB, Kafka oder DynamoDB als reines Anhänge-Log mit DynamoDB Streams. Kernbankensysteme sind die klassische Domäne dafür.
+- **Wo:** EventStoreDB, Kafka oder DynamoDB als Append-only-Log mit DynamoDB Streams. Kernbankensysteme sind die klassische Domäne dafür.
 - **Vorsicht:** Die Weiterentwicklung von Ereignisschemata (Versionierung) und die Performance beim Abspielen brauchen Snapshots und Planung.
-- **Verbindungen:** Es ist die Schreibseite von CQRS. Seine Ereignisse speisen Publisher-Subscriber, und es macht Compensating Transactions natürlich, weil eine Kompensation einfach ein weiteres angehängtes Ereignis ist.
+- **Verbindungen:** Es ist oft die Schreibseite von CQRS. Seine Ereignisse speisen Publisher-Subscriber, und es macht Compensating Transactions natürlich, weil eine Kompensation einfach ein weiteres angehängtes Ereignis ist.
 
 ### C4. Sharding
 
-- **Was:** Teilt Daten horizontal auf mehrere Datenbanken oder Partitionen auf, anhand eines Shard-Schlüssels wie einer Mandanten-ID (Identifikator) oder einer Region.
+- **Was:** Teilt Daten horizontal auf mehrere Datenbanken oder Partitionen auf, anhand eines Shard-Schlüssels wie einer Mandanten-ID oder einer Region.
 - **Wann:** Eine einzelne Datenbank stößt an Grenzen bei Speicher, Durchsatz oder Verbindungen, oder Sie brauchen Mandantentrennung oder Datenresidenz.
 - **Wo:** Partition Keys in DynamoDB (eingebautes Sharding), Citus für PostgreSQL, Sharded Cluster in MongoDB, eine Datenbank pro Mandant in mandantenfähiger Software as a Service.
 - **Vorsicht:** Abfragen und Transaktionen über Shards hinweg werden schwierig. Ein schlechter Schlüssel erzeugt „heiße“ Shards.
-- **Verbindungen:** Es ist ein Bulkhead auf Datenebene. Es ist auch der Grund, warum die Patterns für verteilte Transaktionen aus Gruppe D nötig werden.
+- **Verbindungen:** Es ist ein Bulkhead auf Datenebene. Es ist auch der Grund, warum die Patterns für verteilte Transaktionen aus Gruppe D nötig werden, sobald eine Operation mehrere Shards umfasst.
 
 ## Gruppe D: Verteilte Transaktionen
 
@@ -134,7 +134,7 @@ Saga ist das Pattern in dieser Liste mit den meisten versteckten Details: welche
 
 - **Was:** Schlägt ein späterer Schritt fehl, macht es frühere, bereits abgeschlossene Schritte durch ausdrückliche Gegenaktionen rückgängig, etwa eine Zahlung erstatten oder eine Reservierung freigeben. Eine Kompensation ist eine neue fachliche Aktion, kein Datenbank-Rollback.
 - **Wann:** In jeder Saga, und immer dann, wenn sich eine dienstübergreifende Operation nicht atomar zurückrollen lässt.
-- **Wo:** Catch-Blöcke in Step Functions, die Lambda-Funktionen zum Rückgängigmachen aufrufen. Es gehört auch zu Agenten-Workflows: Scheitert ein Schritt eines KI-Agenten (Künstliche Intelligenz), nachdem er schon Nebenwirkungen hatte, etwa eine versendete E-Mail oder ein angelegtes Ticket, ist eine Kompensation der saubere Ausweg.
+- **Wo:** Catch-Blöcke in Step Functions, die Lambda-Funktionen zum Rückgängigmachen aufrufen. Es gehört auch zu Agenten-Workflows: Scheitert ein Schritt eines KI-Agenten, nachdem er schon Nebenwirkungen hatte, etwa eine versendete E-Mail oder ein angelegtes Ticket, ist eine Kompensation der saubere Ausweg.
 - **Verbindungen:** Es ist die Fehlerhälfte der Saga und kommt zum Einsatz, wenn Retry ausgeschöpft ist. Mit Event Sourcing ist es einfach ein weiteres angehängtes Ereignis.
 
 ## Gruppe E: Gateway und Edge
@@ -152,13 +152,13 @@ Steuern, wie Clients Ihre Dienste erreichen.
 
 - **Was:** Ein einziger Einstiegspunkt, der Anfragen anhand von Pfad, Header oder Version an den richtigen Backend-Dienst leitet.
 - **Wann:** Sie haben viele Microservices und wollen nicht, dass Clients jede Dienstadresse kennen. Es ermöglicht außerdem Canary Releases und Versionierung.
-- **Wo:** Amazon API Gateway (API steht für Application Programming Interface), Pfadregeln im Application Load Balancer, CloudFront Behaviors, Kubernetes Ingress, Azure Front Door.
+- **Wo:** Amazon API Gateway, Pfadregeln im Application Load Balancer, CloudFront Behaviors, Kubernetes Ingress, Azure Front Door.
 - **Verbindungen:** Es ist das Rückgrat von Strangler Fig, das `/old` an das Altsystem und `/new` an neue Dienste leitet. Meist wird es im selben Gateway-Produkt mit Offloading und Aggregation kombiniert.
 
 ### E3. Gateway Aggregation
 
 - **Was:** Das Gateway ruft mehrere Dienste auf und führt die Ergebnisse zu einer Antwort zusammen, sodass der Client eine Anfrage statt vieler stellt.
-- **Wann:** Bei gesprächigen Clients, Netzen mit hoher Latenz wie im Mobilfunk oder einer Ansicht, die Daten aus fünf Diensten braucht.
+- **Wann:** Bei Clients mit vielen einzelnen Anfragen, Netzen mit hoher Latenz wie im Mobilfunk oder einer Ansicht, die Daten aus fünf Diensten braucht.
 - **Wo:** GraphQL Federation oder Apollo Gateway, ein Endpunkt in einem Backend for Frontends, Resolver in AWS AppSync.
 - **Vorsicht:** Der Aggregator wird zum Engpass. Er sollte Circuit Breaker und einen Timeout pro nachgelagertem Aufruf verwenden.
 - **Verbindungen:** Eng verwandt mit Backends for Frontends. Es braucht die Resilienz-Patterns aus Gruppe A, weil eine langsame Abhängigkeit die ganze Antwort verlangsamt.
@@ -178,7 +178,7 @@ Dienste gut betreiben und sicher modernisieren.
 
 - **Was:** Stellt einen Hilfsprozess neben die Hauptanwendung, im selben Pod oder auf demselben Host, der querschnittliche Aufgaben übernimmt, etwa Proxying, Mutual TLS, Log-Versand oder das Abrufen von Secrets.
 - **Wann:** Sie wollen diese Fähigkeiten, ohne den Anwendungscode zu ändern, oder über Dienste in verschiedenen Programmiersprachen hinweg.
-- **Wo:** Envoy in den Service Meshes Istio oder Linkerd, Dapr, Fluent-Bit-Log-Collectors, der Collector der AWS Distro for OpenTelemetry und Lambda Extensions als serverlose Entsprechung. Ein lokaler MCP-Server (Model Context Protocol) neben einem KI-Agenten folgt derselben Idee.
+- **Wo:** Envoy in Istio, der eigene Proxy von Linkerd, Dapr, Fluent-Bit-Log-Collectors, der Collector der AWS Distro for OpenTelemetry und Lambda Extensions als serverlose Entsprechung. Ein lokaler MCP-Server (Model Context Protocol) neben einem KI-Agenten folgt derselben Idee.
 - **Verbindungen:** Service Meshes liefern Retry, Circuit Breaker und Health Endpoint Monitoring als Sidecar, sodass diese nicht im Anwendungscode stecken müssen.
 
 ### F2. Strangler Fig
@@ -202,7 +202,7 @@ Kaum eines dieser Patterns tritt allein auf. Sechs Kombinationen kommen immer wi
 1. **Der Resilienz-Stack:** Retry, Circuit Breaker, Bulkhead und Health Endpoint Monitoring. Retry fängt kurze Ausfälle ab, der Breaker lange, das Bulkhead begrenzt den Schaden, und Health Checks steuern die automatische Wiederherstellung. Ein Sidecar aus einem Service Mesh liefert oft alle vier.
 2. **Das asynchrone Rückgrat:** Queue-Based Load Leveling plus Competing Consumers, um Arbeit zu verteilen, und Publisher-Subscriber für das Auffächern. Eine Queue nehmen Sie, wenn ein Worker eine Nachricht verarbeiten soll, ein Topic, wenn alle davon erfahren sollen.
 3. **Das ereignisgetriebene Daten-Trio:** Event Sourcing hält die Wahrheit als Ereignisse, Publisher-Subscriber verteilt sie, und CQRS-Lesemodelle beantworten Abfragen schnell. Cache-Aside ist die günstigere Alternative, wenn Sie nur schnellere Lesezugriffe brauchen.
-4. **Das Paar für verteilte Transaktionen:** Saga plus Compensating Transaction. Beide werden nötig, sobald Sie Daten mit Sharding oder einer Datenbank pro Dienst aufteilen.
+4. **Das Paar für verteilte Transaktionen:** Saga plus Compensating Transaction. Beide werden nötig, sobald eine fachliche Operation Daten umfasst, die mit Sharding oder einer Datenbank pro Dienst aufgeteilt sind.
 5. **Die Edge-Schicht:** Gateway Routing, Offloading und Aggregation stecken meist in einem Produkt wie Amazon API Gateway oder Azure API Management, ergänzt um Backends for Frontends, wenn sich die Clients auseinanderentwickeln.
 6. **Der Modernisierungspfad:** Strangler Fig über Gateway Routing, ein External Configuration Store mit Feature Flags zum Umschalten des Traffics und Health Endpoint Monitoring, um den neuen Pfad vor dem Umschalten zu prüfen.
 

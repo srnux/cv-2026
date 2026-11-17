@@ -261,10 +261,10 @@
 <p>An AI coding agent can produce working code while skipping the steps that make it the right thing to build. Implementation starts without a plan. Approval is assumed. A prototype changes after work begins, and the agent follows the new version instead of the one you agreed on.</p>
 <p>These are workflow failures, and passing tests won&#39;t necessarily reveal them. You need to check what was specified, what was approved, and which version the work is supposed to follow.</p>
 <p>I built <a href="https://github.com/srnux/sdlc-playbooks" target="_blank" rel="noopener noreferrer"><strong>sdlc-playbooks</strong></a> to make those checks executable. Each playbook describes a delivery phase: the inputs it needs, the work to do, and the artifact it produces. Scripts check the prerequisites against files in the repo and report missing artifacts or inconsistent state before the next phase starts.</p>
-<p>For example, the implementation gate refuses to proceed when a story has no plan or its pinned prototype snapshot is missing. A prompt can tell the agent to check those things; a script can inspect the files and return a specific failure with a fix.</p>
-<p>The procedure runs from design system → requirements → prototype → human approval → product, with one source shared by Claude Code and Codex. The agent follows the playbooks; the scripts check the parts of the workflow that can be checked mechanically.</p>
+<p>For example, the implementation gate refuses to proceed when a story has no plan or its pinned prototype snapshot is missing. A prompt can tell the agent to check those things. A script can inspect the files and return a specific failure with a fix.</p>
+<p>The procedure runs from design system → requirements → prototype → human approval → product, with one source shared by Claude Code and Codex. The agent follows the playbooks. The scripts check the parts of the workflow that can be checked mechanically.</p>
 <p>That distinction matters: an executable check can establish that a plan exists. It cannot establish that the plan is good, or independently prove that a person approved the prototype. Those decisions still need people and review.</p>
-<p>This post walks through those checks, where they run, and what they can—and cannot—catch.</p>
+<p>This post walks through those checks, where they run, and what they can catch and where their limits lie.</p>
 <hr>
 <h2 id="the-flow"><a class="anchor" href="#the-flow">The flow</a></h2>
 <pre><code>  design system                 PO requirements (text)
@@ -339,8 +339,8 @@
 | **Never**     | copy the prototype into the product; build against the live prototype |
 </code></pre>
 <p>Each playbook also routes neighbouring decisions: new tokens go to <code>lock-design-system</code>, changed scope goes to <code>capture-requirements</code>, and finished work goes to <code>review-change</code>.</p>
-<p>The earlier version had separate agent definitions. Most of their instructions already existed in the matching playbooks; the remaining ownership rules belonged at phase boundaries. Removing those files left one place to maintain each procedure. Keeping two copies of a rule means you have one rule and one future contradiction.</p>
-<p>Handoffs happen through saved artifacts. Requirements supply acceptance criteria to prototyping; an approved snapshot supplies the baseline for planning and implementation; the plan and resulting code supply the inputs to review. The next phase can run in a fresh session because its inputs are in the repo. It doesn&#39;t need the previous agent&#39;s persona or conversation history to reconstruct what was agreed.</p>
+<p>The earlier version had separate agent definitions. Most of their instructions already existed in the matching playbooks. The remaining ownership rules belonged at phase boundaries. Removing those files left one place to maintain each procedure. Keeping two copies of a rule means you have one rule and one future contradiction.</p>
+<p>Handoffs happen through saved artifacts. Requirements supply acceptance criteria to prototyping. An approved snapshot supplies the baseline for planning and implementation. The plan and resulting code supply the inputs to review. The next phase can run in a fresh session because its inputs are in the repo. It doesn&#39;t need the previous agent&#39;s persona or conversation history to reconstruct what was agreed.</p>
 <hr>
 <h2 id="layer-1-gates-decide-whether-a-phase-may-start"><a class="anchor" href="#layer-1-gates-decide-whether-a-phase-may-start">Layer 1: gates decide whether a phase may start</a></h2>
 <p>Every phase begins with:</p>
@@ -430,27 +430,27 @@ Run the plan-story skill first. The plan is a gate, not paperwork.
 </code></pre>
 <p>The reasoning: a plan written after the code is just a summary, and a summary never catches the thing you&#39;d have noticed before starting.</p>
 <p><strong><code>check-hardcoded-colors.sh</code> warns.</strong> It flags a raw <code>#hex</code>, <code>rgb()</code> or <code>hsl()</code> at the moment it&#39;s written, while fixing it is still a one-line change. The blocking version of this rule runs at review time.</p>
-<p>The hooks have limits: shell writes fall outside Claude&#39;s <code>Edit|Write</code> matcher, some file types are excluded, and the plan hook allows an edit when no story can be identified. Both scripts accept <code>file_path</code> or <code>path</code>; actual coverage also depends on the harness invoking them with a supported payload.</p>
+<p>The hooks have limits: shell writes fall outside Claude&#39;s <code>Edit|Write</code> matcher, some file types are excluded, and the plan hook allows an edit when no story can be identified. Both scripts accept <code>file_path</code> or <code>path</code>. Actual coverage also depends on the harness invoking them with a supported payload.</p>
 <hr>
 <h2 id="layer-3-checks-expose-gaps-before-handover"><a class="anchor" href="#layer-3-checks-expose-gaps-before-handover">Layer 3: checks expose gaps before handover</a></h2>
-<p><strong><code>check-tokens.mjs</code></strong> scans prototypes and configured product directories for raw hex/RGB/HSL colours and literal values in selected properties: font size, radius, shadow, padding, margin, and gap. It also checks for undefined token references. <code>width: 100%</code> and <code>z-index</code> are outside those design-property checks.</p>
+<p><strong><code>check-tokens.mjs</code></strong> scans prototypes and configured product directories for raw hex, RGB (Red, Green, Blue) and HSL (Hue, Saturation, Lightness) colours and literal values in selected properties: font size, radius, shadow, padding, margin, and gap. It also checks for undefined token references. <code>width: 100%</code> and <code>z-index</code> are outside those design-property checks.</p>
 <pre><code class="language-text">$ node .claude/tools/check-tokens.mjs
 ok — 139 tokens defined, 134 used, no raw design values in 1 files
 </code></pre>
-<p>The procedure&#39;s rule is that <strong>a design value can only be created in phase 0</strong>. The scanner catches common violations; it is not a complete CSS validator. It permits token-definition blocks for inlined prototypes without verifying that their values match the locked file.</p>
+<p>The procedure&#39;s rule is that <strong>a design value can only be created in phase 0</strong>. The scanner catches common violations, but it is not a complete CSS validator. It permits token-definition blocks for inlined prototypes without verifying that their values match the locked file.</p>
 <p><strong><code>check-coverage.mjs</code></strong> checks structural links:</p>
 <pre><code>requirement → approved snapshot → screen → story → plan file
 </code></pre>
-<p>It reports gaps such as <code>screen-without-story</code>, <code>story-without-plan</code>, <code>stale-pin</code>, and <code>done-story-screen-vanished</code>, exiting 2 when it finds one. It checks that acceptance criteria exist, but does not map each AC to a screen or inspect implementation and test coverage.</p>
+<p>It reports gaps such as <code>screen-without-story</code>, <code>story-without-plan</code>, <code>stale-pin</code>, and <code>done-story-screen-vanished</code>, exiting 2 when it finds one. It checks that acceptance criteria exist, but does not map each acceptance criterion to a screen or inspect implementation and test coverage.</p>
 <p>The prototype convention puts two attributes on every screen root:</p>
 <pre><code class="language-html">&lt;section data-screen=&quot;SCR-booking-enquiry&quot; data-req=&quot;REQ-003&quot;&gt;&lt;/section&gt;
 </code></pre>
-<p>The checker discovers screens through <code>data-screen</code>; the approve gate refuses a prototype with no screen markers. <code>data-req</code> records the intended requirement association.</p>
+<p>The checker discovers screens through <code>data-screen</code>. The approve gate refuses a prototype with no screen markers. <code>data-req</code> records the intended requirement association.</p>
 <p><strong>Structural gaps become queryable.</strong> Whether the product satisfies the requirements still needs tests and review.</p>
 <hr>
 <h2 id="the-prototype-and-the-pin"><a class="anchor" href="#the-prototype-and-the-pin">The prototype, and the pin</a></h2>
-<p>Phase 2 calls for one HTML file per requirement: React 18 UMD plus <code>@babel/standalone</code> from a CDN, tokens inlined, catalog components, hash routing, and realistic mock data. It needs no build step and opens with a double-click, but loading its CDN dependencies requires network access. The playbook requires <strong>every state to be drawn</strong>: empty, loading, populated, error, <em>and success</em>. &quot;The list refreshes&quot; doesn&#39;t show a person what success looks like.</p>
-<p>After human approval, the procedure uses <code>approve.mjs</code> to create <code>prototype/.approved/&lt;slug&gt;-v&lt;N&gt;.html</code>, then cuts one story per screen with a <code>prototypeVersion: v&lt;N&gt;</code> pin. These are versioned snapshots treated as immutable by the procedure. The utility checks for an existing destination before copying; the resulting files remain editable on disk.</p>
+<p>Phase 2 calls for one HTML file per requirement: React 18 as a UMD (Universal Module Definition) build plus <code>@babel/standalone</code> from a CDN (Content Delivery Network), tokens inlined, catalog components, hash routing, and realistic mock data. It needs no build step and opens with a double-click, but loading its CDN dependencies requires network access. The playbook requires <strong>every state to be drawn</strong>: empty, loading, populated, error, <em>and success</em>. &quot;The list refreshes&quot; doesn&#39;t show a person what success looks like.</p>
+<p>After human approval, the procedure uses <code>approve.mjs</code> to create <code>prototype/.approved/&lt;slug&gt;-v&lt;N&gt;.html</code>, then cuts one story per screen with a <code>prototypeVersion: v&lt;N&gt;</code> pin. These are versioned snapshots treated as immutable by the procedure. The utility checks for an existing destination before copying, but the resulting files remain editable on disk.</p>
 <p><strong>The implementation playbook directs the agent to build against the pinned snapshot.</strong> If someone makes &quot;one more tweak&quot; to the live file, <code>gate.mjs implement</code> reports the difference:</p>
 <pre><code class="language-json">{
   &quot;liveHasMovedPastThePin&quot;: true,
@@ -474,21 +474,21 @@ node .claude/tools/sync.mjs --check  # exit 2 if one is stale (for CI)
 node .claude/tools/tracker.mjs set ST-007 --status in-review
 node .claude/tools/tracker.mjs next --type story
 </code></pre>
-<p>The default provider is <code>files</code>, storing Markdown with YAML front matter in <code>work/items/</code>. Jira support is unfinished: mapping and REST code exist, but the gate&#39;s asynchronous provider handling and the coverage checker&#39;s direct file reads still need integration work.</p>
+<p>The default provider is <code>files</code>, storing Markdown with front matter in YAML (YAML Ain&#39;t Markup Language) in <code>work/items/</code>. Jira support is unfinished: mapping and code for REST (Representational State Transfer) calls exist, but the gate&#39;s asynchronous provider handling and the coverage checker&#39;s direct file reads still need integration work.</p>
 <p>Two procedural rules keep updates consistent: <strong>never hand-edit a work item, and never pick an id yourself.</strong> <code>create</code> allocates IDs centrally so agents don&#39;t choose them manually. Allocation is not protected against concurrent writers.</p>
 <p>The adapter is intended to let status and conversation move to another tracker while design, prototype, and plan artifacts stay in the repo.</p>
 <hr>
 <h2 id="every-tool-runs-without-a-model"><a class="anchor" href="#every-tool-runs-without-a-model">Every tool runs without a model</a></h2>
-<p>None of the enforcement needs an LLM. You can check the state of the repo from a plain shell:</p>
+<p>None of the enforcement needs an LLM (Large Language Model). You can check the state of the repo from a plain shell:</p>
 <pre><code class="language-bash">node .claude/tools/status.mjs --gaps
 node .claude/tools/check-coverage.mjs
 node .claude/tools/check-tokens.mjs
 node .claude/tools/gate.mjs plan ST-001
 </code></pre>
-<p>The local tools use Node 18+ and plain ESM, with no npm dependencies. The hooks require Bash; on Windows, that means a Bash installation such as Git Bash.</p>
+<p>The local tools use Node 18+ and plain ESM (ECMAScript Modules), with no npm dependencies. The hooks require Bash. On Windows, that means a Bash installation such as Git Bash.</p>
 <hr>
 <h2 id="what-39-s-deliberately-missing"><a class="anchor" href="#what-39-s-deliberately-missing">What&#39;s deliberately missing</a></h2>
-<p>There&#39;s no CI/deploy stage, no QA phase, no parallel fan-out, no worktree isolation, and no board integration. Those are all real and sometimes necessary. They&#39;re also where a procedure stops being easy to read.</p>
+<p>There&#39;s no stage for CI (Continuous Integration) or deployment, no QA (Quality Assurance) phase, no parallel fan-out, no worktree isolation, and no board integration. Those are all real and sometimes necessary. They&#39;re also where a procedure stops being easy to read.</p>
 <p>The rule for adding one: do it when a specific failure demands it, and write down which failure.</p>
 <blockquote>
 <p><strong>A gate with no incident behind it is ceremony.</strong></p>

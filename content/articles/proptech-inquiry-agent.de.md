@@ -14,11 +14,11 @@ Für manche dieser Aufgaben stehen die Antworten in den Daten. Für andere brauc
 
 Diese Unterscheidung ist der Ausgangspunkt für [proptech-inquiry-agent](https://github.com/srnux/proptech-inquiry-agent): ein TypeScript-Projekt, das einem KI-Assistenten Tools gibt, mit denen er Objektdaten durchsuchen, belegende Textstellen abrufen und Tickets für die Übergabe an einen Menschen anlegen kann.
 
-Bedient wird es über einen Anfrage-Desk in React. Hinter der Oberfläche wählt ein Agent Tools aus, sammelt Belege, prüft seinen Entwurf und liefert eine Antwort oder eine Übergabe. Die Browseroberfläche lässt sich ohne API-Schlüssel für ein Modell ausprobieren. Alle Objekt- und Richtliniendaten sind synthetisch.
+Bedient wird es über eine Anfrageoberfläche in React. Hinter der Oberfläche wählt ein Agent Tools aus, sammelt Belege, prüft seinen Entwurf und liefert eine Antwort oder eine Übergabe. Die Browseroberfläche lässt sich ohne API-Schlüssel für ein Modell ausprobieren. Alle Objekt- und Richtliniendaten sind synthetisch.
 
-Die MCP-Tools, das hybride Retrieval, der Agent Loop, die Antwortprüfungen und die Weboberfläche sind umgesetzt. Eine Evaluierungssuite mit 49 Fällen misst inzwischen über die bestehenden Tests hinaus, ob Antworten korrekt sind und ob Übergaben stattfinden. Ihre ersten Läufe fanden Probleme im Retrieval, bei Antworten auf Folgefragen und im Evaluator selbst. Nach den Korrekturen bestehen 46 von 49 Fällen. Das Projekt ist weiterhin in Arbeit, und die verbleibenden Fehlschläge sind zusammen mit den Ergebnissen dokumentiert.
+Die MCP-Tools (Model Context Protocol), das hybride Retrieval, der Agent Loop, die Antwortprüfungen und die Weboberfläche sind umgesetzt. Eine Evaluierungssuite mit 49 Fällen misst inzwischen über die bestehenden Tests hinaus, ob Antworten korrekt sind und ob Übergaben stattfinden. Ihre ersten Läufe fanden Probleme im Retrieval, bei Antworten auf Folgefragen und im Evaluator selbst. Nach den Korrekturen bestehen 46 von 49 Fällen. Das Projekt ist weiterhin in Arbeit, und die verbleibenden Fehlschläge sind zusammen mit den Ergebnissen dokumentiert.
 
-## Ein Desk, an dem man sieht, was passiert ist
+## Eine Oberfläche, die den Ablauf sichtbar macht
 
 Die Browseranwendung hat drei Bereiche, und jeder beantwortet eine andere Frage: Was hat der Assistent gesagt, was hat er getan, und was braucht einen Menschen?
 
@@ -38,7 +38,7 @@ Die Skizzen und Codebeispiele in diesem Artikel sind auf Englisch.
 +---------------------+----------------------+---------------------+
 ```
 
-[![Der Anfrage-Desk beantwortet eine Frage zur Heizung mit Quellenangaben und legt danach ein Ticket für eine Besichtigungsanfrage an, die ein Mensch weiterbearbeitet](/images/writing/proptech-inquiry-agent-demo.gif)](/images/writing/proptech-inquiry-agent-demo.gif)
+[![Die Anfrageoberfläche beantwortet eine Frage zur Heizung mit Quellenangaben und legt danach ein Ticket für eine Besichtigungsanfrage an, die ein Mensch weiterbearbeitet](/images/writing/proptech-inquiry-agent-demo.gif)](/images/writing/proptech-inquiry-agent-demo.gif)
 
 Diese Demo zeigt in derselben Oberfläche erst eine Sachfrage und dann eine Besichtigungsanfrage. Ein Klick öffnet die Animation in voller Größe.
 
@@ -50,7 +50,7 @@ Die Anwendung nutzt React State, Vite und ein einfaches Stylesheet. Die Oberflä
 
 ## Was hinter der Oberfläche passiert
 
-Eine abgeschickte Anfrage startet auf dem Server einen Agent Loop. Der Loop fragt ein Modell, welche Tools es nutzen soll, führt diese Aufrufe aus und prüft die entstandene Antwort. Der Browser zeigt den Fortschritt und das Endergebnis. Derselbe Ablauf steht auch über eine CLI und eine HTTP-API bereit.
+Eine abgeschickte Anfrage startet auf dem Server einen Agent Loop. Der Loop fragt ein Modell, welche Tools es nutzen soll, führt diese Aufrufe aus und prüft die entstandene Antwort. Der Browser zeigt den Fortschritt und das Endergebnis. Derselbe Ablauf steht auch über eine CLI (Command-Line Interface) und eine HTTP-API bereit.
 
 ```text
 Customer inquiry
@@ -73,7 +73,7 @@ Check the draft answer
 Reply + citations + tickets + tool trace + token usage
 ```
 
-MCP (Model Context Protocol) ist die Verbindung, über die ein Assistent Tools entdecken und aufrufen kann. Der eingebaute Agent nutzt einen MCP-Client, der im selben Prozess mit dem Server dieses Repositorys verbunden ist. Er geht über dieselbe Tool-Schnittstelle wie ein externer Assistent, aber ohne zusätzlichen HTTP-Roundtrip.
+MCP ist die Verbindung, über die ein Assistent Tools entdecken und aufrufen kann. Der eingebaute Agent nutzt einen MCP-Client, der im selben Prozess mit dem Server dieses Repositorys verbunden ist. Er geht über dieselbe Tool-Schnittstelle wie ein externer Assistent, aber ohne zusätzlichen HTTP-Roundtrip.
 
 Der [Architekturleitfaden](https://github.com/srnux/proptech-inquiry-agent/blob/main/ARCHITECTURE.md) des Repositorys bildet diesen Anfrageablauf ab, dazu die Grenze für Eskalationen, die Stelle, an der jede Prüfung läuft, und die Teile, die offline funktionieren.
 
@@ -218,7 +218,7 @@ Das ist ein kleines Experiment, aber es hat die Implementierung verändert: Zus�
 
 ## Die Fakten eines Objekts von denen eines anderen trennen
 
-Enthält eine Frage eine Inserats-ID, schließt der Code andere Objekte **vor dem Ranking** aus.
+Enthält eine Frage eine Objekt-ID, schließt der Code andere Objekte **vor dem Ranking** aus.
 
 ```text
 Question about HH-1001
@@ -267,7 +267,7 @@ Die Prüfungen in `packages/core/src/agent/guards.ts` untersuchen einen Entwurf,
 
 | Prüfung          | Worauf der Code achtet                                                                                                                                                                      |
 | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Quellenangabe    | Erkannte Quellenmarker müssen auf Inserats- oder Textstellen-IDs verweisen, die in diesem Lauf von einem Tool zurückgegeben wurden.                                                          |
+| Quellenangabe    | Erkannte Quellenmarker müssen auf Objekt- oder Textstellen-IDs verweisen, die in diesem Lauf von einem Tool zurückgegeben wurden.                                                          |
 | Zahl             | Erkannte Preise, Flächen und Prozentangaben müssen einer Zahl entsprechen, die in einem erfolgreichen Tool-Ergebnis dieses Laufs oder in der aktuellen oder einer beibehaltenen früheren Anfrage des Nutzers vorkommt. |
 | Fehlende Belege  | Eine Antwort mit solchen Zahlen muss mindestens eine erkannte Quellenangabe enthalten.                                                                                                      |
 | Leere Antwort    | Die Antwort muss Text enthalten.                                                                                                                                                            |
@@ -376,7 +376,7 @@ Auch der optionale Live-Test des Agenten ist als bestanden dokumentiert. Dieser 
 
 Drei Playwright-Tests decken den Ablauf im Browser ab: Eine Besichtigungsanfrage erzeugt Antwort, Trace und Ticket, eine Quellenangabe öffnet ihre hervorgehobene Textstelle, und eine Folgefrage behält den Objektkontext, bis „New conversation“ ihn löscht. Sie laufen mit dem Demo-Modell und dem Hashing-Embedder, sodass die Testläufe weder Zugangsdaten für ein Modell noch Modell-Downloads brauchen. Sie prüfen den Ablauf im Browser, nicht die Antwortqualität eines entfernten Modells.
 
-GitHub Actions führt bei jedem Push und jedem Pull Request Typprüfung, Unit-Tests und diese Browserprüfungen aus. Der [CI-Workflow](https://github.com/srnux/proptech-inquiry-agent/actions/workflows/ci.yml) war auf dem Entwicklungsbranch, in seinem Pull Request und auf `main` nach dem Merge am 1. Oktober 2026 erfolgreich. Diese Prüfungen brauchen weder API-Zugangsdaten für ein Modell noch Downloads der Retrieval-Modelle.
+GitHub Actions führt bei jedem Push und jedem Pull Request Typprüfung, Unit-Tests und diese Browserprüfungen aus. Der [CI-Workflow (Continuous Integration)](https://github.com/srnux/proptech-inquiry-agent/actions/workflows/ci.yml) war auf dem Entwicklungsbranch, in seinem Pull Request und auf `main` nach dem Merge am 1. Oktober 2026 erfolgreich. Diese Prüfungen brauchen weder API-Zugangsdaten für ein Modell noch Downloads der Retrieval-Modelle.
 
 ## Die Arbeit streamen, dann die geprüfte Antwort zeigen
 
@@ -408,7 +408,7 @@ External MCP client
 
 Das ist eine bewusste Entscheidung. Würde die Oberfläche einen erfundenen Preis streamen, bevor die Zahlenprüfung ihn ablehnt, hätte der Nutzer ihn schon gelesen. Weil der Entwurf intern bleibt, kann der Agent ihn nachbessern, bevor er ihn zeigt.
 
-Zwei weitere Routen unterstützen den Desk:
+Zwei weitere Routen unterstützen die Anfrageoberfläche:
 
 | Route              | Was der Browser erhält                                                          |
 | ------------------ | ------------------------------------------------------------------------------- |
@@ -454,7 +454,7 @@ evals/                     Agent cases, judge rubric, thresholds, retrieval gold
   fixtures/                Test-only prompt-injection listing
 ```
 
-Das Core-Paket importiert nichts aus MCP, HTTP oder von Modellanbietern. Der Server passt diese externen Schnittstellen an den Kern an. Die Web-App teilt Typen und Beispielanfragen mit, ohne die Node.js-Implementierung des Kerns ins Browser-Bundle zu ziehen.
+Das Core-Paket importiert nichts aus MCP, HTTP oder von Modellanbietern. Der Server passt diese externen Schnittstellen an den Kern an. Die Web-App nutzt gemeinsame Typen und Beispielanfragen, ohne die Node.js-Implementierung des Kerns ins Browser-Bundle zu ziehen.
 
 In der Entwicklung wird der TypeScript-Quelltext der Pakete direkt genutzt. Für den kompilierten MCP-Einstiegspunkt, den Claude Desktop verwendet, zuerst bauen und Node mit `--conditions=built` starten. Der Einstiegspunkt des Servers ist `packages/server/dist/mcp/stdio.js`, sein Quelltext liegt in `packages/server/src/mcp/stdio.ts`.
 
@@ -462,7 +462,7 @@ Der Vector Store liegt derzeit im Arbeitsspeicher, die Embeddings werden auf der
 
 ## Den aktuellen Stand ausprobieren
 
-Klonen Sie das [GitHub-Repository](https://github.com/srnux/proptech-inquiry-agent) und führen Sie diese Befehle mit Node.js 20 oder neuer in dessen Wurzelverzeichnis aus:
+Klonen Sie das [GitHub-Repository](https://github.com/srnux/proptech-inquiry-agent) und führen Sie diese Befehle mit Node.js 20 oder neuer in dessen Wurzelverzeichnis aus. Ab Node.js 25 ist Corepack nicht mehr enthalten. Installieren Sie es in diesem Fall zuerst mit `npm install -g corepack`:
 
 ```bash
 corepack enable   # once, provides the pnpm version pinned in package.json
@@ -482,7 +482,7 @@ pnpm dev
 
 Nutzen Sie ein neues Terminal oder entfernen Sie diese Overrides, wenn Sie zu den echten Modellen wechseln. `pnpm inspect` steht weiterhin bereit, um die MCP-Tools direkt aufzurufen.
 
-Für ein entferntes Gesprächsmodell kopieren Sie `.env.example` nach `.env` und tragen die Zugangsdaten für den gewählten Anbieter ein. Für den Standardadapter von Anthropic setzen Sie `ANTHROPIC_API_KEY`. Für Bedrock setzen Sie `MODEL_PROVIDER=bedrock`, eine AWS-Region und die passenden Zugangsdaten. CLI und HTTP-Server laden `.env` automatisch.
+Für ein entferntes Gesprächsmodell kopieren Sie `.env.example` nach `.env` und tragen die Zugangsdaten für den gewählten Anbieter ein. Für den Standardadapter von Anthropic setzen Sie `ANTHROPIC_API_KEY`. Für Bedrock setzen Sie `MODEL_PROVIDER=bedrock`, eine AWS-Region (Amazon Web Services) und die passenden Zugangsdaten. CLI und HTTP-Server laden `.env` automatisch.
 
 Dann stellen Sie eine Frage und lassen sich den Tool-Trace anzeigen:
 
@@ -550,4 +550,4 @@ Die Evaluierungssuite testet jetzt, ob Einschränkungen eine Umformulierung übe
 
 Architekturleitfaden, aufgezeichnete Demo, Fehleranalyse und CI-Workflows sind vorhanden. Beschreibung, Topics und Social Preview des Repositorys sind ebenfalls eingerichtet. Übergabetickets liegen weiterhin nur im Arbeitsspeicher, eine persistente Speicherung der Tickets steht noch aus. Vorerst ist das eine lokale Anwendung mit synthetischen Daten, kein vollständiges System für den Betrieb eines Maklerbüros.
 
-Die bisher nützlichste Lehre: Retrieval, Antwortgenerierung und Antwortprüfung brauchen getrennte Tests. Ein Suchergebnis kann relevant sein und trotzdem falsch zitiert werden. Eine Quellenangabe kann existieren und trotzdem eine andere Aussage stützen. Der Anfrage-Desk macht Belege, Tool-Aufrufe und entstandene Tickets nachvollziehbar und hält abgelehnte Entwürfe aus dem Gespräch heraus.
+Die bisher nützlichste Lehre: Retrieval, Antwortgenerierung und Antwortprüfung brauchen getrennte Tests. Ein Suchergebnis kann relevant sein und trotzdem falsch zitiert werden. Eine Quellenangabe kann existieren und trotzdem eine andere Aussage stützen. Die Anfrageoberfläche macht Belege, Tool-Aufrufe und entstandene Tickets nachvollziehbar und hält abgelehnte Entwürfe aus dem Gespräch heraus.

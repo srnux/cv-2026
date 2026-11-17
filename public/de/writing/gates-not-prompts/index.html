@@ -264,7 +264,7 @@
 <p>Das Gate für die Implementierung verweigert zum Beispiel die Arbeit, wenn eine Story keinen Plan hat oder ihr festgepinnter Prototyp-Snapshot fehlt. Ein Prompt kann den Agenten anweisen, das zu prüfen. Ein Skript kann die Dateien selbst untersuchen und einen konkreten Fehler samt Lösung zurückgeben.</p>
 <p>Der Ablauf führt von Design System → Anforderungen → Prototyp → Freigabe durch einen Menschen → Produkt, mit einer einzigen Quelle für Claude Code und Codex. Der Agent folgt den Playbooks, die Skripte prüfen die Teile des Workflows, die sich mechanisch prüfen lassen.</p>
 <p>Diese Unterscheidung ist wichtig: Eine ausführbare Prüfung kann feststellen, dass ein Plan existiert. Sie kann nicht feststellen, ob der Plan gut ist, und auch nicht unabhängig beweisen, dass ein Mensch den Prototyp freigegeben hat. Diese Entscheidungen brauchen weiterhin Menschen und Reviews.</p>
-<p>Dieser Artikel geht diese Prüfungen durch: wo sie laufen, was sie erkennen und was nicht.</p>
+<p>Dieser Artikel geht diese Prüfungen durch: wo sie laufen, was sie erkennen und wo ihre Grenzen liegen.</p>
 <hr>
 <h2 id="der-ablauf"><a class="anchor" href="#der-ablauf">Der Ablauf</a></h2>
 <pre><code>  design system                 PO requirements (text)
@@ -381,7 +381,7 @@ Gate — this runs before you read any further; a non-zero exit aborts the comma
 </tr>
 <tr>
 <td><code>plan</code></td>
-<td>übergeordnetes Item nicht freigegeben · kein Versions-Pin · <strong>Snapshot fehlt</strong></td>
+<td>übergeordnete Anforderung nicht freigegeben · kein Versions-Pin · <strong>Snapshot fehlt</strong></td>
 </tr>
 <tr>
 <td><code>implement</code></td>
@@ -418,7 +418,7 @@ $ echo $?
 <p>Ein Review kann eine Story freigeben oder zurückschicken. Das Gate liest das höchste <code>round N:</code>, das in den Notizen der Story steht, und verweigert jede Runde über <code>loops.reviewRounds</code> hinaus (standardmäßig zwei). Diese Grenze funktioniert nur, wenn der Reviewer jede Runde festhält. Ist die Obergrenze erreicht, sieht das Vorgehen vor, die Meinungsverschiedenheit an einen Menschen zu übergeben.</p>
 <p>Bei Erfolg geben die Gates den aufgelösten Kontext als JSON aus: Pfade, die festgepinnte Prototyp-Version, die IDs der Akzeptanzkriterien und, wo relevant, die Review-Runde. Der Agent bekommt konkrete Eingaben für seinen nächsten Schritt.</p>
 <hr>
-<h2 id="ebene-2-hooks-entscheiden-ob-eine-änderung-landen-darf"><a class="anchor" href="#ebene-2-hooks-entscheiden-ob-eine-änderung-landen-darf">Ebene 2: Hooks entscheiden, ob eine Änderung landen darf</a></h2>
+<h2 id="ebene-2-hooks-entscheiden-ob-eine-änderung-übernommen-werden-darf"><a class="anchor" href="#ebene-2-hooks-entscheiden-ob-eine-änderung-übernommen-werden-darf">Ebene 2: Hooks entscheiden, ob eine Änderung übernommen werden darf</a></h2>
 <p>Hooks ergänzen Prüfungen an unterstützten Einstiegspunkten für Änderungen. In Claude Code sind zwei Shell-Skripte als <code>PreToolUse</code>-Hooks auf <code>Edit|Write</code> registriert:</p>
 <p><strong><code>require-plan.sh</code> blockiert eine überwachte Änderung, wenn es eine Story ohne Plan erkennt.</strong> Die Story ermittelt es aus dem Branch-Namen (<code>story/ST-007-…</code>) oder, falls das nicht geht, aus genau einer Story mit Status <code>in-progress</code> im Tracker. Zum Beispiel:</p>
 <pre><code class="language-text">BLOCKED — no plan for ST-007.
@@ -433,7 +433,7 @@ Run the plan-story skill first. The plan is a gate, not paperwork.
 <p>Die Hooks haben Grenzen: Schreibzugriffe über die Shell fallen nicht unter den <code>Edit|Write</code>-Matcher von Claude, einige Dateitypen sind ausgenommen, und der Plan-Hook lässt eine Änderung zu, wenn sich keine Story ermitteln lässt. Beide Skripte akzeptieren <code>file_path</code> oder <code>path</code>. Wie weit sie tatsächlich greifen, hängt außerdem davon ab, dass das Harness sie mit einem unterstützten Payload aufruft.</p>
 <hr>
 <h2 id="ebene-3-prüfungen-zeigen-lücken-vor-der-übergabe"><a class="anchor" href="#ebene-3-prüfungen-zeigen-lücken-vor-der-übergabe">Ebene 3: Prüfungen zeigen Lücken vor der Übergabe</a></h2>
-<p><strong><code>check-tokens.mjs</code></strong> durchsucht Prototypen und die konfigurierten Produktverzeichnisse nach rohen Farbwerten in Hex, RGB und HSL sowie nach literalen Werten in ausgewählten Eigenschaften: Schriftgröße, Radius, Schatten, Padding, Margin und Gap. Außerdem prüft es auf Verweise auf nicht definierte Tokens. <code>width: 100%</code> und <code>z-index</code> liegen außerhalb dieser Prüfungen von Design-Eigenschaften.</p>
+<p><strong><code>check-tokens.mjs</code></strong> durchsucht Prototypen und die konfigurierten Produktverzeichnisse nach rohen Farbwerten in Hex, RGB (Rot, Grün, Blau) und HSL (Hue, Saturation, Lightness) sowie nach literalen Werten in ausgewählten Eigenschaften: Schriftgröße, Radius, Schatten, Padding, Margin und Gap. Außerdem prüft es auf Verweise auf nicht definierte Tokens. <code>width: 100%</code> und <code>z-index</code> liegen außerhalb dieser Prüfungen von Design-Eigenschaften.</p>
 <pre><code class="language-text">$ node .claude/tools/check-tokens.mjs
 ok — 139 tokens defined, 134 used, no raw design values in 1 files
 </code></pre>
@@ -449,7 +449,7 @@ ok — 139 tokens defined, 134 used, no raw design values in 1 files
 <p><strong>Strukturelle Lücken werden abfragbar.</strong> Ob das Produkt die Anforderungen erfüllt, müssen weiterhin Tests und Reviews zeigen.</p>
 <hr>
 <h2 id="der-prototyp-und-der-pin"><a class="anchor" href="#der-prototyp-und-der-pin">Der Prototyp und der Pin</a></h2>
-<p>Phase 2 sieht eine HTML-Datei pro Anforderung vor: React 18 als UMD-Build plus <code>@babel/standalone</code> aus einem CDN, eingebettete Tokens, Komponenten aus dem Katalog, Hash-Routing und realistische Mock-Daten. Sie braucht keinen Build-Schritt und öffnet sich per Doppelklick, zum Laden ihrer Abhängigkeiten aus dem CDN ist aber Netzwerkzugriff nötig. Das Playbook verlangt, dass <strong>jeder Zustand gezeichnet wird</strong>: leer, ladend, befüllt, Fehler <em>und Erfolg</em>. „Die Liste aktualisiert sich“ zeigt einem Menschen nicht, wie Erfolg aussieht.</p>
+<p>Phase 2 sieht eine HTML-Datei pro Anforderung vor: React 18 im Format UMD (Universal Module Definition) plus <code>@babel/standalone</code> aus einem CDN (Content Delivery Network), eingebettete Tokens, Komponenten aus dem Katalog, Hash-Routing und realistische Mock-Daten. Sie braucht keinen Build-Schritt und öffnet sich per Doppelklick, zum Laden ihrer Abhängigkeiten aus dem CDN ist aber Netzwerkzugriff nötig. Das Playbook verlangt, dass <strong>jeder Zustand gezeichnet wird</strong>: leer, ladend, befüllt, Fehler <em>und Erfolg</em>. „Die Liste aktualisiert sich“ zeigt einem Menschen nicht, wie Erfolg aussieht.</p>
 <p>Nach der Freigabe durch einen Menschen legt das Vorgehen mit <code>approve.mjs</code> die Datei <code>prototype/.approved/&lt;slug&gt;-v&lt;N&gt;.html</code> an und schneidet dann eine Story pro Screen, jeweils mit dem Pin <code>prototypeVersion: v&lt;N&gt;</code>. Das sind versionierte Snapshots, die das Vorgehen als unveränderlich behandelt. Das Werkzeug prüft vor dem Kopieren, ob das Ziel schon existiert, die entstandenen Dateien bleiben auf der Festplatte aber bearbeitbar.</p>
 <p><strong>Das Implementierungs-Playbook weist den Agenten an, gegen den festgepinnten Snapshot zu bauen.</strong> Nimmt jemand „noch eine kleine Änderung“ an der Live-Datei vor, meldet <code>gate.mjs implement</code> den Unterschied:</p>
 <pre><code class="language-json">{
@@ -474,21 +474,21 @@ node .claude/tools/sync.mjs --check  # exit 2 if one is stale (for CI)
 node .claude/tools/tracker.mjs set ST-007 --status in-review
 node .claude/tools/tracker.mjs next --type story
 </code></pre>
-<p>Der Standard-Provider ist <code>files</code> und speichert Markdown mit Front Matter in YAML in <code>work/items/</code>. Die Anbindung an Jira ist unfertig: Mapping und Code für REST-Aufrufe gibt es, aber die asynchrone Provider-Behandlung im Gate und die direkten Dateizugriffe im Coverage-Checker brauchen noch Integrationsarbeit.</p>
+<p>Der Standard-Provider ist <code>files</code> und speichert Markdown mit Front Matter in YAML (YAML Ain&#39;t Markup Language) in <code>work/items/</code>. Die Anbindung an Jira ist unfertig: Mapping und Code für Aufrufe per REST (Representational State Transfer) gibt es, aber die asynchrone Provider-Behandlung im Gate und die direkten Dateizugriffe im Coverage-Checker brauchen noch Integrationsarbeit.</p>
 <p>Zwei Regeln im Vorgehen halten Aktualisierungen konsistent: <strong>Bearbeiten Sie nie ein Work Item von Hand, und wählen Sie nie selbst eine ID.</strong> <code>create</code> vergibt IDs zentral, damit Agenten sie nicht selbst wählen. Gegen gleichzeitige Schreibzugriffe ist die Vergabe nicht geschützt.</p>
 <p>Der Adapter soll es ermöglichen, Status und Diskussion in einen anderen Tracker zu verlagern, während Design-, Prototyp- und Plan-Artefakte im Repo bleiben.</p>
 <hr>
 <h2 id="jedes-werkzeug-läuft-ohne-modell"><a class="anchor" href="#jedes-werkzeug-läuft-ohne-modell">Jedes Werkzeug läuft ohne Modell</a></h2>
-<p>Keine der Kontrollen braucht ein LLM. Den Zustand des Repos können Sie aus einer einfachen Shell prüfen:</p>
+<p>Keine der Kontrollen braucht ein LLM (Large Language Model). Den Zustand des Repos können Sie aus einer einfachen Shell prüfen:</p>
 <pre><code class="language-bash">node .claude/tools/status.mjs --gaps
 node .claude/tools/check-coverage.mjs
 node .claude/tools/check-tokens.mjs
 node .claude/tools/gate.mjs plan ST-001
 </code></pre>
-<p>Die lokalen Werkzeuge brauchen Node 18+ und reines ESM, ohne npm-Abhängigkeiten. Die Hooks setzen Bash voraus, unter Windows also eine Bash-Installation wie Git Bash.</p>
+<p>Die lokalen Werkzeuge brauchen Node 18+ und reines ESM (ECMAScript Modules), ohne npm-Abhängigkeiten. Die Hooks setzen Bash voraus, unter Windows also eine Bash-Installation wie Git Bash.</p>
 <hr>
 <h2 id="was-bewusst-fehlt"><a class="anchor" href="#was-bewusst-fehlt">Was bewusst fehlt</a></h2>
-<p>Es gibt keine Stufe für CI und Deployment, keine QA-Phase, kein paralleles Fan-out, keine Isolation über Worktrees und keine Board-Integration. Das alles ist real und manchmal notwendig. Es ist aber auch genau die Stelle, an der ein Vorgehen aufhört, leicht lesbar zu sein.</p>
+<p>Es gibt keine Stufe für CI (Continuous Integration) und Deployment, keine Phase für die Qualitätssicherung (QA), kein paralleles Fan-out, keine Isolation über Worktrees und keine Board-Integration. Das alles ist real und manchmal notwendig. Es ist aber auch genau die Stelle, an der ein Vorgehen aufhört, leicht lesbar zu sein.</p>
 <p>Die Regel für jede Ergänzung: Bauen Sie sie ein, wenn ein konkreter Fehler sie verlangt, und schreiben Sie auf, welcher.</p>
 <blockquote>
 <p><strong>Ein Gate ohne Vorfall dahinter ist Zeremonie.</strong></p>

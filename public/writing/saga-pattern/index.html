@@ -44,7 +44,7 @@
   "dateModified": "2026-11-16",
   "inLanguage": "en-GB",
   "keywords": "architecture, aws, microservices, serverless",
-  "wordCount": 1980,
+  "wordCount": 2200,
   "mainEntityOfPage": {
     "@type": "WebPage",
     "@id": "https://luka-engels.de/writing/saga-pattern/"
@@ -250,13 +250,13 @@
 
   <article>
     <h1>The Saga pattern in practice: compensations, pivots and the hard parts</h1>
-    <p class="meta">16 November 2026 · 9 min read · Luka Engels</p>
+    <p class="meta">16 November 2026 · 10 min read · Luka Engels</p>
     <p class="lede">How the Saga pattern replaces one database transaction with a chain of local ones, why the pivot step matters most, and what goes wrong in production, with an AWS (Amazon Web Services) Step Functions example.</p>
     <ul class="tags"><li>architecture</li><li>aws</li><li>microservices</li><li>serverless</li></ul>
     <img class="cover" src="/images/writing/saga-pattern-cover.jpg" alt="" width="1200" height="500" loading="eager">
 
 <p>In a monolith with one database, a business operation runs inside a single ACID (Atomicity, Consistency, Isolation, Durability) transaction. Either everything commits or nothing does. Once each service owns its own database, that guarantee is gone.</p>
-<p>A distributed two-phase commit is technically possible, but it locks resources across services, needs every participant to be online at the same time, and most cloud services don&#39;t support it at all. DynamoDB doesn&#39;t, Amazon Simple Queue Service doesn&#39;t, and neither does any third-party payment provider.</p>
+<p>A distributed two-phase commit is technically possible, but it locks resources across services, needs every participant to be online at the same time, and most cloud services don&#39;t support it at all. DynamoDB doesn&#39;t, Amazon Simple Queue Service doesn&#39;t, and neither do typical payment providers.</p>
 <p>A Saga replaces that one big transaction with a <strong>sequence of local transactions</strong>. Each one commits on its own. If a later step fails, the earlier steps are undone by <strong>compensating transactions</strong>. You give up immediate consistency and get <strong>eventual consistency</strong> with an explicit, business-level undo.</p>
 <p>The idea is older than microservices. Hector Garcia-Molina and Kenneth Salem described it in their 1987 paper &quot;Sagas&quot;, written for long-lived database transactions. In the <a href="/writing/cloud-design-patterns/">overview of 20 cloud design patterns</a> it&#39;s pattern D1, next to its partner D2, Compensating Transaction. This article goes into the detail that an overview has to skip.</p>
 <h2 id="three-kinds-of-steps"><a class="anchor" href="#three-kinds-of-steps">Three kinds of steps</a></h2>
@@ -264,7 +264,7 @@
 <ol>
 <li><strong>Compensatable steps</strong> come before the point of no return, and each has an undo action. Examples are &quot;reserve stock&quot; (undo: release the stock) and &quot;authorise payment&quot; (undo: void the authorisation).</li>
 <li><strong>The pivot step</strong> is the go or no-go decision. Once it commits, the Saga must complete. Examples are &quot;capture payment&quot; and &quot;sign contract&quot;.</li>
-<li><strong>Retriable steps</strong> come after the pivot. They can&#39;t be undone and must not fail permanently, so they are retried until they succeed. Examples are &quot;send confirmation email&quot; and &quot;update search index&quot;.</li>
+<li><strong>Retriable steps</strong> come after the pivot. They have no undo action and must not fail permanently, so they are retried until they succeed. Examples are &quot;send confirmation email&quot; and &quot;update search index&quot;.</li>
 </ol>
 <p><strong>Design rule:</strong> order the steps so that risky steps, the ones likely to fail, run early while they can still be compensated. Only steps that are guaranteed to succeed belong after the pivot.</p>
 <h2 id="try-it-a-rental-onboarding-saga"><a class="anchor" href="#try-it-a-rental-onboarding-saga">Try it: a rental onboarding Saga</a></h2>
@@ -276,6 +276,7 @@
 <li>Collect the deposit. Retriable.</li>
 <li>Update the listing portals. Retriable.</li>
 </ol>
+<p>Retrying covers a payment service that is briefly unavailable. A tenant who never pays is a business process, such as a reminder and dunning procedure, not a compensation.</p>
 <p>If the credit check fails, or the tenant doesn&#39;t sign within seven days, the Saga discards the credit check and releases the reservation, so the listing goes back on the market. A timeout counts as a failure too.</p>
 <p>Click a scenario and watch what gets undone.</p>
 <div class="saga-demo">
@@ -320,7 +321,7 @@ Order Service        hears PaymentFailed → marks order Cancelled
 <h3 id="6-customer-and-account-provisioning-in-saas-software-as-a-service"><a class="anchor" href="#6-customer-and-account-provisioning-in-saas-software-as-a-service">6. Customer and account provisioning in SaaS (Software as a Service)</a></h3>
 <p>Create the tenant, provision a database or schema, create the admin user in the identity provider, set up the billing subscription, send a welcome email. If identity provisioning fails, drop the schema and delete the tenant record. This is common after acquisitions, when accounts have to be created across several merged platforms.</p>
 <h3 id="7-agentic-workflows"><a class="anchor" href="#7-agentic-workflows">7. Agentic workflows</a></h3>
-<p>An AI (Artificial Intelligence) agent run that creates side effects across tools is a Saga, whether it was designed as one or not. For example: create a branch, generate code, open a pull request, link the ticket, notify the team channel. If the review agent rejects the change, the compensations are closing the pull request, deleting the branch and reverting the ticket status.</p>
+<p>An AI agent run that creates side effects across tools is a Saga, whether it was designed as one or not. For example: create a branch, generate code, open a pull request, link the ticket, notify the team channel. If the review agent rejects the change, the compensations are closing the pull request, deleting the branch and reverting the ticket status.</p>
 <p>Treating agent tool calls as Saga steps with explicit compensations means a failed agent run leaves a clean state instead of orphaned branches and half-updated tickets. Orchestration fits best here, because the agent harness already acts as the orchestrator.</p>
 <h2 id="implementation-with-step-functions-and-the-cdk-cloud-development-kit"><a class="anchor" href="#implementation-with-step-functions-and-the-cdk-cloud-development-kit">Implementation with Step Functions and the CDK (Cloud Development Kit)</a></h2>
 <p>Here is the rental onboarding Saga as a Step Functions state machine, defined with the AWS CDK in TypeScript. Three mechanisms do the work:</p>
@@ -332,11 +333,11 @@ Order Service        hears PaymentFailed → marks order Cancelled
 <div class="gist-embed">
 <script src="https://gist.github.com/srnux/367d79f3f3e03c258542d55c0b2a8741.js"></script>
 <noscript><p><a href="https://gist.github.com/srnux/367d79f3f3e03c258542d55c0b2a8741" target="_blank" rel="noopener noreferrer">View the code on GitHub Gist</a></p></noscript>
-</div><p>The code type-checks with <code>tsc --strict</code> against <code>aws-cdk-lib</code> 2.277.0. Step Functions also gives you a visual execution history, so &quot;where is this onboarding stuck?&quot; can be answered in the console.</p>
+</div><p>The code type-checks with <code>tsc --strict</code> against <code>aws-cdk-lib</code> 2.277.0. This example shows the control flow. Production code also needs durable recovery and escalation for failed compensations, plus idempotency in every handler. Step Functions also gives you a visual execution history, so &quot;where is this onboarding stuck?&quot; can be answered in the console.</p>
 <h2 id="the-hard-parts"><a class="anchor" href="#the-hard-parts">The hard parts</a></h2>
 <p>The diagrams make Sagas look tidy. These seven things are where they go wrong in production.</p>
 <h3 id="1-idempotency-everywhere"><a class="anchor" href="#1-idempotency-everywhere">1. Idempotency everywhere</a></h3>
-<p>Messages get delivered twice and orchestrators retry. Every step and every compensation must be safe to run more than once. Pass the Saga ID (identifier) plus the step name as an idempotency key and store the keys you have processed, for example in DynamoDB with a conditional write.</p>
+<p>Messages get delivered twice and orchestrators retry. Every step and every compensation must be safe to run more than once. Pass the Saga ID plus the step name as an idempotency key and store the keys you have processed, for example in DynamoDB with a conditional write.</p>
 <h3 id="2-the-dual-write-problem"><a class="anchor" href="#2-the-dual-write-problem">2. The dual-write problem</a></h3>
 <p>A service must update its database and publish an event. If it crashes between the two, the Saga stalls or diverges. The fix is the Transactional Outbox: write the event into an outbox table in the same local transaction, then publish it from there. Change data capture, such as DynamoDB Streams or Debezium for PostgreSQL, or a polling relay can do the publishing.</p>
 <h3 id="3-missing-isolation"><a class="anchor" href="#3-missing-isolation">3. Missing isolation</a></h3>
@@ -352,7 +353,7 @@ Order Service        hears PaymentFailed → marks order Cancelled
 <h3 id="5-not-everything-can-be-undone"><a class="anchor" href="#5-not-everything-can-be-undone">5. Not everything can be undone</a></h3>
 <p>A sent email or text message can&#39;t be unsent. Either move such steps after the pivot, or compensate semantically with a &quot;sorry, your booking was cancelled&quot; email.</p>
 <h3 id="6-timeouts-are-failures"><a class="anchor" href="#6-timeouts-are-failures">6. Timeouts are failures</a></h3>
-<p>A step that never answers is worse than one that fails. Each step needs a timeout that leads into compensation. Long-running Sagas need durable timers, not an in-memory <code>setTimeout</code>.</p>
+<p>A step that never answers is worse than one that fails. Each step needs a timeout and an explicit recovery path. Before the pivot, that can mean compensation. After the pivot, retry or escalate for manual intervention. Long-running Sagas need durable timers, not an in-memory <code>setTimeout</code>.</p>
 <h3 id="7-observability"><a class="anchor" href="#7-observability">7. Observability</a></h3>
 <p>Propagate a correlation ID, the Saga ID, through every message and log line. Store the Saga state (current step, status, history) so support can answer &quot;what happened to this order?&quot; With choreography, distributed tracing with OpenTelemetry or AWS X-Ray is close to mandatory.</p>
 <h2 id="when-not-to-use-a-saga"><a class="anchor" href="#when-not-to-use-a-saga">When not to use a Saga</a></h2>

@@ -256,7 +256,7 @@
     <img class="cover" src="/images/writing/saga-pattern-cover.jpg" alt="" width="1200" height="500" loading="eager">
 
 <p>In einem Monolithen mit einer Datenbank läuft ein fachlicher Vorgang in einer einzigen ACID-Transaktion (Atomicity, Consistency, Isolation, Durability). Entweder wird alles festgeschrieben oder nichts. Sobald jeder Dienst seine eigene Datenbank besitzt, ist diese Garantie weg.</p>
-<p>Ein verteilter Two-Phase Commit ist technisch möglich, sperrt aber Ressourcen über Dienste hinweg, verlangt, dass alle Beteiligten gleichzeitig erreichbar sind, und wird von den meisten Cloud-Diensten gar nicht unterstützt. DynamoDB kann es nicht, Amazon Simple Queue Service kann es nicht, und kein externer Zahlungsanbieter kann es.</p>
+<p>Ein verteilter Two-Phase Commit ist technisch möglich, sperrt aber Ressourcen über Dienste hinweg, verlangt, dass alle Beteiligten gleichzeitig erreichbar sind, und wird von den meisten Cloud-Diensten gar nicht unterstützt. DynamoDB kann es nicht, Amazon Simple Queue Service kann es nicht, und übliche Zahlungsanbieter können es auch nicht.</p>
 <p>Eine Saga ersetzt diese eine große Transaktion durch eine <strong>Folge lokaler Transaktionen</strong>. Jede wird für sich festgeschrieben. Schlägt ein späterer Schritt fehl, werden die früheren durch <strong>kompensierende Transaktionen</strong> rückgängig gemacht. Sie geben sofortige Konsistenz auf und erhalten <strong>letztendliche Konsistenz</strong> (Eventual Consistency) mit einem ausdrücklichen, fachlichen Rückgängigmachen.</p>
 <p>Die Idee ist älter als Microservices. Hector Garcia-Molina und Kenneth Salem haben sie 1987 im Aufsatz „Sagas“ für langlaufende Datenbanktransaktionen beschrieben. In der <a href="/de/writing/cloud-design-patterns/">Übersicht über 20 Cloud Design Patterns</a> ist sie Pattern D1, neben ihrem Partner D2, Compensating Transaction. Dieser Artikel geht in die Details, die eine Übersicht weglassen muss.</p>
 <h2 id="drei-arten-von-schritten"><a class="anchor" href="#drei-arten-von-schritten">Drei Arten von Schritten</a></h2>
@@ -264,7 +264,7 @@
 <ol>
 <li><strong>Kompensierbare Schritte</strong> liegen vor dem Point of No Return, und jeder hat eine Gegenaktion. Beispiele sind „Bestand reservieren“ (Gegenaktion: Bestand freigeben) und „Zahlung autorisieren“ (Gegenaktion: Autorisierung stornieren).</li>
 <li><strong>Der Pivot-Schritt</strong> ist die Entscheidung über Weitermachen oder Abbrechen. Sobald er festgeschrieben ist, muss die Saga zu Ende laufen. Beispiele sind „Zahlung einziehen“ und „Vertrag unterschreiben“.</li>
-<li><strong>Wiederholbare Schritte</strong> folgen nach dem Pivot. Sie lassen sich nicht rückgängig machen und dürfen nicht dauerhaft scheitern, deshalb werden sie wiederholt, bis sie gelingen. Beispiele sind „Bestätigungs-E-Mail senden“ und „Suchindex aktualisieren“.</li>
+<li><strong>Wiederholbare Schritte</strong> folgen nach dem Pivot. Sie haben keine Gegenaktion und dürfen nicht dauerhaft scheitern, deshalb werden sie wiederholt, bis sie gelingen. Beispiele sind „Bestätigungs-E-Mail senden“ und „Suchindex aktualisieren“.</li>
 </ol>
 <p><strong>Entwurfsregel:</strong> Ordnen Sie die Schritte so, dass riskante Schritte, die wahrscheinlich scheitern, früh laufen, solange sie sich noch kompensieren lassen. Nach dem Pivot gehören nur Schritte, die garantiert gelingen.</p>
 <h2 id="ausprobieren-eine-saga-für-das-mieter-onboarding"><a class="anchor" href="#ausprobieren-eine-saga-für-das-mieter-onboarding">Ausprobieren: eine Saga für das Mieter-Onboarding</a></h2>
@@ -276,6 +276,7 @@
 <li>Die Kaution einziehen. Wiederholbar.</li>
 <li>Die Immobilienportale aktualisieren. Wiederholbar.</li>
 </ol>
+<p>Die Wiederholung deckt einen kurz nicht erreichbaren Zahlungsdienst ab. Ein Mieter, der nie zahlt, ist ein fachlicher Vorgang, etwa ein Mahnverfahren, keine Kompensation.</p>
 <p>Scheitert die Bonitätsprüfung oder unterschreibt der Mieter nicht innerhalb von sieben Tagen, verwirft die Saga das Ergebnis der Bonitätsprüfung und gibt die Reservierung frei, sodass das Angebot wieder auf den Markt kommt. Ein Timeout zählt ebenfalls als Fehler.</p>
 <p>Wählen Sie ein Szenario und sehen Sie zu, was rückgängig gemacht wird. Die Demo ist auf Englisch.</p>
 <div class="saga-demo">
@@ -321,7 +322,7 @@ Order Service        hears PaymentFailed → marks order Cancelled
 <h3 id="6-bereitstellung-von-kunden-und-konten-in-saas-software-as-a-service"><a class="anchor" href="#6-bereitstellung-von-kunden-und-konten-in-saas-software-as-a-service">6. Bereitstellung von Kunden und Konten in SaaS (Software as a Service)</a></h3>
 <p>Mandanten anlegen, eine Datenbank oder ein Schema bereitstellen, den Admin-Benutzer im Identity Provider anlegen, das Abrechnungsabonnement einrichten, eine Begrüßungs-E-Mail senden. Scheitert die Einrichtung der Identität, wird das Schema gelöscht und der Mandanteneintrag entfernt. Das kommt häufig nach Übernahmen vor, wenn Konten auf mehreren zusammengeführten Plattformen angelegt werden müssen.</p>
 <h3 id="7-agentische-workflows"><a class="anchor" href="#7-agentische-workflows">7. Agentische Workflows</a></h3>
-<p>Ein Lauf eines KI-Agenten (Künstliche Intelligenz), der über mehrere Werkzeuge hinweg Nebenwirkungen erzeugt, ist eine Saga, ob er als solche entworfen wurde oder nicht. Zum Beispiel: Branch anlegen, Code generieren, Pull Request öffnen, Ticket verknüpfen, das Team im Channel benachrichtigen. Lehnt der Review-Agent die Änderung ab, bestehen die Kompensationen darin, den Pull Request zu schließen, den Branch zu löschen und den Ticketstatus zurückzusetzen.</p>
+<p>Ein Lauf eines KI-Agenten, der über mehrere Werkzeuge hinweg Nebenwirkungen erzeugt, ist eine Saga, ob er als solche entworfen wurde oder nicht. Zum Beispiel: Branch anlegen, Code generieren, Pull Request öffnen, Ticket verknüpfen, das Team im Channel benachrichtigen. Lehnt der Review-Agent die Änderung ab, bestehen die Kompensationen darin, den Pull Request zu schließen, den Branch zu löschen und den Ticketstatus zurückzusetzen.</p>
 <p>Werden die Werkzeugaufrufe eines Agenten als Saga-Schritte mit ausdrücklichen Kompensationen behandelt, hinterlässt ein gescheiterter Lauf einen sauberen Zustand statt verwaister Branches und halb aktualisierter Tickets. Orchestrierung passt hier am besten, weil das Agenten-Harness ohnehin als Orchestrator arbeitet.</p>
 <h2 id="umsetzung-mit-step-functions-und-dem-cdk-cloud-development-kit"><a class="anchor" href="#umsetzung-mit-step-functions-und-dem-cdk-cloud-development-kit">Umsetzung mit Step Functions und dem CDK (Cloud Development Kit)</a></h2>
 <p>Hier ist die Onboarding-Saga als Zustandsmaschine in Step Functions, definiert mit dem AWS CDK in TypeScript. Drei Mechanismen erledigen die Arbeit:</p>
@@ -334,11 +335,11 @@ Order Service        hears PaymentFailed → marks order Cancelled
 <div class="gist-embed">
 <script src="https://gist.github.com/srnux/367d79f3f3e03c258542d55c0b2a8741.js"></script>
 <noscript><p><a href="https://gist.github.com/srnux/367d79f3f3e03c258542d55c0b2a8741" target="_blank" rel="noopener noreferrer">Code auf GitHub Gist ansehen</a></p></noscript>
-</div><p>Der Code besteht die Typprüfung mit <code>tsc --strict</code> gegen <code>aws-cdk-lib</code> 2.277.0. Step Functions liefert außerdem einen visuellen Ausführungsverlauf, sodass sich die Frage „wo hängt dieses Onboarding?“ in der Konsole beantworten lässt.</p>
+</div><p>Der Code besteht die Typprüfung mit <code>tsc --strict</code> gegen <code>aws-cdk-lib</code> 2.277.0. Das Beispiel zeigt den Kontrollfluss. Produktivcode braucht zusätzlich eine dauerhafte Wiederaufnahme und Eskalation gescheiterter Kompensationen sowie Idempotenz in jedem Handler. Step Functions liefert außerdem einen visuellen Ausführungsverlauf, sodass sich die Frage „wo hängt dieses Onboarding?“ in der Konsole beantworten lässt.</p>
 <h2 id="die-schwierigen-stellen"><a class="anchor" href="#die-schwierigen-stellen">Die schwierigen Stellen</a></h2>
 <p>In den Diagrammen sehen Sagas aufgeräumt aus. An diesen sieben Stellen gehen sie im Produktivbetrieb schief.</p>
 <h3 id="1-idempotenz-überall"><a class="anchor" href="#1-idempotenz-überall">1. Idempotenz überall</a></h3>
-<p>Nachrichten werden doppelt zugestellt, und Orchestratoren wiederholen Aufrufe. Jeder Schritt und jede Kompensation muss sich gefahrlos mehrfach ausführen lassen. Geben Sie die Saga-ID (Identifikator) zusammen mit dem Schrittnamen als Idempotenzschlüssel mit und speichern Sie die verarbeiteten Schlüssel, etwa in DynamoDB mit einem bedingten Schreibzugriff.</p>
+<p>Nachrichten werden doppelt zugestellt, und Orchestratoren wiederholen Aufrufe. Jeder Schritt und jede Kompensation muss sich gefahrlos mehrfach ausführen lassen. Geben Sie die Saga-ID zusammen mit dem Schrittnamen als Idempotenzschlüssel mit und speichern Sie die verarbeiteten Schlüssel, etwa in DynamoDB mit einem bedingten Schreibzugriff.</p>
 <h3 id="2-das-dual-write-problem"><a class="anchor" href="#2-das-dual-write-problem">2. Das Dual-Write-Problem</a></h3>
 <p>Ein Dienst muss seine Datenbank aktualisieren und ein Ereignis veröffentlichen. Stürzt er zwischen beidem ab, bleibt die Saga stehen oder läuft auseinander. Die Lösung ist die Transactional Outbox: Das Ereignis wird in derselben lokalen Transaktion in eine Outbox-Tabelle geschrieben und von dort veröffentlicht. Das Veröffentlichen kann Change Data Capture übernehmen, etwa DynamoDB Streams oder Debezium für PostgreSQL, oder ein Relay, das die Tabelle regelmäßig abfragt.</p>
 <h3 id="3-fehlende-isolation"><a class="anchor" href="#3-fehlende-isolation">3. Fehlende Isolation</a></h3>
@@ -354,7 +355,7 @@ Order Service        hears PaymentFailed → marks order Cancelled
 <h3 id="5-nicht-alles-lässt-sich-rückgängig-machen"><a class="anchor" href="#5-nicht-alles-lässt-sich-rückgängig-machen">5. Nicht alles lässt sich rückgängig machen</a></h3>
 <p>Eine versendete E-Mail oder Textnachricht lässt sich nicht zurückholen. Solche Schritte gehören entweder hinter den Pivot, oder sie werden fachlich kompensiert, mit einer E-Mail wie „Ihre Buchung wurde leider storniert“.</p>
 <h3 id="6-timeouts-sind-fehler"><a class="anchor" href="#6-timeouts-sind-fehler">6. Timeouts sind Fehler</a></h3>
-<p>Ein Schritt, der nie antwortet, ist schlimmer als einer, der scheitert. Jeder Schritt braucht einen Timeout, der in die Kompensation führt. Langlaufende Sagas brauchen dauerhafte Timer, kein <code>setTimeout</code> im Arbeitsspeicher.</p>
+<p>Ein Schritt, der nie antwortet, ist schlimmer als einer, der scheitert. Jeder Schritt braucht einen Timeout und einen ausdrücklichen Wiederherstellungspfad. Vor dem Pivot kann das eine Kompensation sein. Nach dem Pivot wird der Schritt wiederholt oder zur manuellen Bearbeitung eskaliert. Langlaufende Sagas brauchen dauerhafte Timer, kein <code>setTimeout</code> im Arbeitsspeicher.</p>
 <h3 id="7-beobachtbarkeit"><a class="anchor" href="#7-beobachtbarkeit">7. Beobachtbarkeit</a></h3>
 <p>Reichen Sie eine Korrelations-ID, die Saga-ID, durch jede Nachricht und jede Logzeile. Speichern Sie den Zustand der Saga (aktueller Schritt, Status, Verlauf), damit der Support die Frage „was ist mit dieser Bestellung passiert?“ beantworten kann. Bei Choreografie ist verteiltes Tracing mit OpenTelemetry oder AWS X-Ray nahezu Pflicht.</p>
 <h2 id="wann-sie-keine-saga-brauchen"><a class="anchor" href="#wann-sie-keine-saga-brauchen">Wann Sie keine Saga brauchen</a></h2>
@@ -367,7 +368,7 @@ Order Service        hears PaymentFailed → marks order Cancelled
 <h2 id="wie-es-mit-den-anderen-patterns-zusammenhängt"><a class="anchor" href="#wie-es-mit-den-anderen-patterns-zusammenhängt">Wie es mit den anderen Patterns zusammenhängt</a></h2>
 <p>Die Saga steht in der Mitte mehrerer Patterns aus der <a href="/de/writing/cloud-design-patterns/">Übersicht über 20 Cloud Design Patterns</a>:</p>
 <ul>
-<li><strong><a href="/de/writing/cloud-design-patterns/#d2-compensating-transaction">Compensating Transaction (D2)</a>:</strong> die Rückgängig-Hälfte jeder Saga.</li>
+<li><strong><a href="/de/writing/cloud-design-patterns/#d2-compensating-transaction">Compensating Transaction (D2)</a>:</strong> die Kompensationsseite jeder Saga.</li>
 <li><strong><a href="/de/writing/cloud-design-patterns/#a1-retry">Retry (A1)</a> und <a href="/de/writing/cloud-design-patterns/#a2-circuit-breaker">Circuit Breaker (A2)</a>:</strong> innerhalb jedes Schritts, bevor aufgegeben und kompensiert wird.</li>
 <li><strong><a href="/de/writing/cloud-design-patterns/#b3-publisher-subscriber">Publisher-Subscriber (B3)</a> und <a href="/de/writing/cloud-design-patterns/#b1-queue-based-load-leveling">Queues (B1)</a>:</strong> der Transportweg für choreografierte Sagas und für Befehle des Orchestrators.</li>
 <li><strong><a href="/de/writing/cloud-design-patterns/#c3-event-sourcing">Event Sourcing (C3)</a>:</strong> macht Saga-Zustand und Kompensationen natürlich, weil eine Kompensation ein angehängtes Gegenereignis ist.</li>
