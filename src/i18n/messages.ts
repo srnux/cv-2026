@@ -101,9 +101,6 @@ export type Messages = {
   writing: {
     heading: string;
     intro: string;
-    minRead: (minutes: number) => string;
-    read: string;
-    repo: string;
     /** Shown on the German page for an article that exists only in English. */
     englishOnly: string;
   };

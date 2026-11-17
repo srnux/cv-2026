@@ -75,12 +75,13 @@ Editorial rules that apply to everything with his name on it:
 
 ## Articles
 
-Articles are Markdown in `content/articles/<slug>.md` with YAML frontmatter: `title`, `description`, `date`, `tags`, plus the optional `coverImage` (a path under `public/`), `devtoPublished`, `devtoUrl`, `repoUrl` (linked as a second button in the home page listing) and `series` (dev.to only: posts with the same series name are linked there). `pnpm articles` turns each one into:
+Articles are Markdown in `content/articles/<slug>.md` with YAML frontmatter: `title`, `description`, `date`, `tags`, plus the optional `coverImage` (a path under `public/`), `devtoPublished`, `devtoUrl`, `repoUrl` (linked as a second button on the index page) and `series` (dev.to only: posts with the same series name are linked there). `pnpm articles` turns each one into:
 
 - `public/writing/<slug>/index.html`, the canonical page, served at `https://luka-engels.de/writing/<slug>/`
 - `public/de/writing/<slug>/index.html`, always, so a visitor redirected to `/de` + path never lands on a 404 (see below)
 - `content/devto/<slug>.md`, a dev.to-ready copy with dev.to's own frontmatter keys and `canonical_url` already pointing back here, from the English source only
-- `src/content/articles.json`, `{ "en": [...], "de": [...] }`, which `Writing.tsx` imports to render the listing on the home page
+- `src/content/articles.json`, `{ "en": [...], "de": [...] }`, which `Writing.tsx` imports to render the compact list on the home page
+- `public/writing/index.html` and `public/de/writing/index.html`, the index page: every article as a full card (cover, tags, buttons), newest first. The header, the footer and every article page link here as "Articles"; `writingPath(lang)` in `src/i18n/paths.ts` is the one place that URL is built
 - `public/sitemap.xml`, the whole sitemap, with hreflang alternates for every translated pair
 
 **German translations are optional.** `content/articles/<slug>.de.md` is the German version: same slug, its own `title`, `description` and optionally `tags`; `date`, `coverImage` and `repoUrl` fall back to the English file, `devtoUrl` does not. With a translation, both pages declare each other as hreflang alternates. Without one, the German route shows the English body in German chrome with a note, its canonical points at the English page, and the sitemap leaves it out. A `.de.md` without an English sibling fails the build.
@@ -93,7 +94,9 @@ Articles are Markdown in `content/articles/<slug>.md` with YAML frontmatter: `ti
 
 **`Writing.tsx` declares its own `Article` type rather than inferring it from the JSON.** TypeScript would otherwise type the optional fields against whatever the current articles happen to set, so `coverImage`, `repoUrl` or `devtoUrl` would stop compiling the moment no article used one. Keep that type in step with `ArticleMeta` in the generator.
 
-**The listing card is not one big anchor.** The buttons are real links, and an anchor inside an anchor is invalid HTML, so the cover, date, title and summary share one link and the buttons sit beside it.
+**The home page shows a compact list, the index page the cards.** The home page is the CV, so `Writing.tsx` lists every article, all visible, as date, title and summary only; covers, tags and buttons are for the index page. `id="writing"` stays on the section so old `/#writing` links still land.
+
+**The index card is not one big anchor.** The buttons are real links, and an anchor inside an anchor is invalid HTML, so the cover, date, title and summary share one link and the buttons sit beside it.
 
 **One source, two targets.** dev.to runs no custom JavaScript and drops most raw HTML, so a block wrapped in `<!-- site-only -->…<!-- /site-only -->` ships only on the site page (an interactive embed, a `<script>`, a `<figure>`), and one wrapped in `<!-- devto-only -->…<!-- /devto-only -->` only in the dev.to copy (its static Markdown stand-in). The markers never ship, and an unbalanced marker fails the build. Raw HTML `src`/`href` paths to images and scripts are checked against `public/` like Markdown images. Interactive scripts live in `public/js/` and are loaded only by the article that uses them (`saga-stepper.js` for `saga-pattern`).
 
