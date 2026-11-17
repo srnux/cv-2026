@@ -239,13 +239,6 @@ const STYLES = `
   a { color: #fff; text-underline-offset: 3px; }
   a:hover { text-decoration: none; }
 
-  .back {
-    display: inline-block; margin-bottom: 3rem; font-family: 'Space Grotesk', sans-serif;
-    font-size: 0.8125rem; letter-spacing: 0.08em; text-transform: uppercase;
-    border: 1px solid #fff; padding: 0.4rem 1rem; text-decoration: none;
-  }
-  .back:hover { background: #fff; color: #000; }
-
   h1 {
     font-family: 'Space Grotesk', sans-serif; font-weight: 500; font-size: clamp(2rem, 5vw, 2.75rem);
     line-height: 1.15; letter-spacing: -0.01em; margin: 0 0 1rem; color: #fff;
@@ -346,7 +339,9 @@ const STYLES = `
 /** The top bar with the back link and the language switcher, and the English-only note. */
 const I18N_STYLES = `
   .topbar { display: flex; justify-content: space-between; align-items: center; gap: 1rem; margin-bottom: 3rem; }
-  .topbar .back { margin-bottom: 0; }
+  .topbar { flex-wrap: wrap; }
+  .sitenav { font-size: 0.9375rem; color: #9a9a9a; }
+  .sitenav a { color: #cfcfcf; }
   .lang { font-family: 'Space Grotesk', sans-serif; font-size: 0.8125rem; letter-spacing: 0.08em; color: #9a9a9a; }
   .lang a { text-decoration: none; color: #cfcfcf; }
   .lang a:hover { text-decoration: underline; }
@@ -364,6 +359,19 @@ function languageSwitcher(pageLang: Lang, urls: Record<Lang, string>): string {
       ? `<a href="${urls[l]}" hreflang="${HTML_LANG[l]}" lang="${HTML_LANG[l]}" aria-current="true">${l.toUpperCase()}</a>`
       : `<a href="${urls[l]}" hreflang="${HTML_LANG[l]}" lang="${HTML_LANG[l]}" onclick="${storeOnClick(l)}">${l.toUpperCase()}</a>`,
   ).join(' / ');
+}
+
+/**
+ * Back to the site · More articles · Get in touch. Shown in the top bar and
+ * again in the footer; the index page leaves out the link to itself.
+ */
+function siteLinks(pageLang: Lang, withMoreArticles: boolean): string {
+  const t = CHROME[pageLang];
+  return [
+    `<a href="${t.home}">${t.backToSite}</a>`,
+    ...(withMoreArticles ? [`<a href="${t.writing}">${t.moreWriting}</a>`] : []),
+    `<a href="${t.contact}">${t.getInTouch}</a>`,
+  ].join(' · ');
 }
 
 type PageOptions = {
@@ -445,7 +453,7 @@ ${JSON.stringify(jsonLd, null, 2).replace(/</g, '\\u003c')}
 <body>
 <div class="wrap">
   <div class="topbar">
-    <a class="back" href="${t.writing}">${AUTHOR}</a>
+    <nav class="sitenav">${siteLinks(opts.pageLang, true)}</nav>
     <nav class="lang" aria-label="${t.switchLanguage}">${switcher}</nav>
   </div>
 ${fallback ? `  <p class="note">${t.englishOnly}</p>\n` : ''}
@@ -462,7 +470,7 @@ ${bodyHtml}
   <footer>
     <p>${t.byline}
     ${meta.devtoUrl ? t.devto(meta.devtoUrl) : ''}</p>
-    <p><a href="${t.home}">${t.backToSite}</a> · <a href="${t.writing}">${t.moreWriting}</a> · <a href="${t.contact}">${t.getInTouch}</a></p>
+    <p>${siteLinks(opts.pageLang, true)}</p>
   </footer>
 </div>
 </body>
@@ -557,7 +565,7 @@ ${LANGS.map(l => `<link rel="alternate" hreflang="${HTML_LANG[l]}" href="${SITE}
 <body>
 <div class="wrap">
   <div class="topbar">
-    <a class="back" href="${t.home}">${AUTHOR}</a>
+    <nav class="sitenav">${siteLinks(lang, false)}</nav>
     <nav class="lang" aria-label="${t.switchLanguage}">${languageSwitcher(lang, urls)}</nav>
   </div>
   <h1>${t.indexTitle}</h1>
@@ -568,7 +576,7 @@ ${cards}
 
   <footer>
     <p>${t.byline}</p>
-    <p><a href="${t.home}">${t.backToSite}</a> · <a href="${t.contact}">${t.getInTouch}</a></p>
+    <p>${siteLinks(lang, false)}</p>
   </footer>
 </div>
 </body>

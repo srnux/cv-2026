@@ -25,6 +25,9 @@ const rootOf = (html: string): string => {
   return html.slice(start, end);
 };
 
+/** The top bar of a generated article or index page. */
+const topbarOf = (html: string): string => html.match(/<div class="topbar">([\s\S]*?)<\/div>/)?.[1] ?? '';
+
 const count = (haystack: string, needle: string): number => haystack.split(needle).length - 1;
 
 /** Same four replacements as the generator, so a title is matched as it appears in the HTML. */
@@ -131,8 +134,13 @@ describe('articles', () => {
     const de = read(`de/writing/${slug}/index.html`);
     expect(en).toContain('<html lang="en-GB">');
     expect(de).toContain('<html lang="de-DE">');
-    expect(en).toContain('<a class="back" href="/writing/">');
-    expect(de).toContain('<a class="back" href="/de/writing/">');
+    // The top bar carries the same links as the footer, in the page language.
+    const enTop = topbarOf(en);
+    const deTop = topbarOf(de);
+    for (const href of ['/', '/writing/', '/#contact']) expect(enTop).toContain(`href="${href}"`);
+    for (const href of ['/de/', '/de/writing/', '/de/#contact']) expect(deTop).toContain(`href="${href}"`);
+    expect(enTop).toContain('Back to the site');
+    expect(deTop).toContain('Zurück zur Website');
     expect(de).toContain('Min. Lesezeit');
   });
 
@@ -186,6 +194,13 @@ describe('writing index', () => {
     expect(de).toContain(`<link rel="canonical" href="${SITE}/de/writing/">`);
     expect(en).toContain(`<link rel="alternate" hreflang="de-DE" href="${SITE}/de/writing/">`);
     expect(de).toContain(`<link rel="alternate" hreflang="en-GB" href="${SITE}/writing/">`);
+  });
+
+  it('index top bar carries the footer links in the page language', () => {
+    const en = topbarOf(read('writing/index.html'));
+    const de = topbarOf(read('de/writing/index.html'));
+    for (const href of ['/', '/#contact']) expect(en).toContain(`href="${href}"`);
+    for (const href of ['/de/', '/de/#contact']) expect(de).toContain(`href="${href}"`);
   });
 
   it('German index marks English-only articles', () => {
