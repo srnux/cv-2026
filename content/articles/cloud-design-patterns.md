@@ -1,7 +1,7 @@
 ---
 title: "20 cloud design patterns, grouped by the problem they solve"
 description: "Twenty cloud design patterns sorted into six groups by the problem they solve, with when to use each one, where it shows up in real cloud services, and how they combine."
-date: 2026-11-16
+date: 2026-11-10
 tags: [architecture, cloud, aws, microservices]
 coverImage: /images/writing/cloud-design-patterns-cover.jpg
 devtoPublished: false
