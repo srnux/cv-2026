@@ -92,7 +92,7 @@ Scaling storage while keeping reads fast and data consistent.
 - **What:** Separate models, and often separate stores, for writes (commands) and reads (queries). Each side can be optimised and scaled on its own.
 - **When:** Reads vastly outnumber writes, read shapes differ a lot from the write model, or a complex domain has rich business rules on the write side.
 - **Where:** Writes go to PostgreSQL and reads come from OpenSearch or a denormalised DynamoDB table. NestJS has an `@nestjs/cqrs` module.
-- **Caution:** The read side is eventually consistent, and there are more moving parts. Don't use it for simple create, read, update and delete applications.
+- **Caution:** The read side is usually eventually consistent, and there are more moving parts. Don't use it for simple create, read, update and delete applications.
 - **Connections:** Very often paired with Event Sourcing, where events build the read models, and with Publisher-Subscriber, which carries those events.
 
 ### C3. Event Sourcing
@@ -101,15 +101,15 @@ Scaling storage while keeping reads fast and data consistent.
 - **When:** You need a full audit trail, temporal queries ("what did this look like last Tuesday?"), or the ability to build new projections later. Typical domains are banking, insurance claims and compliance-heavy systems.
 - **Where:** EventStoreDB, Kafka, or DynamoDB used as an append-only log with DynamoDB Streams. Core banking is the classic domain for this.
 - **Caution:** Changing event schemas over time (versioning) and replay performance both need snapshots and planning.
-- **Connections:** It's the write side of CQRS. Its events feed Publisher-Subscriber, and it makes Compensating Transactions natural, because a compensation is just another appended event.
+- **Connections:** It's often the write side of CQRS. Its events feed Publisher-Subscriber, and it makes Compensating Transactions natural, because a compensation is just another appended event.
 
 ### C4. Sharding
 
-- **What:** Splits data horizontally across several databases or partitions by a shard key, such as a tenant ID (identifier) or a region.
+- **What:** Splits data horizontally across several databases or partitions by a shard key, such as a tenant ID or a region.
 - **When:** A single database hits storage, throughput or connection limits, or you need tenant isolation or data residency.
 - **Where:** DynamoDB partition keys (built-in sharding), Citus for PostgreSQL, MongoDB sharded clusters, a database-per-tenant model in multi-tenant software as a service.
 - **Caution:** Queries and transactions across shards become hard. A bad key creates "hot" shards.
-- **Connections:** It's a Bulkhead at the data level. It's also what makes the distributed transaction patterns in group D necessary.
+- **Connections:** It's a Bulkhead at the data level. It's also what makes the distributed transaction patterns in group D necessary once an operation spans several shards.
 
 ## Group D: Distributed transactions
 
@@ -129,7 +129,7 @@ Saga is the pattern in this list with the most hidden detail: which steps can be
 
 - **What:** When a later step fails, it undoes earlier completed steps with explicit reversing actions, such as refunding a payment or releasing a reservation. A compensation is a new business action, not a database rollback.
 - **When:** Inside every Saga, and whenever an operation across services can't be rolled back atomically.
-- **Where:** Step Functions catch blocks that call "undo" Lambda functions. It's also part of agent workflows: when an AI (Artificial Intelligence) agent step fails after side effects such as a sent email or a created ticket, a compensation is the clean way out.
+- **Where:** Step Functions catch blocks that call "undo" Lambda functions. It's also part of agent workflows: when an AI agent step fails after side effects such as a sent email or a created ticket, a compensation is the clean way out.
 - **Connections:** It's the failure half of Saga, used once Retry is exhausted. With Event Sourcing it's simply another appended event.
 
 ## Group E: Gateway and edge
@@ -147,7 +147,7 @@ Controlling how clients reach your services.
 
 - **What:** One entry point that routes requests to the right backend service based on path, header or version.
 - **When:** You have many microservices and don't want clients to know every service address. It also enables canary releases and versioning.
-- **Where:** Amazon API (Application Programming Interface) Gateway, Application Load Balancer path rules, CloudFront behaviours, Kubernetes Ingress, Azure Front Door.
+- **Where:** Amazon API Gateway, Application Load Balancer path rules, CloudFront behaviours, Kubernetes Ingress, Azure Front Door.
 - **Connections:** It's the backbone of Strangler Fig, which routes `/old` to the legacy system and `/new` to new services. It's usually combined with Offloading and Aggregation in the same gateway product.
 
 ### E3. Gateway Aggregation
@@ -173,7 +173,7 @@ Running services well and modernising them safely.
 
 - **What:** Deploys a helper process next to the main application, in the same pod or on the same host, to handle cross-cutting tasks such as proxying, mutual TLS, log shipping or fetching secrets.
 - **When:** You want those capabilities without changing application code, or across services written in different languages.
-- **Where:** Envoy in Istio or Linkerd service meshes, Dapr, Fluent Bit log collectors, the AWS Distro for OpenTelemetry collector, and Lambda Extensions as the serverless equivalent. A local MCP (Model Context Protocol) server running beside an AI agent follows the same idea.
+- **Where:** Envoy in Istio, Linkerd's own proxy, Dapr, Fluent Bit log collectors, the AWS Distro for OpenTelemetry collector, and Lambda Extensions as the serverless equivalent. A local MCP (Model Context Protocol) server running beside an AI agent follows the same idea.
 - **Connections:** Service meshes deliver Retry, Circuit Breaker and Health Endpoint Monitoring as a sidecar, so they don't have to live in application code.
 
 ### F2. Strangler Fig
@@ -197,7 +197,7 @@ Few of these patterns show up alone. Six combinations come up again and again:
 1. **The resilience stack:** Retry, Circuit Breaker, Bulkhead and Health Endpoint Monitoring. Retry handles short failures, the breaker handles long ones, the bulkhead contains the damage, and health checks drive automated recovery. A service mesh sidecar often delivers all four.
 2. **The asynchronous backbone:** Queue-Based Load Leveling plus Competing Consumers for distributing work, Publisher-Subscriber for fan-out. Use a queue when one worker should process a message, and a topic when everyone should hear about it.
 3. **The event-driven data trio:** Event Sourcing holds the truth as events, Publisher-Subscriber distributes them, and CQRS read models answer queries fast. Cache-Aside is the cheaper alternative when you only need faster reads.
-4. **The distributed transaction pair:** Saga plus Compensating Transaction. They become necessary as soon as you split data with Sharding or a database per service.
+4. **The distributed transaction pair:** Saga plus Compensating Transaction. They become necessary once a business operation spans data split with Sharding or a database per service.
 5. **The edge layer:** Gateway Routing, Offloading and Aggregation usually live in one product, such as Amazon API Gateway or Azure API Management, with Backends for Frontends added when clients diverge.
 6. **The modernisation path:** Strangler Fig through Gateway Routing, an External Configuration Store with feature flags to switch traffic, and Health Endpoint Monitoring to verify the new path before cutting over.
 

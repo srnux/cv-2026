@@ -6,7 +6,7 @@ tags: [architektur, aws, microservices, serverless]
 
 In einem Monolithen mit einer Datenbank läuft ein fachlicher Vorgang in einer einzigen ACID-Transaktion (Atomicity, Consistency, Isolation, Durability). Entweder wird alles festgeschrieben oder nichts. Sobald jeder Dienst seine eigene Datenbank besitzt, ist diese Garantie weg.
 
-Ein verteilter Two-Phase Commit ist technisch möglich, sperrt aber Ressourcen über Dienste hinweg, verlangt, dass alle Beteiligten gleichzeitig erreichbar sind, und wird von den meisten Cloud-Diensten gar nicht unterstützt. DynamoDB kann es nicht, Amazon Simple Queue Service kann es nicht, und kein externer Zahlungsanbieter kann es.
+Ein verteilter Two-Phase Commit ist technisch möglich, sperrt aber Ressourcen über Dienste hinweg, verlangt, dass alle Beteiligten gleichzeitig erreichbar sind, und wird von den meisten Cloud-Diensten gar nicht unterstützt. DynamoDB kann es nicht, Amazon Simple Queue Service kann es nicht, und übliche Zahlungsanbieter können es auch nicht.
 
 Eine Saga ersetzt diese eine große Transaktion durch eine **Folge lokaler Transaktionen**. Jede wird für sich festgeschrieben. Schlägt ein späterer Schritt fehl, werden die früheren durch **kompensierende Transaktionen** rückgängig gemacht. Sie geben sofortige Konsistenz auf und erhalten **letztendliche Konsistenz** (Eventual Consistency) mit einem ausdrücklichen, fachlichen Rückgängigmachen.
 
@@ -18,7 +18,7 @@ Das ist die nützlichste Idee beim Entwurf einer echten Saga. Jeder Schritt geh�
 
 1. **Kompensierbare Schritte** liegen vor dem Point of No Return, und jeder hat eine Gegenaktion. Beispiele sind „Bestand reservieren“ (Gegenaktion: Bestand freigeben) und „Zahlung autorisieren“ (Gegenaktion: Autorisierung stornieren).
 2. **Der Pivot-Schritt** ist die Entscheidung über Weitermachen oder Abbrechen. Sobald er festgeschrieben ist, muss die Saga zu Ende laufen. Beispiele sind „Zahlung einziehen“ und „Vertrag unterschreiben“.
-3. **Wiederholbare Schritte** folgen nach dem Pivot. Sie lassen sich nicht rückgängig machen und dürfen nicht dauerhaft scheitern, deshalb werden sie wiederholt, bis sie gelingen. Beispiele sind „Bestätigungs-E-Mail senden“ und „Suchindex aktualisieren“.
+3. **Wiederholbare Schritte** folgen nach dem Pivot. Sie haben keine Gegenaktion und dürfen nicht dauerhaft scheitern, deshalb werden sie wiederholt, bis sie gelingen. Beispiele sind „Bestätigungs-E-Mail senden“ und „Suchindex aktualisieren“.
 
 **Entwurfsregel:** Ordnen Sie die Schritte so, dass riskante Schritte, die wahrscheinlich scheitern, früh laufen, solange sie sich noch kompensieren lassen. Nach dem Pivot gehören nur Schritte, die garantiert gelingen.
 
@@ -31,6 +31,8 @@ Das durchgehende Beispiel in diesem Artikel ist das Onboarding eines Mietvertrag
 3. Der Mieter unterschreibt den Vertrag. Das ist der Pivot.
 4. Die Kaution einziehen. Wiederholbar.
 5. Die Immobilienportale aktualisieren. Wiederholbar.
+
+Die Wiederholung deckt einen kurz nicht erreichbaren Zahlungsdienst ab. Ein Mieter, der nie zahlt, ist ein fachlicher Vorgang, etwa ein Mahnverfahren, keine Kompensation.
 
 Scheitert die Bonitätsprüfung oder unterschreibt der Mieter nicht innerhalb von sieben Tagen, verwirft die Saga das Ergebnis der Bonitätsprüfung und gibt die Reservierung frei, sodass das Angebot wieder auf den Markt kommt. Ein Timeout zählt ebenfalls als Fehler.
 
@@ -107,7 +109,7 @@ Mandanten anlegen, eine Datenbank oder ein Schema bereitstellen, den Admin-Benut
 
 ### 7. Agentische Workflows
 
-Ein Lauf eines KI-Agenten (Künstliche Intelligenz), der über mehrere Werkzeuge hinweg Nebenwirkungen erzeugt, ist eine Saga, ob er als solche entworfen wurde oder nicht. Zum Beispiel: Branch anlegen, Code generieren, Pull Request öffnen, Ticket verknüpfen, das Team im Channel benachrichtigen. Lehnt der Review-Agent die Änderung ab, bestehen die Kompensationen darin, den Pull Request zu schließen, den Branch zu löschen und den Ticketstatus zurückzusetzen.
+Ein Lauf eines KI-Agenten, der über mehrere Werkzeuge hinweg Nebenwirkungen erzeugt, ist eine Saga, ob er als solche entworfen wurde oder nicht. Zum Beispiel: Branch anlegen, Code generieren, Pull Request öffnen, Ticket verknüpfen, das Team im Channel benachrichtigen. Lehnt der Review-Agent die Änderung ab, bestehen die Kompensationen darin, den Pull Request zu schließen, den Branch zu löschen und den Ticketstatus zurückzusetzen.
 
 Werden die Werkzeugaufrufe eines Agenten als Saga-Schritte mit ausdrücklichen Kompensationen behandelt, hinterlässt ein gescheiterter Lauf einen sauberen Zustand statt verwaister Branches und halb aktualisierter Tickets. Orchestrierung passt hier am besten, weil das Agenten-Harness ohnehin als Orchestrator arbeitet.
 
@@ -128,7 +130,7 @@ Der Code und seine Kommentare sind auf Englisch, wie im Quelltext üblich.
 </div>
 <!-- /site-only -->
 
-Der Code besteht die Typprüfung mit `tsc --strict` gegen `aws-cdk-lib` 2.277.0. Step Functions liefert außerdem einen visuellen Ausführungsverlauf, sodass sich die Frage „wo hängt dieses Onboarding?“ in der Konsole beantworten lässt.
+Der Code besteht die Typprüfung mit `tsc --strict` gegen `aws-cdk-lib` 2.277.0. Das Beispiel zeigt den Kontrollfluss. Produktivcode braucht zusätzlich eine dauerhafte Wiederaufnahme und Eskalation gescheiterter Kompensationen sowie Idempotenz in jedem Handler. Step Functions liefert außerdem einen visuellen Ausführungsverlauf, sodass sich die Frage „wo hängt dieses Onboarding?“ in der Konsole beantworten lässt.
 
 ## Die schwierigen Stellen
 
@@ -136,7 +138,7 @@ In den Diagrammen sehen Sagas aufgeräumt aus. An diesen sieben Stellen gehen si
 
 ### 1. Idempotenz überall
 
-Nachrichten werden doppelt zugestellt, und Orchestratoren wiederholen Aufrufe. Jeder Schritt und jede Kompensation muss sich gefahrlos mehrfach ausführen lassen. Geben Sie die Saga-ID (Identifikator) zusammen mit dem Schrittnamen als Idempotenzschlüssel mit und speichern Sie die verarbeiteten Schlüssel, etwa in DynamoDB mit einem bedingten Schreibzugriff.
+Nachrichten werden doppelt zugestellt, und Orchestratoren wiederholen Aufrufe. Jeder Schritt und jede Kompensation muss sich gefahrlos mehrfach ausführen lassen. Geben Sie die Saga-ID zusammen mit dem Schrittnamen als Idempotenzschlüssel mit und speichern Sie die verarbeiteten Schlüssel, etwa in DynamoDB mit einem bedingten Schreibzugriff.
 
 ### 2. Das Dual-Write-Problem
 
@@ -161,7 +163,7 @@ Eine versendete E-Mail oder Textnachricht lässt sich nicht zurückholen. Solche
 
 ### 6. Timeouts sind Fehler
 
-Ein Schritt, der nie antwortet, ist schlimmer als einer, der scheitert. Jeder Schritt braucht einen Timeout, der in die Kompensation führt. Langlaufende Sagas brauchen dauerhafte Timer, kein `setTimeout` im Arbeitsspeicher.
+Ein Schritt, der nie antwortet, ist schlimmer als einer, der scheitert. Jeder Schritt braucht einen Timeout und einen ausdrücklichen Wiederherstellungspfad. Vor dem Pivot kann das eine Kompensation sein. Nach dem Pivot wird der Schritt wiederholt oder zur manuellen Bearbeitung eskaliert. Langlaufende Sagas brauchen dauerhafte Timer, kein `setTimeout` im Arbeitsspeicher.
 
 ### 7. Beobachtbarkeit
 
@@ -178,7 +180,7 @@ Reichen Sie eine Korrelations-ID, die Saga-ID, durch jede Nachricht und jede Log
 
 Die Saga steht in der Mitte mehrerer Patterns aus der [Übersicht über 20 Cloud Design Patterns](/de/writing/cloud-design-patterns/):
 
-- **[Compensating Transaction (D2)](/de/writing/cloud-design-patterns/#d2-compensating-transaction):** die Rückgängig-Hälfte jeder Saga.
+- **[Compensating Transaction (D2)](/de/writing/cloud-design-patterns/#d2-compensating-transaction):** die Kompensationsseite jeder Saga.
 - **[Retry (A1)](/de/writing/cloud-design-patterns/#a1-retry) und [Circuit Breaker (A2)](/de/writing/cloud-design-patterns/#a2-circuit-breaker):** innerhalb jedes Schritts, bevor aufgegeben und kompensiert wird.
 - **[Publisher-Subscriber (B3)](/de/writing/cloud-design-patterns/#b3-publisher-subscriber) und [Queues (B1)](/de/writing/cloud-design-patterns/#b1-queue-based-load-leveling):** der Transportweg für choreografierte Sagas und für Befehle des Orchestrators.
 - **[Event Sourcing (C3)](/de/writing/cloud-design-patterns/#c3-event-sourcing):** macht Saga-Zustand und Kompensationen natürlich, weil eine Kompensation ein angehängtes Gegenereignis ist.

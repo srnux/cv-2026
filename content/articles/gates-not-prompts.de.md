@@ -16,7 +16,7 @@ Der Ablauf führt von Design System → Anforderungen → Prototyp → Freigabe 
 
 Diese Unterscheidung ist wichtig: Eine ausführbare Prüfung kann feststellen, dass ein Plan existiert. Sie kann nicht feststellen, ob der Plan gut ist, und auch nicht unabhängig beweisen, dass ein Mensch den Prototyp freigegeben hat. Diese Entscheidungen brauchen weiterhin Menschen und Reviews.
 
-Dieser Artikel geht diese Prüfungen durch: wo sie laufen, was sie erkennen und was nicht.
+Dieser Artikel geht diese Prüfungen durch: wo sie laufen, was sie erkennen und wo ihre Grenzen liegen.
 
 ---
 
@@ -115,7 +115,7 @@ Damit sitzt eine konkrete Prüfung am Einstiegspunkt des Commands. Das Playbook 
 | `requirements`  | keine Eingabe                                                                 |
 | `prototype`     | Design System nicht gesperrt · falscher Status · **keine Akzeptanzkriterien** |
 | `approve`       | nicht `prototyped` · kein `data-screen`-Markup · **kein `--human-approved`**  |
-| `plan`          | übergeordnetes Item nicht freigegeben · kein Versions-Pin · **Snapshot fehlt** |
+| `plan`          | übergeordnete Anforderung nicht freigegeben · kein Versions-Pin · **Snapshot fehlt** |
 | `implement`     | **kein Plan** · Story nicht `in-progress` · Snapshot fehlt                    |
 | `review`        | Story nicht `in-review` · **bereits bei `loops.reviewRounds`**                |
 
@@ -158,7 +158,7 @@ Bei Erfolg geben die Gates den aufgelösten Kontext als JSON aus: Pfade, die fes
 
 ---
 
-## Ebene 2: Hooks entscheiden, ob eine Änderung landen darf
+## Ebene 2: Hooks entscheiden, ob eine Änderung übernommen werden darf
 
 Hooks ergänzen Prüfungen an unterstützten Einstiegspunkten für Änderungen. In Claude Code sind zwei Shell-Skripte als `PreToolUse`-Hooks auf `Edit|Write` registriert:
 
@@ -183,7 +183,7 @@ Die Hooks haben Grenzen: Schreibzugriffe über die Shell fallen nicht unter den 
 
 ## Ebene 3: Prüfungen zeigen Lücken vor der Übergabe
 
-**`check-tokens.mjs`** durchsucht Prototypen und die konfigurierten Produktverzeichnisse nach rohen Farbwerten in Hex, RGB und HSL sowie nach literalen Werten in ausgewählten Eigenschaften: Schriftgröße, Radius, Schatten, Padding, Margin und Gap. Außerdem prüft es auf Verweise auf nicht definierte Tokens. `width: 100%` und `z-index` liegen außerhalb dieser Prüfungen von Design-Eigenschaften.
+**`check-tokens.mjs`** durchsucht Prototypen und die konfigurierten Produktverzeichnisse nach rohen Farbwerten in Hex, RGB (Rot, Grün, Blau) und HSL (Hue, Saturation, Lightness) sowie nach literalen Werten in ausgewählten Eigenschaften: Schriftgröße, Radius, Schatten, Padding, Margin und Gap. Außerdem prüft es auf Verweise auf nicht definierte Tokens. `width: 100%` und `z-index` liegen außerhalb dieser Prüfungen von Design-Eigenschaften.
 
 ```text
 $ node .claude/tools/check-tokens.mjs
@@ -214,7 +214,7 @@ Der Checker findet Screens über `data-screen`, und das Approve-Gate verweigert 
 
 ## Der Prototyp und der Pin
 
-Phase 2 sieht eine HTML-Datei pro Anforderung vor: React 18 als UMD-Build plus `@babel/standalone` aus einem CDN, eingebettete Tokens, Komponenten aus dem Katalog, Hash-Routing und realistische Mock-Daten. Sie braucht keinen Build-Schritt und öffnet sich per Doppelklick, zum Laden ihrer Abhängigkeiten aus dem CDN ist aber Netzwerkzugriff nötig. Das Playbook verlangt, dass **jeder Zustand gezeichnet wird**: leer, ladend, befüllt, Fehler _und Erfolg_. „Die Liste aktualisiert sich“ zeigt einem Menschen nicht, wie Erfolg aussieht.
+Phase 2 sieht eine HTML-Datei pro Anforderung vor: React 18 im Format UMD (Universal Module Definition) plus `@babel/standalone` aus einem CDN (Content Delivery Network), eingebettete Tokens, Komponenten aus dem Katalog, Hash-Routing und realistische Mock-Daten. Sie braucht keinen Build-Schritt und öffnet sich per Doppelklick, zum Laden ihrer Abhängigkeiten aus dem CDN ist aber Netzwerkzugriff nötig. Das Playbook verlangt, dass **jeder Zustand gezeichnet wird**: leer, ladend, befüllt, Fehler _und Erfolg_. „Die Liste aktualisiert sich“ zeigt einem Menschen nicht, wie Erfolg aussieht.
 
 Nach der Freigabe durch einen Menschen legt das Vorgehen mit `approve.mjs` die Datei `prototype/.approved/<slug>-v<N>.html` an und schneidet dann eine Story pro Screen, jeweils mit dem Pin `prototypeVersion: v<N>`. Das sind versionierte Snapshots, die das Vorgehen als unveränderlich behandelt. Das Werkzeug prüft vor dem Kopieren, ob das Ziel schon existiert, die entstandenen Dateien bleiben auf der Festplatte aber bearbeitbar.
 
@@ -258,7 +258,7 @@ node .claude/tools/tracker.mjs set ST-007 --status in-review
 node .claude/tools/tracker.mjs next --type story
 ```
 
-Der Standard-Provider ist `files` und speichert Markdown mit Front Matter in YAML in `work/items/`. Die Anbindung an Jira ist unfertig: Mapping und Code für REST-Aufrufe gibt es, aber die asynchrone Provider-Behandlung im Gate und die direkten Dateizugriffe im Coverage-Checker brauchen noch Integrationsarbeit.
+Der Standard-Provider ist `files` und speichert Markdown mit Front Matter in YAML (YAML Ain't Markup Language) in `work/items/`. Die Anbindung an Jira ist unfertig: Mapping und Code für Aufrufe per REST (Representational State Transfer) gibt es, aber die asynchrone Provider-Behandlung im Gate und die direkten Dateizugriffe im Coverage-Checker brauchen noch Integrationsarbeit.
 
 Zwei Regeln im Vorgehen halten Aktualisierungen konsistent: **Bearbeiten Sie nie ein Work Item von Hand, und wählen Sie nie selbst eine ID.** `create` vergibt IDs zentral, damit Agenten sie nicht selbst wählen. Gegen gleichzeitige Schreibzugriffe ist die Vergabe nicht geschützt.
 
@@ -268,7 +268,7 @@ Der Adapter soll es ermöglichen, Status und Diskussion in einen anderen Tracker
 
 ## Jedes Werkzeug läuft ohne Modell
 
-Keine der Kontrollen braucht ein LLM. Den Zustand des Repos können Sie aus einer einfachen Shell prüfen:
+Keine der Kontrollen braucht ein LLM (Large Language Model). Den Zustand des Repos können Sie aus einer einfachen Shell prüfen:
 
 ```bash
 node .claude/tools/status.mjs --gaps
@@ -277,13 +277,13 @@ node .claude/tools/check-tokens.mjs
 node .claude/tools/gate.mjs plan ST-001
 ```
 
-Die lokalen Werkzeuge brauchen Node 18+ und reines ESM, ohne npm-Abhängigkeiten. Die Hooks setzen Bash voraus, unter Windows also eine Bash-Installation wie Git Bash.
+Die lokalen Werkzeuge brauchen Node 18+ und reines ESM (ECMAScript Modules), ohne npm-Abhängigkeiten. Die Hooks setzen Bash voraus, unter Windows also eine Bash-Installation wie Git Bash.
 
 ---
 
 ## Was bewusst fehlt
 
-Es gibt keine Stufe für CI und Deployment, keine QA-Phase, kein paralleles Fan-out, keine Isolation über Worktrees und keine Board-Integration. Das alles ist real und manchmal notwendig. Es ist aber auch genau die Stelle, an der ein Vorgehen aufhört, leicht lesbar zu sein.
+Es gibt keine Stufe für CI (Continuous Integration) und Deployment, keine Phase für die Qualitätssicherung (QA), kein paralleles Fan-out, keine Isolation über Worktrees und keine Board-Integration. Das alles ist real und manchmal notwendig. Es ist aber auch genau die Stelle, an der ein Vorgehen aufhört, leicht lesbar zu sein.
 
 Die Regel für jede Ergänzung: Bauen Sie sie ein, wenn ein konkreter Fehler sie verlangt, und schreiben Sie auf, welcher.
 

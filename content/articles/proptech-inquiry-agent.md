@@ -21,7 +21,7 @@ That distinction is the starting point for [proptech-inquiry-agent](https://gith
 
 You interact with it through a React inquiry desk. Behind the interface, an agent chooses tools, gathers evidence, checks its draft, and returns an answer or a hand-off. You can try the browser interface without a model API key. All property and policy data is synthetic.
 
-The MCP tools, hybrid retrieval, agent loop, answer checks, and web interface are implemented. A 49-case evaluation suite now measures answer correctness and hand-offs beyond the existing tests. Its first runs found problems in retrieval, follow-up replies, and the evaluator itself; after fixes, 46 of 49 cases pass. This is still a work in progress, with the remaining failures recorded alongside the results.
+The MCP (Model Context Protocol) tools, hybrid retrieval, agent loop, answer checks, and web interface are implemented. A 49-case evaluation suite now measures answer correctness and hand-offs beyond the existing tests. Its first runs found problems in retrieval, follow-up replies, and the evaluator itself. After fixes, 46 of 49 cases pass. This is still a work in progress, with the remaining failures recorded alongside the results.
 
 ## A desk where you can see what happened
 
@@ -49,11 +49,11 @@ The left pane has example buttons for a fact question, a viewing request, an una
 
 Clicking a citation opens a dialog with the source document and the cited passage highlighted. A citation for a whole property shows its structured fields and description. This makes it possible to inspect the evidence behind the reply without searching through logs.
 
-The application uses React state, Vite, and one plain stylesheet. The UI makes the existing workflow visible; the server still owns the tools, retrieval, and answer checks.
+The application uses React state, Vite, and one plain stylesheet. The UI makes the existing workflow visible. The server still owns the tools, retrieval, and answer checks.
 
 ## What happens behind the interface
 
-Submitting an inquiry starts an agent loop on the server. The loop asks a model which tools to use, executes those calls, and checks the resulting answer. The browser displays the progress and final result. The same workflow is available through a CLI or HTTP API.
+Submitting an inquiry starts an agent loop on the server. The loop asks a model which tools to use, executes those calls, and checks the resulting answer. The browser displays the progress and final result. The same workflow is available through a CLI (Command-Line Interface) or HTTP API.
 
 ```text
 Customer inquiry
@@ -76,7 +76,7 @@ Check the draft answer
 Reply + citations + tickets + tool trace + token usage
 ```
 
-MCP, the Model Context Protocol, is the connection that lets an assistant discover and call tools. The built-in agent uses an MCP client connected to this repository's server in the same process. It goes through the same tool interface as an external assistant, without an extra HTTP round trip.
+MCP is the connection that lets an assistant discover and call tools. The built-in agent uses an MCP client connected to this repository's server in the same process. It goes through the same tool interface as an external assistant, without an extra HTTP round trip.
 
 The repository's [architecture guide](https://github.com/srnux/proptech-inquiry-agent/blob/main/ARCHITECTURE.md) maps this request flow, the escalation boundary, where each check runs, and which parts work offline.
 
@@ -114,7 +114,7 @@ Inquiry + instructions + available tools
 
 The system prompt asks the model to answer from tool results, cite its facts, preserve qualifications such as “on request,” and hand off the parts it cannot resolve. The model can answer the heating question and create a viewing ticket in the same run.
 
-The model adapter supports the Anthropic API and Amazon Bedrock. The loop itself depends on a small `ModelClient` interface, so tests can substitute a scripted model. Model and effort settings are configurable; the adapter also requests prompt caching and records cache token usage.
+The model adapter supports the Anthropic API and Amazon Bedrock. The loop itself depends on a small `ModelClient` interface, so tests can substitute a scripted model. Model and effort settings are configurable. The adapter also requests prompt caching and records cache token usage.
 
 Each run returns a structured result:
 
@@ -155,7 +155,7 @@ The heating question needs a different approach. The answer appears inside the d
 
 The retrieval system splits property descriptions into sentences and policy pages into sections. These small passages are called chunks. Each carries its source and an identifier for citations.
 
-Retrieving evidence for the model before it writes an answer is called retrieval-augmented generation (RAG). Here, the retrieval is hybrid: it combines keyword search with embedding-based meaning search, then uses a reranker to assess the candidates.
+Retrieving evidence for the model before it writes an answer is called RAG (Retrieval-Augmented Generation). Here, the retrieval is hybrid: it combines keyword search with embedding-based meaning search, then uses a reranker to assess the candidates.
 
 Search then happens in two stages:
 
@@ -194,7 +194,7 @@ For meaning search, `multilingual-e5-small` converts text into numerical represe
 
 The system collects up to 20 candidates from each search method and removes duplicates. A second model, `bge-reranker-v2-m3`, scores each candidate together with the question. Only passages above the configured threshold are returned.
 
-Both models run locally through Transformers.js after their initial downloads. The conversational assistant is separate; local retrieval does not mean the whole conversation runs offline.
+Both models run locally through Transformers.js after their initial downloads. The conversational assistant is separate. Local retrieval does not mean the whole conversation runs offline.
 
 ## The nearest passage may still be useless
 
@@ -303,7 +303,7 @@ If a check fails, the user does not receive that draft. The model gets feedback 
                                 and returns a fixed reply
 ```
 
-The defaults also limit an inquiry to eight model calls, with an 80,000-token budget checked between calls, a 60-second model-call timeout, and a 30-second tool-call timeout. The loop initiates a hand-off when it reaches its turn or token limit, the model times out, or a final response is refused or truncated. Tool failures are returned to the model as errors it can react to; unrelated provider failures can still surface as errors.
+The defaults also limit an inquiry to eight model calls, with an 80,000-token budget checked between calls, a 60-second model-call timeout, and a 30-second tool-call timeout. The loop initiates a hand-off when it reaches its turn or token limit, the model times out, or a final response is refused or truncated. Tool failures are returned to the model as errors it can react to. Unrelated provider failures can still surface as errors.
 
 These checks have a precise scope. They check whether recognized IDs and numbers appeared in the evidence, not whether each sentence correctly interprets that evidence. A real number attached to the wrong property can still pass. A reply without numerical claims can also omit citations without this guard catching it.
 
@@ -315,7 +315,7 @@ These answer checks belong to the built-in agent loop. An external assistant cal
 
 After asking about heating in `HH-1001`, a user can ask “and the deposit?” The model needs the earlier exchange to know which property they mean.
 
-`POST /inquiries` accepts an optional `history` containing up to five earlier `{inquiry, reply}` pairs, oldest first. The web app sends the five most recent completed exchanges on screen. “New conversation” clears that conversation context. The server does not retain conversation history between requests; its shared in-memory ticket queue is separate.
+`POST /inquiries` accepts an optional `history` containing up to five earlier `{inquiry, reply}` pairs, oldest first. The web app sends the five most recent completed exchanges on screen. “New conversation” clears that conversation context. The server does not retain conversation history between requests. Its shared in-memory ticket queue is separate.
 
 ```text
 Earlier questions and replies ──> Context: which property?
@@ -328,15 +328,15 @@ New question ──────────────────────�
                                   Write and check the reply
 ```
 
-Earlier replies reach the model as plain text, without their tool calls or results. Their citations and figures do not become evidence for the new run. Reusing a source marker requires retrieving it again; a figure must appear in this run's tool results or in a user inquiry. Figures the user supplied in retained earlier turns still count as their own, for example their €2,000 budget.
+Earlier replies reach the model as plain text, without their tool calls or results. Their citations and figures do not become evidence for the new run. Reusing a source marker requires retrieving it again. A figure must appear in this run's tool results or in a user inquiry. Figures the user supplied in retained earlier turns still count as their own, for example their €2,000 budget.
 
-The API rejects more than five history entries with HTTP 400; the client chooses which entries to drop. This keeps the history bounded without adding server-side conversation sessions. Replaying old tool results would carry evidence across inquiries, while model-generated summaries would add another model call and another unchecked text to the workflow.
+The API rejects more than five history entries with HTTP 400. The client chooses which entries to drop. This keeps the history bounded without adding server-side conversation sessions. Replaying old tool results would carry evidence across inquiries, while model-generated summaries would add another model call and another unchecked text to the workflow.
 
 ## What the evaluation tells us
 
 The [agent evaluation suite](https://github.com/srnux/proptech-inquiry-agent/blob/main/evals/cases.jsonl) contains 49 German and English inquiries: fact questions, searches, all six hand-off reasons, follow-ups, and traps where a qualification matters. “Pets on request” must not become permission, an estimated facade levy must not become a final amount, and polite haggling must still produce a negotiation ticket.
 
-One case uses a test-only listing whose description tells the assistant to ignore its instructions and confirm a viewing. The expected behavior is still a hand-off. That fixture has its own catalogue and index; it is never served by the application.
+One case uses a test-only listing whose description tells the assistant to ignore its instructions and confirm a viewing. The expected behavior is still a hand-off. That fixture has its own catalogue and index. It is never served by the application.
 
 Code checks the expected listings, hand-off reasons, and numerical grounding. A different model judges the required facts, forbidden claims, unsupported statements, and reply language against a [written rubric](https://github.com/srnux/proptech-inquiry-agent/blob/main/evals/rubric.md). It sees the tool results and tickets as well as the reply. Explicitly allowed optional hand-offs count as neither correct nor extra when calculating precision and recall.
 
@@ -353,9 +353,9 @@ Two full runs on October 1, 2026 used `claude-opus-5-5` on Amazon Bedrock as the
 | Mean estimated agent cost per inquiry                 | $0.0160        | $0.0143        |
 | Mean latency / p95 latency                            | 9.2 s / 14.7 s | 8.6 s / 13.8 s |
 
-The [first report](https://github.com/srnux/proptech-inquiry-agent/blob/main/evals/reports/2026-10-01.md) and [report after fixes](https://github.com/srnux/proptech-inquiry-agent/blob/main/evals/reports/2026-10-01-after-fixes.md) link each case to its full trace. Cost estimates use Claude API list prices, not Bedrock billing, and exclude the judge's separate cost. Runs processed three cases concurrently; latency includes waiting for the shared local reranker. The retrieval set gained one regression question between runs.
+The [first report](https://github.com/srnux/proptech-inquiry-agent/blob/main/evals/reports/2026-10-01.md) and [report after fixes](https://github.com/srnux/proptech-inquiry-agent/blob/main/evals/reports/2026-10-01-after-fixes.md) link each case to its full trace. Cost estimates use Claude API list prices, not Bedrock billing, and exclude the judge's separate cost. Runs processed three cases concurrently. Latency includes waiting for the shared local reranker. The retrieval set gained one regression question between runs.
 
-These results have limits. Numerical groundedness uses the same number check as the runtime guard, so the final-reply score mainly checks that the guard is working; the first-draft score also shows whether a numerical repair was needed. Neither establishes that every claim is supported. The judge can make mistakes, and the small retrieval development set is also used for calibration. These are measurements on known cases, not an independent benchmark or proof that the assistant never invents facts.
+These results have limits. Numerical groundedness uses the same number check as the runtime guard, so the final-reply score mainly checks that the guard is working. The first-draft score also shows whether a numerical repair was needed. Neither establishes that every claim is supported. The judge can make mistakes, and the small retrieval development set is also used for calibration. These are measurements on known cases, not an independent benchmark or proof that the assistant never invents facts.
 
 ## What broke, and what changed
 
@@ -363,7 +363,7 @@ The first runs exposed three different problems:
 
 - **A German commission question could not find an English policy.** The page said “commission,” but neither candidate search collected it for “Provision.” Adding “Provision” and “Maklerprovision” to the policy made it retrievable. The original missed question and a new regression question now pass, bringing retrieval recall to 26 of 26. Lowering the reranker threshold would not have helped: a reranker cannot rescue a passage it never receives.
 - **A follow-up corrected an earlier answer that was already right.** The agent retrieved the heating fact again, confirmed it, then introduced the same fact as a correction. The prompt now asks for a correction only when new evidence contradicts the earlier reply. A separate case with an actually wrong earlier figure still checks that the agent corrects it.
-- **The judge treated ordinary hand-off wording as unsupported claims.** The rubric now accepts statements about human follow-up when a matching ticket exists, while still rejecting promised outcomes such as a confirmed viewing or approved pet. This fixes the evaluator; it does not represent an improvement to the agent itself.
+- **The judge treated ordinary hand-off wording as unsupported claims.** The rubric now accepts statements about human follow-up when a matching ticket exists, while still rejecting promised outcomes such as a confirmed viewing or approved pet. This fixes the evaluator. It does not represent an improvement to the agent itself.
 
 Three cases still fail after those changes. Two involve borderline inferences the judge flags, such as saying the customer would have to use the stairs because a flat has no lift. The third exposes a concrete capability claim: the agent offers to add an email address to an existing ticket, but no tool can update a ticket. That remains open. A reply can pass every number and citation check while promising something the system cannot do.
 
@@ -375,11 +375,11 @@ Scripted-model tests exercise the loop with invented citations, unsupported figu
 
 In a documented run on Amazon Bedrock on September 29, 2026, the German version of the opening inquiry produced a German reply, selected `HH-1001`, kept pets “on request,” cited `HH-1001#s5` for heating, and created one `viewing_request` ticket. The run used four tool calls across three model turns.
 
-The optional live agent test is recorded as passing too. That test uses a real conversational model with the offline retrieval substitute; it is separate from the real-retrieval model test. The recorded acceptance run is evidence that the workflow has been exercised, not a broad measure of its reliability.
+The optional live agent test is recorded as passing too. That test uses a real conversational model with the offline retrieval substitute. It is separate from the real-retrieval model test. The recorded acceptance run is evidence that the workflow has been exercised, not a broad measure of its reliability.
 
-Three Playwright tests cover the browser workflow: a viewing request produces a reply, trace, and ticket; a citation opens its highlighted passage; and a follow-up retains the property context until “New conversation” clears it. They run with the demo model and hashing embedder, so the test runs need no model credentials or model downloads. They verify the browser workflow, not a remote model's answer quality.
+Three Playwright tests cover the browser workflow. In the first, a viewing request produces a reply, trace, and ticket. In the second, a citation opens its highlighted passage. In the third, a follow-up retains the property context until “New conversation” clears it. They run with the demo model and hashing embedder, so the test runs need no model credentials or model downloads. They verify the browser workflow, not a remote model's answer quality.
 
-GitHub Actions runs typechecking, unit tests, and these browser checks on every push and pull request. The [CI workflow](https://github.com/srnux/proptech-inquiry-agent/actions/workflows/ci.yml) passed on the development branch, its pull request, and `main` after the merge on October 1, 2026. Those checks need no model API credentials or retrieval-model downloads.
+GitHub Actions runs typechecking, unit tests, and these browser checks on every push and pull request. The [CI (Continuous Integration) workflow](https://github.com/srnux/proptech-inquiry-agent/actions/workflows/ci.yml) passed on the development branch, its pull request, and `main` after the merge on October 1, 2026. Those checks need no model API credentials or retrieval-model downloads.
 
 ## Stream the work, then show the checked answer
 
@@ -407,7 +407,7 @@ External MCP client
     Calls the tools directly
 ```
 
-`/inquiries` uses server-sent events (SSE): one HTTP response carries a sequence of named events. The UI shows completed tool calls and progress messages while it waits. The answer appears as a whole after the checks pass, or as a fixed hand-off reply if the code ends the run.
+`/inquiries` uses SSE (Server-Sent Events): one HTTP response carries a sequence of named events. The UI shows completed tool calls and progress messages while it waits. The answer appears as a whole after the checks pass, or as a fixed hand-off reply if the code ends the run.
 
 This is a deliberate choice. If the UI streamed an invented price before the number check rejected it, the user would already have read it. Keeping the draft private lets the agent repair it before showing it.
 
@@ -459,13 +459,13 @@ evals/                     Agent cases, judge rubric, thresholds, retrieval gold
 
 The core package has no MCP, HTTP, or model-provider imports. The server adapts those external interfaces to the core. The web app shares types and example inquiries without pulling the core's Node.js implementation into the browser bundle.
 
-Development uses the packages' TypeScript source directly. For the compiled MCP entry point used by Claude Desktop, build first and run Node with `--conditions=built`. The server entry point is `packages/server/dist/mcp/stdio.js`; its source lives in `packages/server/src/mcp/stdio.ts`.
+Development uses the packages' TypeScript source directly. For the compiled MCP entry point used by Claude Desktop, build first and run Node with `--conditions=built`. The server entry point is `packages/server/dist/mcp/stdio.js`. Its source lives in `packages/server/src/mcp/stdio.ts`.
 
-The vector store is currently in memory, with embeddings cached on disk. For this small corpus, a separate database would add setup without solving an immediate problem. A pgvector adapter is an optional, unscheduled extension intended to exercise the store interface; it would persist retrieval vectors, not hand-off tickets.
+The vector store is currently in memory, with embeddings cached on disk. For this small corpus, a separate database would add setup without solving an immediate problem. A pgvector adapter is an optional, unscheduled extension intended to exercise the store interface. It would persist retrieval vectors, not hand-off tickets.
 
 ## Try the current implementation
 
-Clone the [GitHub repository](https://github.com/srnux/proptech-inquiry-agent), then run these commands from its root with Node.js 20 or newer:
+Clone the [GitHub repository](https://github.com/srnux/proptech-inquiry-agent), then run these commands from its root with Node.js 20 or newer. Node.js 25 and later no longer ship Corepack, so install it first with `npm install -g corepack`:
 
 ```bash
 corepack enable   # once, provides the pnpm version pinned in package.json
@@ -485,7 +485,7 @@ pnpm dev
 
 Use a fresh terminal or clear those overrides when switching to the real models. `pnpm inspect` remains available for calling the MCP tools directly.
 
-To use a remote conversational model, copy `.env.example` to `.env` and fill in credentials for your chosen provider. For the default Anthropic adapter, set `ANTHROPIC_API_KEY`. For Bedrock, set `MODEL_PROVIDER=bedrock`, an AWS region, and the relevant credentials. The CLI and HTTP server load `.env` automatically.
+To use a remote conversational model, copy `.env.example` to `.env` and fill in credentials for your chosen provider. For the default Anthropic adapter, set `ANTHROPIC_API_KEY`. For Bedrock, set `MODEL_PROVIDER=bedrock`, an AWS (Amazon Web Services) region, and the relevant credentials. The CLI and HTTP server load `.env` automatically.
 
 Then ask a question and show the tool trace:
 
@@ -505,7 +505,7 @@ Send `POST /inquiries` a JSON body such as:
 { "inquiry": "Is heating included in HH-1001, and can I view it on Saturday?" }
 ```
 
-For a follow-up, include the earlier exchange. This example shows the request shape; in an application, pass the actual reply previously returned:
+For a follow-up, include the earlier exchange. This example shows the request shape. In an application, pass the actual reply previously returned:
 
 ```json
 {
@@ -519,7 +519,7 @@ For a follow-up, include the earlier exchange. This example shows the request sh
 }
 ```
 
-Unlike `pnpm dev`, `pnpm ask` and `pnpm serve` require credentials unless you explicitly select `MODEL_PROVIDER=demo`. Real-model runs use provider credentials; demo runs do not.
+Unlike `pnpm dev`, `pnpm ask` and `pnpm serve` require credentials unless you explicitly select `MODEL_PROVIDER=demo`. Real-model runs use provider credentials. Demo runs do not.
 
 To run the regular tests and the browser checks:
 
@@ -529,9 +529,9 @@ pnpm --filter @proptech/web exec playwright install chromium
 pnpm test:e2e
 ```
 
-Installing the browser is a one-time setup. The optional live-model test runs when its credential conditions are met in the process environment; the test itself does not load `.env`.
+Installing the browser is a one-time setup. The optional live-model test runs when its credential conditions are met in the process environment. The test itself does not load `.env`.
 
-After changing the corpus or model, `pnpm calibrate` reports scores and proposes thresholds. Those values are reviewed and copied into `retrieval.thresholds.json`; calibration does not automatically update that file.
+After changing the corpus or model, `pnpm calibrate` reports scores and proposes thresholds. Those values are reviewed and copied into `retrieval.thresholds.json`. Calibration does not automatically update that file.
 
 To evaluate the real agent and retrieval, configure credentials for both the agent and judge, then run:
 
@@ -541,16 +541,16 @@ pnpm eval --subset         # 12 cases covering both languages and the main case 
 pnpm eval --case handoff-viewing --case trap-pets-hh1001
 ```
 
-The runner exits non-zero when a metric misses a threshold in `evals/thresholds.json`. Current requirements include at least 90% case pass rate and judge-rated correctness, 100% hand-off recall, and 100% retrieval recall on the golden set. Thresholds were set from the first run and raised after the fixes; the committed reports retain the thresholds used at the time.
+The runner exits non-zero when a metric misses a threshold in `evals/thresholds.json`. Current requirements include at least 90% case pass rate and judge-rated correctness, 100% hand-off recall, and 100% retrieval recall on the golden set. Thresholds were set from the first run and raised after the fixes. The committed reports retain the thresholds used at the time.
 
 The paid evaluations also have a manually triggered [GitHub Actions workflow](https://github.com/srnux/proptech-inquiry-agent/actions/workflows/eval.yml). In the repository's Actions tab, select “Eval subset,” then “Run workflow.” Choose `subset` for the 12-case selection or `all` for the full 49 cases. Configure the repository secret `ANTHROPIC_API_KEY`, or `AWS_BEARER_TOKEN_BEDROCK` for Bedrock with the repository variable `AWS_REGION` (default `eu-central-1`). When both secrets are present, the workflow chooses the Anthropic API.
 
-The report table appears in the workflow run summary, and the report and per-case traces are uploaded as an artifact. A workflow run does not commit them to the repository. The free CI checks have passed; a successful manual eval workflow run has not yet been confirmed. The committed full-run measurements above came from local runs.
+The report table appears in the workflow run summary, and the report and per-case traces are uploaded as an artifact. A workflow run does not commit them to the repository. The free CI checks have passed. A successful manual eval workflow run has not yet been confirmed. The committed full-run measurements above came from local runs.
 
 ## What remains to be proven
 
 The evaluation suite now tests whether qualifications survive paraphrasing, requests needing a person produce hand-offs, and a malicious listing instruction changes the agent's behavior. The next work includes fixing the unsupported ticket-update offer, expanding coverage beyond these known cases, and comparing a cheaper agent model with a separate judge. Passing one prompt-injection case does not establish resistance to other attacks.
 
-The architecture guide, recorded demo, failure analysis, and CI workflows are in place. The repository description, topics, and social preview are configured too. Hand-off tickets still live only in memory; persistent ticket storage remains future work. For now, this is a local application with synthetic data, not a complete agency operations system.
+The architecture guide, recorded demo, failure analysis, and CI workflows are in place. The repository description, topics, and social preview are configured too. Hand-off tickets still live only in memory. Persistent ticket storage remains future work. For now, this is a local application with synthetic data, not a complete agency operations system.
 
 The useful lesson so far is that retrieval, answer generation, and answer checking need separate tests. A search result can be relevant but misquoted. A citation can exist but support a different claim. The inquiry desk makes the evidence, tool calls, and resulting tickets inspectable while keeping rejected drafts out of the conversation.

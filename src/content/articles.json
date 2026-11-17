@@ -13,7 +13,7 @@
         "microservices",
         "serverless"
       ],
-      "readingMinutes": 9,
+      "readingMinutes": 10,
       "url": "/writing/saga-pattern/",
       "coverImage": "/images/writing/saga-pattern-cover.jpg"
     },
@@ -47,7 +47,7 @@
         "mcp",
         "rag"
       ],
-      "readingMinutes": 22,
+      "readingMinutes": 23,
       "url": "/writing/proptech-inquiry-agent/",
       "coverImage": "/images/writing/proptech-inquiry-agent-cover.jpg",
       "devtoUrl": "https://dev.to/srnux/a-property-inquiry-agent-with-react-mcp-and-hybrid-rag-34cb",

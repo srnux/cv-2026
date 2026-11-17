@@ -10,7 +10,7 @@ series: Cloud design patterns
 
 In a monolith with one database, a business operation runs inside a single ACID (Atomicity, Consistency, Isolation, Durability) transaction. Either everything commits or nothing does. Once each service owns its own database, that guarantee is gone.
 
-A distributed two-phase commit is technically possible, but it locks resources across services, needs every participant to be online at the same time, and most cloud services don't support it at all. DynamoDB doesn't, Amazon Simple Queue Service doesn't, and neither does any third-party payment provider.
+A distributed two-phase commit is technically possible, but it locks resources across services, needs every participant to be online at the same time, and most cloud services don't support it at all. DynamoDB doesn't, Amazon Simple Queue Service doesn't, and neither do typical payment providers.
 
 A Saga replaces that one big transaction with a **sequence of local transactions**. Each one commits on its own. If a later step fails, the earlier steps are undone by **compensating transactions**. You give up immediate consistency and get **eventual consistency** with an explicit, business-level undo.
 
@@ -22,7 +22,7 @@ This is the most useful idea when you design a real Saga. Every step belongs to 
 
 1. **Compensatable steps** come before the point of no return, and each has an undo action. Examples are "reserve stock" (undo: release the stock) and "authorise payment" (undo: void the authorisation).
 2. **The pivot step** is the go or no-go decision. Once it commits, the Saga must complete. Examples are "capture payment" and "sign contract".
-3. **Retriable steps** come after the pivot. They can't be undone and must not fail permanently, so they are retried until they succeed. Examples are "send confirmation email" and "update search index".
+3. **Retriable steps** come after the pivot. They have no undo action and must not fail permanently, so they are retried until they succeed. Examples are "send confirmation email" and "update search index".
 
 **Design rule:** order the steps so that risky steps, the ones likely to fail, run early while they can still be compensated. Only steps that are guaranteed to succeed belong after the pivot.
 
@@ -35,6 +35,8 @@ The running example in this article is a rental contract onboarding in proptech.
 3. The tenant signs the contract. This is the pivot.
 4. Collect the deposit. Retriable.
 5. Update the listing portals. Retriable.
+
+Retrying covers a payment service that is briefly unavailable. A tenant who never pays is a business process, such as a reminder and dunning procedure, not a compensation.
 
 If the credit check fails, or the tenant doesn't sign within seven days, the Saga discards the credit check and releases the reservation, so the listing goes back on the market. A timeout counts as a failure too.
 
@@ -134,7 +136,7 @@ Create the tenant, provision a database or schema, create the admin user in the 
 
 ### 7. Agentic workflows
 
-An AI (Artificial Intelligence) agent run that creates side effects across tools is a Saga, whether it was designed as one or not. For example: create a branch, generate code, open a pull request, link the ticket, notify the team channel. If the review agent rejects the change, the compensations are closing the pull request, deleting the branch and reverting the ticket status.
+An AI agent run that creates side effects across tools is a Saga, whether it was designed as one or not. For example: create a branch, generate code, open a pull request, link the ticket, notify the team channel. If the review agent rejects the change, the compensations are closing the pull request, deleting the branch and reverting the ticket status.
 
 Treating agent tool calls as Saga steps with explicit compensations means a failed agent run leaves a clean state instead of orphaned branches and half-updated tickets. Orchestration fits best here, because the agent harness already acts as the orchestrator.
 
@@ -156,7 +158,7 @@ Here is the rental onboarding Saga as a Step Functions state machine, defined wi
 {% gist https://gist.github.com/srnux/367d79f3f3e03c258542d55c0b2a8741 %}
 <!-- /devto-only -->
 
-The code type-checks with `tsc --strict` against `aws-cdk-lib` 2.277.0. Step Functions also gives you a visual execution history, so "where is this onboarding stuck?" can be answered in the console.
+The code type-checks with `tsc --strict` against `aws-cdk-lib` 2.277.0. This example shows the control flow. Production code also needs durable recovery and escalation for failed compensations, plus idempotency in every handler. Step Functions also gives you a visual execution history, so "where is this onboarding stuck?" can be answered in the console.
 
 ## The hard parts
 
@@ -164,7 +166,7 @@ The diagrams make Sagas look tidy. These seven things are where they go wrong in
 
 ### 1. Idempotency everywhere
 
-Messages get delivered twice and orchestrators retry. Every step and every compensation must be safe to run more than once. Pass the Saga ID (identifier) plus the step name as an idempotency key and store the keys you have processed, for example in DynamoDB with a conditional write.
+Messages get delivered twice and orchestrators retry. Every step and every compensation must be safe to run more than once. Pass the Saga ID plus the step name as an idempotency key and store the keys you have processed, for example in DynamoDB with a conditional write.
 
 ### 2. The dual-write problem
 
@@ -189,7 +191,7 @@ A sent email or text message can't be unsent. Either move such steps after the p
 
 ### 6. Timeouts are failures
 
-A step that never answers is worse than one that fails. Each step needs a timeout that leads into compensation. Long-running Sagas need durable timers, not an in-memory `setTimeout`.
+A step that never answers is worse than one that fails. Each step needs a timeout and an explicit recovery path. Before the pivot, that can mean compensation. After the pivot, retry or escalate for manual intervention. Long-running Sagas need durable timers, not an in-memory `setTimeout`.
 
 ### 7. Observability
 
