@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { counterpartPath, homePath, langFromPath } from './paths';
+import { counterpartPath, homePath, langFromPath, writingPath } from './paths';
 
 describe('langFromPath', () => {
   it.each([
@@ -28,4 +28,11 @@ describe('counterpartPath', () => {
 it('homePath', () => {
   expect(homePath('en')).toBe('/');
   expect(homePath('de')).toBe('/de/');
+});
+
+describe('writingPath', () => {
+  it('points at the index page in each language', () => {
+    expect(writingPath('en')).toBe('/writing/');
+    expect(writingPath('de')).toBe('/de/writing/');
+  });
 });

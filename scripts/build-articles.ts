@@ -38,6 +38,7 @@ import matter from 'gray-matter';
 import { marked } from 'marked';
 import { HTML_LANG, LANGS, type Lang } from '../src/i18n/lang';
 import { languageScript, storeOnClick } from '../src/i18n/inline';
+import { writingPath } from '../src/i18n/paths';
 import { buildSitemap, pair, type SitemapEntry } from './sitemap';
 
 const SITE = 'https://luka-engels.de';
@@ -129,11 +130,19 @@ const CHROME: Record<Lang, {
   getInTouch: string;
   switchLanguage: string;
   englishOnly: string;
+  /** The index page at /writing/ and /de/writing/. */
+  indexTitle: string;
+  indexIntro: string;
+  indexDescription: string;
+  read: string;
+  repo: string;
+  /** Appended to the date line of an index card whose article exists only in English. */
+  englishOnlyMark: string;
 }> = {
   en: {
     dateLocale: 'en-GB',
     home: '/',
-    writing: '/#writing',
+    writing: writingPath('en'),
     contact: '/#contact',
     minRead: n => `${n} min read`,
     byline: `Written by ${AUTHOR}, Lead Software Engineer in Hamburg.`,
@@ -143,11 +152,17 @@ const CHROME: Record<Lang, {
     getInTouch: 'Get in touch',
     switchLanguage: 'Language',
     englishOnly: '',
+    indexTitle: 'Articles',
+    indexIntro: 'On technology, work, and the ideas shaping both.',
+    indexDescription: `Articles by ${AUTHOR} on agentic AI, LLM platforms and cloud architecture.`,
+    read: 'Read the article',
+    repo: 'GitHub Repo',
+    englishOnlyMark: '',
   },
   de: {
     dateLocale: 'de-DE',
     home: '/de/',
-    writing: '/de/#writing',
+    writing: writingPath('de'),
     contact: '/de/#contact',
     minRead: n => `${n} Min. Lesezeit`,
     byline: `Geschrieben von ${AUTHOR}, Lead Software Engineer in Hamburg.`,
@@ -157,10 +172,16 @@ const CHROME: Record<Lang, {
     getInTouch: 'Kontakt aufnehmen',
     switchLanguage: 'Sprache',
     englishOnly: 'Diesen Artikel gibt es bisher nur auf Englisch.',
+    indexTitle: 'Artikel',
+    indexIntro: 'Über Technologie, Arbeit und die Ideen, die beide prägen.',
+    indexDescription: `Artikel von ${AUTHOR} über agentische KI, LLM-Plattformen und Cloud-Architektur.`,
+    read: 'Artikel lesen',
+    repo: 'GitHub-Repo',
+    englishOnlyMark: 'Artikel auf Englisch',
   },
 };
 
-const articleUrl = (lang: Lang, slug: string): string => `${lang === 'de' ? '/de' : ''}/writing/${slug}/`;
+const articleUrl = (lang: Lang, slug: string): string => `${writingPath(lang)}${slug}/`;
 
 const escapeHtml = (s: string): string =>
   s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -336,6 +357,15 @@ const I18N_STYLES = `
   }
 `;
 
+/** EN / DE links between the two language versions of a page; a click stores the choice. */
+function languageSwitcher(pageLang: Lang, urls: Record<Lang, string>): string {
+  return LANGS.map(l =>
+    l === pageLang
+      ? `<a href="${urls[l]}" hreflang="${HTML_LANG[l]}" lang="${HTML_LANG[l]}" aria-current="true">${l.toUpperCase()}</a>`
+      : `<a href="${urls[l]}" hreflang="${HTML_LANG[l]}" lang="${HTML_LANG[l]}" onclick="${storeOnClick(l)}">${l.toUpperCase()}</a>`,
+  ).join(' / ');
+}
+
 type PageOptions = {
   /** Language of the page chrome and of <html lang>. */
   pageLang: Lang;
@@ -372,11 +402,7 @@ function page(meta: ArticleMeta, bodyHtml: string, opts: PageOptions): string {
         `<link rel="alternate" hreflang="x-default" href="${SITE}${opts.urls.en}">`,
       ].join('\n')
     : '';
-  const switcher = LANGS.map(l =>
-    l === opts.pageLang
-      ? `<a href="${opts.urls[l]}" hreflang="${HTML_LANG[l]}" lang="${HTML_LANG[l]}" aria-current="true">${l.toUpperCase()}</a>`
-      : `<a href="${opts.urls[l]}" hreflang="${HTML_LANG[l]}" lang="${HTML_LANG[l]}" onclick="${storeOnClick(l)}">${l.toUpperCase()}</a>`,
-  ).join(' / ');
+  const switcher = languageSwitcher(opts.pageLang, opts.urls);
   const bodyLang = fallback ? ` lang="${HTML_LANG[meta.lang]}"` : '';
 
   return `<!doctype html>
@@ -437,6 +463,112 @@ ${bodyHtml}
     <p>${t.byline}
     ${meta.devtoUrl ? t.devto(meta.devtoUrl) : ''}</p>
     <p><a href="${t.home}">${t.backToSite}</a> · <a href="${t.writing}">${t.moreWriting}</a> · <a href="${t.contact}">${t.getInTouch}</a></p>
+  </footer>
+</div>
+</body>
+</html>
+`;
+}
+
+/** The article cards on the index page. Overrides the article-body heading and list spacing from STYLES. */
+const INDEX_STYLES = `
+  .cards { list-style: none; margin: 0; padding: 0; }
+  .cards > li { border-top: 1px solid #fff; padding-top: 2rem; margin: 0 0 3rem; }
+  .card-link { display: block; text-decoration: none; color: inherit; }
+  .card-link .cover { margin: 0 0 1.5rem; }
+  .card-link h2 { margin: 0 0 0.75rem; }
+  .card-link:hover h2 { text-decoration: underline; }
+  .card-link .lede { margin: 0 0 1.25rem; }
+  .cards .tags { margin: 0 0 1.25rem; padding: 0; }
+  .cards .tags li { margin: 0; }
+  .actions { display: flex; flex-wrap: wrap; gap: 0.75rem; margin: 0; }
+  .button {
+    display: inline-flex; align-items: center; gap: 0.5rem; font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.8125rem; letter-spacing: 0.08em; border: 1px solid #fff; padding: 0.4rem 1rem; text-decoration: none;
+  }
+  .button.secondary { border-color: #5a5a5a; color: #cfcfcf; }
+  .button:hover { background: #fff; color: #000; border-color: #fff; }
+`;
+
+/**
+ * The index page at /writing/ (or /de/writing/): every article as a card, newest first.
+ * The card is not one big link: the buttons are real anchors, and an anchor inside an
+ * anchor is invalid HTML. Cover, date, title and summary share one link; tags and
+ * buttons sit beside it.
+ */
+function indexPage(lang: Lang, articles: ArticleMeta[]): string {
+  const t = CHROME[lang];
+  const urls: Record<Lang, string> = { en: writingPath('en'), de: writingPath('de') };
+  const url = `${SITE}${urls[lang]}`;
+  const title = `${t.indexTitle} — ${AUTHOR}`;
+  const cards = articles
+    .map(a => {
+      const foreign = a.lang !== lang ? ` lang="${HTML_LANG[a.lang]}"` : '';
+      const mark = a.lang !== lang && t.englishOnlyMark ? ` · ${t.englishOnlyMark}` : '';
+      const cover = a.coverImage
+        ? `        <img class="cover" src="${a.coverImage}" alt="" width="1200" height="500" loading="lazy">\n`
+        : '';
+      const repo = a.repoUrl
+        ? ` <a class="button secondary" href="${escapeHtml(a.repoUrl)}" target="_blank" rel="noopener noreferrer">${t.repo}</a>`
+        : '';
+      return [
+        '    <li>',
+        `      <a class="card-link" href="${a.url}">`,
+        `${cover}        <p class="meta">${a.displayDate} · ${t.minRead(a.readingMinutes)}${mark}</p>`,
+        `        <h2${foreign}>${escapeHtml(a.title)}</h2>`,
+        `        <p class="lede"${foreign}>${escapeHtml(a.description)}</p>`,
+        '      </a>',
+        `      <ul class="tags">${a.tags.map(tag => `<li>${escapeHtml(tag)}</li>`).join('')}</ul>`,
+        `      <p class="actions"><a class="button" href="${a.url}">${t.read}</a>${repo}</p>`,
+        '    </li>',
+      ].join('\n');
+    })
+    .join('\n');
+
+  return `<!doctype html>
+<html lang="${HTML_LANG[lang]}">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>${title}</title>
+<meta name="description" content="${escapeHtml(t.indexDescription)}">
+<meta name="author" content="${AUTHOR}">
+<link rel="canonical" href="${url}">
+${LANGS.map(l => `<link rel="alternate" hreflang="${HTML_LANG[l]}" href="${SITE}${urls[l]}">`).join('\n')}
+<link rel="alternate" hreflang="x-default" href="${SITE}${urls.en}">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<meta name="theme-color" content="#000000">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="${AUTHOR}">
+<meta property="og:url" content="${url}">
+<meta property="og:title" content="${title}">
+<meta property="og:description" content="${escapeHtml(t.indexDescription)}">
+<meta property="og:locale" content="${HTML_LANG[lang].replace('-', '_')}">
+
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="${title}">
+<meta name="twitter:description" content="${escapeHtml(t.indexDescription)}">
+
+<!-- Generated by scripts/build-articles.ts from content/articles/. Do not hand-edit. -->
+<script>${languageScript}</script>
+<style>${STYLES}${I18N_STYLES}${INDEX_STYLES}</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <a class="back" href="${t.home}">${AUTHOR}</a>
+    <nav class="lang" aria-label="${t.switchLanguage}">${languageSwitcher(lang, urls)}</nav>
+  </div>
+  <h1>${t.indexTitle}</h1>
+  <p class="lede">${t.indexIntro}</p>
+  <ul class="cards">
+${cards}
+  </ul>
+
+  <footer>
+    <p>${t.byline}</p>
+    <p><a href="${t.home}">${t.backToSite}</a> · <a href="${t.contact}">${t.getInTouch}</a></p>
   </footer>
 </div>
 </body>
@@ -627,9 +759,21 @@ for (const lang of LANGS) listing[lang].sort((a, b) => b.date.localeCompare(a.da
 writeFileSync(LISTING, `${JSON.stringify(listing, null, 2)}\n`, 'utf8');
 console.log(`wrote src/content/articles.json (${englishSlugs.length} article${englishSlugs.length === 1 ? '' : 's'} per language)`);
 
+for (const lang of LANGS) {
+  const outDir = resolve(PUBLIC, `.${writingPath(lang)}`);
+  mkdirSync(outDir, { recursive: true });
+  writeFileSync(resolve(outDir, 'index.html'), indexPage(lang, listing[lang]), 'utf8');
+  console.log(`wrote public${writingPath(lang)}index.html (index of ${listing[lang].length} articles)`);
+}
+
 const sitemap = buildSitemap([
   ...pair(`${SITE}/`, `${SITE}/de/`, { changefreq: 'monthly', priority: '1.0' }),
   ...pair(`${SITE}/cv-luka-engels-en.html`, `${SITE}/cv-luka-engels-de.html`, { changefreq: 'monthly', priority: '0.8' }),
+  ...pair(`${SITE}${writingPath('en')}`, `${SITE}${writingPath('de')}`, {
+    lastmod: listing.en[0].date,
+    changefreq: 'monthly',
+    priority: '0.9',
+  }),
   ...sitemapArticles,
   ...pair(`${SITE}/legal-notice.html`, `${SITE}/impressum.html`, { changefreq: 'yearly', priority: '0.1' }),
   ...pair(`${SITE}/privacy.html`, `${SITE}/datenschutz.html`, { changefreq: 'yearly', priority: '0.1' }),
