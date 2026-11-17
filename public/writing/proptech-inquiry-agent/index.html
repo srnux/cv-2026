@@ -129,13 +129,6 @@
   a { color: #fff; text-underline-offset: 3px; }
   a:hover { text-decoration: none; }
 
-  .back {
-    display: inline-block; margin-bottom: 3rem; font-family: 'Space Grotesk', sans-serif;
-    font-size: 0.8125rem; letter-spacing: 0.08em; text-transform: uppercase;
-    border: 1px solid #fff; padding: 0.4rem 1rem; text-decoration: none;
-  }
-  .back:hover { background: #fff; color: #000; }
-
   h1 {
     font-family: 'Space Grotesk', sans-serif; font-weight: 500; font-size: clamp(2rem, 5vw, 2.75rem);
     line-height: 1.15; letter-spacing: -0.01em; margin: 0 0 1rem; color: #fff;
@@ -233,7 +226,9 @@
   }
 
   .topbar { display: flex; justify-content: space-between; align-items: center; gap: 1rem; margin-bottom: 3rem; }
-  .topbar .back { margin-bottom: 0; }
+  .topbar { flex-wrap: wrap; }
+  .sitenav { font-size: 0.9375rem; color: #9a9a9a; }
+  .sitenav a { color: #cfcfcf; }
   .lang { font-family: 'Space Grotesk', sans-serif; font-size: 0.8125rem; letter-spacing: 0.08em; color: #9a9a9a; }
   .lang a { text-decoration: none; color: #cfcfcf; }
   .lang a:hover { text-decoration: underline; }
@@ -247,7 +242,7 @@
 <body>
 <div class="wrap">
   <div class="topbar">
-    <a class="back" href="/writing/">Luka Engels</a>
+    <nav class="sitenav"><a href="/">Back to the site</a> · <a href="/writing/">More articles</a> · <a href="/#contact">Get in touch</a></nav>
     <nav class="lang" aria-label="Language"><a href="/writing/proptech-inquiry-agent/" hreflang="en-GB" lang="en-GB" aria-current="true">EN</a> / <a href="/de/writing/proptech-inquiry-agent/" hreflang="de-DE" lang="de-DE" onclick="try{localStorage.setItem('lang','de')}catch(e){}">DE</a></nav>
   </div>
 
