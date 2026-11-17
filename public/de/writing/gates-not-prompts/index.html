@@ -194,6 +194,29 @@
     color: #d6d6d6; white-space: pre;
   }
 
+  /* GitHub gist embeds ship a light theme; these rules restyle them to match the code panels above.
+     GitHub's stylesheet is injected after this one, hence the !important. */
+  .gist-embed { margin: 0 0 1.5rem; }
+  .gist-embed .gist .gist-file { border: 1px solid #262626 !important; border-radius: 0 !important; margin: 0 !important; background: #0c0c0c !important; }
+  .gist-embed .gist .gist-data { background: #0c0c0c !important; border-bottom: 1px solid #262626 !important; }
+  .gist-embed .gist .blob-wrapper, .gist-embed .gist .highlight, .gist-embed .gist table, .gist-embed .gist tr, .gist-embed .gist td { background: #0c0c0c !important; border: 0 !important; }
+  .gist-embed .gist .blob-code, .gist-embed .gist .blob-code-inner {
+    font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace !important;
+    font-size: 0.8125rem !important; line-height: 1.55 !important; color: #d6d6d6 !important; background: #0c0c0c !important;
+  }
+  .gist-embed .gist .blob-num { color: #4d4d4d !important; background: #0c0c0c !important; border: 0 !important; font-size: 0.75rem !important; }
+  .gist-embed .gist .pl-c { color: #6f6f6f !important; font-style: italic; }
+  .gist-embed .gist .pl-k, .gist-embed .gist .pl-s1 .pl-k { color: #ffffff !important; font-weight: 600; }
+  .gist-embed .gist .pl-s, .gist-embed .gist .pl-pds, .gist-embed .gist .pl-s .pl-pse { color: #d6b25a !important; }
+  .gist-embed .gist .pl-en, .gist-embed .gist .pl-smi, .gist-embed .gist .pl-v, .gist-embed .gist .pl-c1, .gist-embed .gist .pl-e { color: #bdbdbd !important; }
+  .gist-embed .gist .pl-c1 { color: #e2e2e2 !important; }
+  .gist-embed .gist .gist-meta {
+    background: #131313 !important; color: #9a9a9a !important; border: 0 !important;
+    font-family: Inter, sans-serif !important; font-size: 0.8125rem !important; padding: 0.6rem 1.15rem !important;
+  }
+  .gist-embed .gist .gist-meta a { color: #cfcfcf !important; }
+  @media (max-width: 640px) { .gist-embed .gist .blob-code, .gist-embed .gist .blob-code-inner { font-size: 0.75rem !important; } }
+
   .table-wrap { overflow-x: auto; margin: 0 0 1.75rem; }
   table { border-collapse: collapse; width: 100%; font-size: 0.9375rem; }
   th, td { border: 1px solid #2a2a2a; padding: 0.55rem 0.8rem; text-align: left; vertical-align: top; }

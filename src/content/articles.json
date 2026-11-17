@@ -30,7 +30,7 @@
         "microservices",
         "serverless"
       ],
-      "readingMinutes": 11,
+      "readingMinutes": 9,
       "url": "/writing/saga-pattern/",
       "coverImage": "/images/writing/saga-pattern-cover.jpg"
     },
@@ -107,7 +107,7 @@
         "microservices",
         "serverless"
       ],
-      "readingMinutes": 10,
+      "readingMinutes": 9,
       "url": "/de/writing/saga-pattern/",
       "coverImage": "/images/writing/saga-pattern-cover.jpg"
     },
