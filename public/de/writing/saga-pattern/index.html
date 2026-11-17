@@ -44,7 +44,7 @@
   "dateModified": "2026-11-16",
   "inLanguage": "de-DE",
   "keywords": "architektur, aws, microservices, serverless",
-  "wordCount": 2200,
+  "wordCount": 1980,
   "mainEntityOfPage": {
     "@type": "WebPage",
     "@id": "https://luka-engels.de/de/writing/saga-pattern/"
@@ -193,6 +193,29 @@
     color: #d6d6d6; white-space: pre;
   }
 
+  /* GitHub gist embeds ship a light theme; these rules restyle them to match the code panels above.
+     GitHub's stylesheet is injected after this one, hence the !important. */
+  .gist-embed { margin: 0 0 1.5rem; }
+  .gist-embed .gist .gist-file { border: 1px solid #262626 !important; border-radius: 0 !important; margin: 0 !important; background: #0c0c0c !important; }
+  .gist-embed .gist .gist-data { background: #0c0c0c !important; border-bottom: 1px solid #262626 !important; }
+  .gist-embed .gist .blob-wrapper, .gist-embed .gist .highlight, .gist-embed .gist table, .gist-embed .gist tr, .gist-embed .gist td { background: #0c0c0c !important; border: 0 !important; }
+  .gist-embed .gist .blob-code, .gist-embed .gist .blob-code-inner {
+    font-family: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace !important;
+    font-size: 0.8125rem !important; line-height: 1.55 !important; color: #d6d6d6 !important; background: #0c0c0c !important;
+  }
+  .gist-embed .gist .blob-num { color: #4d4d4d !important; background: #0c0c0c !important; border: 0 !important; font-size: 0.75rem !important; }
+  .gist-embed .gist .pl-c { color: #6f6f6f !important; font-style: italic; }
+  .gist-embed .gist .pl-k, .gist-embed .gist .pl-s1 .pl-k { color: #ffffff !important; font-weight: 600; }
+  .gist-embed .gist .pl-s, .gist-embed .gist .pl-pds, .gist-embed .gist .pl-s .pl-pse { color: #d6b25a !important; }
+  .gist-embed .gist .pl-en, .gist-embed .gist .pl-smi, .gist-embed .gist .pl-v, .gist-embed .gist .pl-c1, .gist-embed .gist .pl-e { color: #bdbdbd !important; }
+  .gist-embed .gist .pl-c1 { color: #e2e2e2 !important; }
+  .gist-embed .gist .gist-meta {
+    background: #131313 !important; color: #9a9a9a !important; border: 0 !important;
+    font-family: Inter, sans-serif !important; font-size: 0.8125rem !important; padding: 0.6rem 1.15rem !important;
+  }
+  .gist-embed .gist .gist-meta a { color: #cfcfcf !important; }
+  @media (max-width: 640px) { .gist-embed .gist .blob-code, .gist-embed .gist .blob-code-inner { font-size: 0.75rem !important; } }
+
   .table-wrap { overflow-x: auto; margin: 0 0 1.75rem; }
   table { border-collapse: collapse; width: 100%; font-size: 0.9375rem; }
   th, td { border: 1px solid #2a2a2a; padding: 0.55rem 0.8rem; text-align: left; vertical-align: top; }
@@ -232,7 +255,7 @@
 
   <article>
     <h1>Das Saga Pattern in der Praxis: Kompensationen, Pivots und die schwierigen Stellen</h1>
-    <p class="meta">16. November 2026 · 10 Min. Lesezeit · Luka Engels</p>
+    <p class="meta">16. November 2026 · 9 Min. Lesezeit · Luka Engels</p>
     <p class="lede">Wie das Saga Pattern eine Datenbanktransaktion durch eine Kette lokaler Transaktionen ersetzt, warum der Pivot-Schritt am wichtigsten ist und was im Produktivbetrieb schiefgeht, mit einem Beispiel in AWS (Amazon Web Services) Step Functions.</p>
     <ul class="tags"><li>architektur</li><li>aws</li><li>microservices</li><li>serverless</li></ul>
     <img class="cover" src="/images/writing/saga-pattern-cover.jpg" alt="" width="1200" height="500" loading="eager">
@@ -313,79 +336,10 @@ Order Service        hears PaymentFailed → marks order Cancelled
 <li><strong>Nach dem Pivot</strong> gibt es keine Kompensation, nur geduldige Wiederholungen und eine Benachrichtigung an einen Menschen.</li>
 </ul>
 <p>Der Code und seine Kommentare sind auf Englisch, wie im Quelltext üblich.</p>
-<pre><code class="language-typescript">import { Duration, Stack, StackProps } from &#39;aws-cdk-lib&#39;
-import { Construct } from &#39;constructs&#39;
-import * as lambda from &#39;aws-cdk-lib/aws-lambda&#39;
-import * as sfn from &#39;aws-cdk-lib/aws-stepfunctions&#39;
-import * as tasks from &#39;aws-cdk-lib/aws-stepfunctions-tasks&#39;
-
-interface RentalSagaProps extends StackProps {
-  reserveFn: lambda.IFunction
-  creditFn: lambda.IFunction
-  signFn: lambda.IFunction
-  depositFn: lambda.IFunction
-  portalsFn: lambda.IFunction
-  releaseFn: lambda.IFunction
-  discardCreditFn: lambda.IFunction
-  alertOpsFn: lambda.IFunction
-}
-
-export class RentalOnboardingSaga extends Stack {
-  constructor(scope: Construct, id: string, props: RentalSagaProps) {
-    super(scope, id, props)
-    const invoke = (name: string, fn: lambda.IFunction, resultPath?: string) =&gt;
-      new tasks.LambdaInvoke(this, name, { lambdaFunction: fn, resultPath: resultPath ?? sfn.JsonPath.DISCARD })
-
-    // Forward steps
-    const reserveProperty = invoke(&#39;ReserveProperty&#39;, props.reserveFn, &#39;$.reservation&#39;)
-    const creditCheck = invoke(&#39;CreditCheck&#39;, props.creditFn, &#39;$.credit&#39;)
-
-    // Pivot: wait for the tenant&#39;s signature via a task token, fail after 7 days
-    const signContract = new tasks.LambdaInvoke(this, &#39;SignContract&#39;, {
-      lambdaFunction: props.signFn,
-      integrationPattern: sfn.IntegrationPattern.WAIT_FOR_TASK_TOKEN,
-      payload: sfn.TaskInput.fromObject({ taskToken: sfn.JsonPath.taskToken, input: sfn.JsonPath.entirePayload }),
-      taskTimeout: sfn.Timeout.duration(Duration.days(7)),
-      resultPath: &#39;$.contract&#39;,
-    })
-
-    // Retriable steps after the pivot
-    const collectDeposit = invoke(&#39;CollectDeposit&#39;, props.depositFn)
-    const updatePortals = invoke(&#39;UpdatePortals&#39;, props.portalsFn)
-
-    // Compensations, run in reverse order
-    const failed = new sfn.Fail(this, &#39;OnboardingCancelled&#39;)
-    const releaseProperty = invoke(&#39;ReleaseProperty&#39;, props.releaseFn).next(failed)
-    const discardCredit = invoke(&#39;DiscardCreditCheck&#39;, props.discardCreditFn).next(releaseProperty)
-
-    // Manual intervention if a post-pivot step still fails after all retries
-    const alertOps = invoke(&#39;AlertOperations&#39;, props.alertOpsFn).next(new sfn.Fail(this, &#39;NeedsManualIntervention&#39;))
-
-    // Before the pivot: a few quick retries, then compensate
-    creditCheck.addRetry({ errors: [&#39;States.Timeout&#39;, &#39;Lambda.TooManyRequestsException&#39;], maxAttempts: 3, backoffRate: 2 })
-    creditCheck.addCatch(releaseProperty, { resultPath: &#39;$.error&#39; })
-    signContract.addCatch(discardCredit, { resultPath: &#39;$.error&#39; })
-
-    // After the pivot: retry patiently, never compensate
-    for (const step of [collectDeposit, updatePortals]) {
-      step.addRetry({ errors: [&#39;States.ALL&#39;], maxAttempts: 10, interval: Duration.seconds(5), backoffRate: 2 })
-      step.addCatch(alertOps, { resultPath: &#39;$.error&#39; })
-    }
-
-    const definition = reserveProperty
-      .next(creditCheck)
-      .next(signContract)
-      .next(collectDeposit)
-      .next(updatePortals)
-      .next(new sfn.Succeed(this, &#39;Onboarded&#39;))
-
-    new sfn.StateMachine(this, &#39;RentalOnboardingSaga&#39;, {
-      definitionBody: sfn.DefinitionBody.fromChainable(definition),
-    })
-  }
-}
-</code></pre>
-<p>Der Code besteht die Typprüfung mit <code>tsc --strict</code> gegen <code>aws-cdk-lib</code> 2.277.0. Step Functions liefert außerdem einen visuellen Ausführungsverlauf, sodass sich die Frage „wo hängt dieses Onboarding?“ in der Konsole beantworten lässt.</p>
+<div class="gist-embed">
+<script src="https://gist.github.com/srnux/367d79f3f3e03c258542d55c0b2a8741.js"></script>
+<noscript><p><a href="https://gist.github.com/srnux/367d79f3f3e03c258542d55c0b2a8741" target="_blank" rel="noopener noreferrer">Code auf GitHub Gist ansehen</a></p></noscript>
+</div><p>Der Code besteht die Typprüfung mit <code>tsc --strict</code> gegen <code>aws-cdk-lib</code> 2.277.0. Step Functions liefert außerdem einen visuellen Ausführungsverlauf, sodass sich die Frage „wo hängt dieses Onboarding?“ in der Konsole beantworten lässt.</p>
 <h2 id="die-schwierigen-stellen"><a class="anchor" href="#die-schwierigen-stellen">Die schwierigen Stellen</a></h2>
 <p>In den Diagrammen sehen Sagas aufgeräumt aus. An diesen sieben Stellen gehen sie im Produktivbetrieb schief.</p>
 <h3 id="1-idempotenz-überall"><a class="anchor" href="#1-idempotenz-überall">1. Idempotenz überall</a></h3>
