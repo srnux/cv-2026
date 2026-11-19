@@ -8,7 +8,7 @@ Ein Makler kommt von einer Besichtigung zurück, mit sechzehn Fotos, einem Grund
 
 > „3 Zimmer, 2. OG, Küche neu 2023, Balkon Süd, 1.450 € kalt, NK 220 €. Musterstraße 12, 20255 Hamburg-Eimsbüttel. Ruhige Seitenstraße, 5 Min. zur U-Bahn Osterstraße, Park um die Ecke. Parkett, Wanne im Bad. Frei ab 1.2.2027.“
 
-Daraus ein Inserat für ein Portal zu machen, ist vor allem Schreibarbeit, und ein Sprachmodell schreibt gut. Das Problem ist das, was in den Notizen fehlt. Es gibt keine Wohnfläche und keinen Energieausweis, den das Gesetz in jeder Immobilienanzeige verlangt. Der Grundriss zeigt vier Zimmer, nicht drei. Drei der Fotos sind zu dunkel, zu unscharf oder fast eine Kopie eines anderen.
+Daraus ein Inserat für ein Portal zu machen, ist vor allem Schreibarbeit, und ein Sprachmodell schreibt gut. Das Problem ist das, was in den Notizen fehlt. Es gibt keine Wohnfläche und keine der Angaben zum Energieausweis, die das Gesetz in Immobilienanzeigen verlangt. Der Grundriss zeigt vier Zimmer, nicht drei. Drei der Fotos sind zu dunkel, zu unscharf oder fast eine Kopie eines anderen.
 
 Ein Modell, das „das Inserat schreiben“ soll, füllt diese Lücken mit etwas Plausiblem. Ein plausibler Energiekennwert in einer veröffentlichten Anzeige ist schlimmer als gar keiner.
 
@@ -56,7 +56,7 @@ Zwölf dieser Felder sind Pflicht: Kaltmiete, Wohnfläche, Zimmer, Etage, Stadt,
 
 ## Ein einfacher Loop, die Regeln stecken in den Tools
 
-Das steuernde Modell ist Claude Opus 5.5 über ein Bedrock-Inferenzprofil der EU (Europäische Union). Der Loop ist gewöhnliches TypeScript: Modell aufrufen, die angeforderten Tools ausführen, die Ergebnisse zurückschicken, wiederholen, bis es aufhört. Er begrenzt auf 20 Modellaufrufe, ein Token-Budget und Timeouts und wirft nie eine Ausnahme. Jeder Modell- und Tool-Aufruf wird zu einem Ereignis, das die Seite über SSE (Server-Sent Events) empfängt.
+Das steuernde Modell ist Claude Opus 5.5 über ein Bedrock-Inferenzprofil der EU (Europäische Union). Der Loop ist gewöhnliches TypeScript: Modell aufrufen, die angeforderten Tools ausführen, die Ergebnisse zurückschicken, wiederholen, bis es aufhört. Er begrenzt einen Lauf auf 20 Modellaufrufe, ein Token-Budget und Timeouts und wirft nie eine Ausnahme. Jeder Modell- und Tool-Aufruf wird zu einem Ereignis, das die Seite über SSE (Server-Sent Events) empfängt.
 
 Das Modell entscheidet über die Reihenfolge. Die Tools entscheiden, was erlaubt ist.
 
@@ -138,9 +138,10 @@ Der schlimmste Fehler, den dieses Projekt machen kann, ist eine Zahl im Exposé,
 Es findet jede Zahl in den deutschen und englischen Titeln, Beschreibungen, Lagetexten und Merkmalslisten und vergleicht sie mit den Zahlen in den erfassten Daten. Zahlenformate machen das schwieriger, als es klingt:
 
 ```text
-“1.450”  ->  1450 in German, 1.45 in English   -> both count
-“78,5”   ->  78.5 in German, 785 in English    -> both count
-“82.5”   ->  82.5                              -> matches the floor plan
+“1.450”  ->  1450 (German) or 1.45 (English)   -> either may match
+“1,450”  ->  1450 (English) or 1.45 (German)   -> either may match
+“82,5”   ->  82.5 only, one digit is no
+             thousands group                    -> matches the floor plan
 ```
 
 Eine Zahl besteht, wenn eine ihrer Lesarten in den Daten steht. Datumsangaben zählen auch in ihren deutschen Formen, ein gespeichertes `2027-02-01` macht also `1.2.2027` zulässig. Die Zahlen 0 und 1 bestehen immer, für Formulierungen wie „1 Balkon“.
@@ -189,7 +190,7 @@ Ein früherer Lauf am selben Morgen exportierte gar nicht. Das Foto- und das Gru
 
 Der Rest des Systems verhielt sich wie vorgesehen:
 
-- Ohne Grundriss fragte der Agent den Makler nach der Wohnfläche, statt sie zu schätzen.
+- Weil der Grundriss nicht lesbar war, fragte der Agent den Makler nach der Wohnfläche, statt sie zu schätzen.
 - Der Export verweigerte mit „photos not analysed“, also ging kein Inserat mit ungeprüften Fotos hinaus.
 - Der Lauf endete als `incomplete`, und die Abschlussnachricht listete, was erledigt war, was nicht und warum.
 - Außerdem bemerkte er, dass der eingetippte Energieausweis am 1. Januar 2027 ablief, einen Monat bevor die Wohnung frei wird, und bat den Makler, das zu bestätigen.

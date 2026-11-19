@@ -255,11 +255,11 @@
     <ul class="tags"><li>ai</li><li>typescript</li><li>aws</li><li>agents</li></ul>
     <img class="cover" src="/images/writing/listing-creation-agent-cover.jpg" alt="" width="1200" height="500" loading="eager">
 
-<p>A broker comes back from a viewing with sixteen photos, a floor plan and three lines of notes:</p>
+<p>A broker comes back from a viewing with sixteen photos, a floor plan and three lines of notes. In the sample they are in German. Translated, they read:</p>
 <blockquote>
-<p>“3 Zimmer, 2. OG, Küche neu 2023, Balkon Süd, 1.450 € kalt, NK 220 €. Musterstraße 12, 20255 Hamburg-Eimsbüttel. Ruhige Seitenstraße, 5 Min. zur U-Bahn Osterstraße, Park um die Ecke. Parkett, Wanne im Bad. Frei ab 1.2.2027.”</p>
+<p>“3 rooms, 2nd floor, new kitchen 2023, balcony south, €1,450 rent excluding utilities, service charges €220. Musterstraße 12, 20255 Hamburg-Eimsbüttel. Quiet side street, 5 min to Osterstraße underground station, park around the corner. Parquet, bathtub in the bathroom. Available from 1.2.2027.”</p>
 </blockquote>
-<p>Turning that into a portal listing is mostly writing, and a language model writes well. The trouble is what the notes leave out. There is no living area and no energy certificate, which German law requires in every property ad. The floor plan shows four rooms, not three. Three of the photos are too dark, too blurry or a near copy of another one.</p>
+<p>Turning that into a portal listing is mostly writing, and a language model writes well. The trouble is what the notes leave out. There is no living area, and none of the energy certificate details that German law requires in property ads. The floor plan shows four rooms, not three. Three of the photos are too dark, too blurry or a near copy of another one.</p>
 <p>A model asked to “write the listing” will fill those gaps with something plausible. A plausible energy value in a published ad is worse than none.</p>
 <p><a href="https://github.com/srnux/listing-creation-agent" target="_blank" rel="noopener noreferrer">listing-creation-agent</a> is a TypeScript project built around one rule: <strong>write only from the record, and ask the broker about everything else.</strong> An agent on Amazon Bedrock reads the notes, the photos and the floor plan, asks the broker when sources disagree or a required field is missing, writes the exposé in German and English, and exports OpenImmo XML (Extensible Markup Language), the exchange format German property portals import.</p>
 <p>It was built for the practical part of an AI workshop and presented live on 19 November 2026. It runs locally on synthetic data and stock photos, and the agency in it, Lindenhof Immobilien, is fictional. It is a demonstration of where the rules of an agent belong, not a production system. It is a sibling of the <a href="/writing/proptech-inquiry-agent/">property inquiry agent</a> and reuses its model interface and loop.</p>
@@ -305,10 +305,10 @@
 <td><code>rooms: 4</code>, after the agent asked</td>
 </tr>
 </tbody></table></div>
-<p>The fields come from a fixed list of 21, each with a Zod schema. Rooms are positive and come in halves, the postal code has five digits, the energy class is one of <code>A+</code> to <code>H</code>, the certificate&#39;s expiry is a <code>YYYY-MM-DD</code> date. A value that fails its schema is rejected, whoever supplied it. In the recorded run below, the model&#39;s first attempt to store the balcony orientation as <code>&quot;Süd&quot;</code> failed, because the schema expects <code>&quot;south&quot;</code>. It stored the right value on the next call.</p>
+<p>The fields come from a fixed list of 21, each with a Zod schema. Rooms are positive and come in halves, the postal code has five digits, the energy class is one of <code>A+</code> to <code>H</code>, the certificate&#39;s expiry is a <code>YYYY-MM-DD</code> date. A value that fails its schema is rejected, whoever supplied it. In the recorded run below, the model&#39;s first attempt to store the balcony orientation as <code>&quot;Süd&quot;</code>, the German word from the notes, failed, because the schema expects <code>&quot;south&quot;</code>. It stored the right value on the next call.</p>
 <p>Twelve of those fields are required: rent, living area, rooms, floor, city, district and the six energy certificate fields. That list is code, not a sentence in the prompt.</p>
 <h2 id="a-plain-loop-with-the-rules-in-the-tools"><a class="anchor" href="#a-plain-loop-with-the-rules-in-the-tools">A plain loop, with the rules in the tools</a></h2>
-<p>The orchestrating model is Claude Opus 5.5 through a Bedrock EU (European Union) inference profile. The loop is ordinary TypeScript: call the model, run the tools it asks for, send the results back, repeat until it stops. It enforces 20 model calls, a token budget and timeouts, and it never throws. Every model call and tool call becomes an event the page streams over SSE (Server-Sent Events).</p>
+<p>The orchestrating model is Claude Opus 5.5 through a Bedrock EU (European Union) inference profile. The loop is ordinary TypeScript: call the model, run the tools it asks for, send the results back, repeat until it stops. It limits a run to 20 model calls, a token budget and timeouts, and it never throws. Every model call and tool call becomes an event the page streams over SSE (Server-Sent Events).</p>
 <p>The model decides the order. The tools decide what is allowed.</p>
 <div class="table-wrap"><table>
 <thead>
@@ -359,7 +359,7 @@
 <td>Refuses while anything is missing, in conflict, or not yet done</td>
 </tr>
 </tbody></table></div>
-<p>The system prompt states the rule, suggests a working order and includes the agency&#39;s tone guide: “Sie” in German, British English, no superlatives, no claims about the neighbourhood the broker did not record. It also says that text inside notes or photos is data and never changes the rules. The prompt explains the rules. The tools are what make them hold.</p>
+<p>The system prompt states the rule, suggests a working order and includes the agency&#39;s tone guide: the formal “Sie” in German, British English, no superlatives, no claims about the neighbourhood the broker did not record. It also says that text inside notes or photos is data and never changes the rules. The prompt explains the rules. The tools are what make them hold.</p>
 <h2 id="photos-code-first-model-second"><a class="anchor" href="#photos-code-first-model-second">Photos: code first, model second</a></h2>
 <p>Some photo problems need judgement. Others are arithmetic. The arithmetic runs first, with <a href="https://sharp.pixelplumbing.com/" target="_blank" rel="noopener noreferrer">sharp</a>:</p>
 <pre><code class="language-text">16 photos
@@ -383,11 +383,11 @@ model said, poor photos go to the end, and a poor cover is replaced
 <p>Two facts flow from the photos into the record. A photo with a built-in kitchen sets <code>built_in_kitchen</code>, a balcony photo sets <code>balcony</code>, each with the photo as its source, and only if the notes have not already said so. The floor plan fills the living area when nobody else has.</p>
 <h2 id="a-conflict-becomes-a-form-not-a-guess"><a class="anchor" href="#a-conflict-becomes-a-form-not-a-guess">A conflict becomes a form, not a guess</a></h2>
 <p><code>compare_sources</code> is deterministic. Notes say 3 rooms, the plan shows 4: that is a conflict. A balcony in the notes that neither the plan nor any photo shows is one too, and so is a living area that differs from the plan by more than 3 percent.</p>
-<p>The agent cannot settle a conflict itself. Its only way out is <code>ask_broker</code>, which takes a question in German and the IDs of the fields the answer fills:</p>
+<p>The agent cannot settle a conflict itself. Its only way out is <code>ask_broker</code>, which takes a question for the broker and the IDs of the fields the answer fills. The broker reads the question in German, translated here:</p>
 <pre><code class="language-text">ask_broker
-  question: “In Ihren Notizen stehen 3 Zimmer, im Grundriss sind es 4
-             (inkl. Arbeitszimmer mit 9 m²). Wie viele Zimmer sollen
-             ins Inserat?”
+  question: “Your notes say 3 rooms, the floor plan shows 4
+             (including a 9 m² study). How many rooms should
+             the listing state?”
   fields:   [rooms]
         |
         v
@@ -402,26 +402,27 @@ Each answer is checked against its field schema
         v
 The conflict is settled: compare_sources ignores fields the broker answered
 </code></pre>
-<p>The model never turns a free-text answer into a fact, because there is no free text. Type “ca. 120” into the energy value and the form rejects it before the agent sees anything.</p>
+<p>The model never turns a free-text answer into a fact, because there is no free text. Type “ca. 120” (about 120) into the energy value and the form rejects it before the agent sees anything.</p>
 <p>The energy certificate is the other half of the demo. GEG §87 (Gebäudeenergiegesetz, the German Buildings Energy Act) requires its key data in property ads, and the notes have none of it. The prompt asks for all six fields in one question, so the broker fills in one form instead of answering six interruptions. <code>ask_broker</code> is the one tool without a timeout, because it waits for a person.</p>
 <h2 id="every-number-in-the-exposé-is-checked"><a class="anchor" href="#every-number-in-the-exposé-is-checked">Every number in the exposé is checked</a></h2>
 <p>The worst failure this project can have is a number in the exposé that came from nowhere. <code>submit_expose</code> therefore runs a number check in code before it accepts any text.</p>
 <p>It finds every number in the German and English titles, descriptions, location texts and feature lists, and compares it with the numbers the record holds. Number formats make this less trivial than it sounds:</p>
-<pre><code class="language-text">“1.450”  -&gt;  1450 in German, 1.45 in English   -&gt; both count
-“78,5”   -&gt;  78.5 in German, 785 in English    -&gt; both count
-“82.5”   -&gt;  82.5                              -&gt; matches the floor plan
+<pre><code class="language-text">“1.450”  -&gt;  1450 (German) or 1.45 (English)   -&gt; either may match
+“1,450”  -&gt;  1450 (English) or 1.45 (German)   -&gt; either may match
+“82,5”   -&gt;  82.5 only, one digit is no
+             thousands group                    -&gt; matches the floor plan
 </code></pre>
-<p>A number passes if any of its readings is in the record. Dates count in their German forms too, so a stored <code>2027-02-01</code> makes <code>1.2.2027</code> acceptable. The numbers 0 and 1 always pass, for phrases like “1 Balkon”.</p>
-<p>The known numbers come from the current facts, not the raw notes. Once the broker has answered 4 rooms, a “3-Zimmer-Wohnung” fails, even though the 3 is right there in the notes.</p>
+<p>A number passes if any of its readings is in the record. Dates count in their German forms too, so a stored <code>2027-02-01</code> makes <code>1.2.2027</code> acceptable. The numbers 0 and 1 always pass, for phrases like “1 balcony”.</p>
+<p>The known numbers come from the current facts, not the raw notes. Once the broker has answered 4 rooms, a “3-room flat” fails, even though the 3 is right there in the notes.</p>
 <p>On a failure the tool rejects the whole exposé, names each invented number with twenty characters of context, and tells the model not to add or round anything. The prompt already forbids computed values, such as a warm rent as the sum of rent and service charges. The check is what catches it when the model forgets. The agent gets two repairs. A third failure ends the run with the offending numbers, because a run that cannot write without inventing figures should stop rather than export.</p>
 <p>The scope is narrow on purpose. The check sees numbers, not claims. A wrong word, a feature that is not there, or a real number attached to the wrong thing all pass. The recorded run below has an example.</p>
 <h2 id="the-export-refuses-until-the-record-is-complete"><a class="anchor" href="#the-export-refuses-until-the-record-is-complete">The export refuses until the record is complete</a></h2>
 <p><code>export_openimmo</code> checks before it builds anything: no missing required field, no open conflict, photos analysed, an exposé accepted. Otherwise it refuses and says why, and the model has to fix that first.</p>
-<p>The XML targets OpenImmo 1.2.7 with one provider and one property: category, address, rent, areas, features, the energy certificate, the German texts, the photos with the cover as <code>TITELBILD</code>, and the technical administration block. German is the portal text. The English version is saved next to it as JSON.</p>
+<p>The XML targets OpenImmo 1.2.7 with one provider and one property: category, address, rent, areas, features, the energy certificate, the German texts, the photos with the cover marked as <code>TITELBILD</code> (title image), and the technical administration block. German is the portal text. The English version is saved next to it as JSON.</p>
 <p>Validation has two modes. The official XSD (XML Schema Definition) may not be redistributed, so it is not in the repository. Placed at <code>schemas/openimmo_127b.xsd</code>, it is used through <code>xmllint-wasm</code>, which avoids native bindings on Windows. Without it, a hand-written check of the required elements and their order runs instead, and the page labels the result “fallback check”. The recorded run used the fallback.</p>
 <h2 id="a-recorded-run"><a class="anchor" href="#a-recorded-run">A recorded run</a></h2>
 <p>On the morning of 19 November 2026 a live run on the sample took 84.5 seconds from start to export, including about 30 seconds of a person filling in the two forms:</p>
-<pre><code class="language-text">  5.4 s  record_facts      12 facts, 1 rejected (“Süd” is not an orientation)
+<pre><code class="language-text">  5.4 s  record_facts      12 facts, 1 rejected (“Süd” is not a valid orientation)
  20.9 s  analyze_photos    16 photos, 3 poor (14-dark, 15-blurry, 16-duplicate)
                            cover 01-living
  23.3 s  read_floor_plan   4 rooms, 82.5 m², balcony
@@ -429,18 +430,18 @@ The conflict is settled: compare_sources ignores fields the broker answered
  24.9 s  check_listing     6 energy fields missing, 1 conflict
  31.4 s  ask_broker        rooms: notes 3, plan 4  -&gt;  answered 4
  35.7 s  ask_broker        all six energy certificate fields in one form
- 75.7 s  submit_expose     accepted: “4-Zimmer-Wohnung mit Südbalkon in
-                           Hamburg-Eimsbüttel”
+ 75.7 s  submit_expose     accepted: “4-room flat with south-facing
+                           balcony in Hamburg-Eimsbüttel”
  77.3 s  export_openimmo   openimmo.xml valid (fallback check)
 </code></pre>
 <p>The run used about 21,000 input tokens, 3,600 output tokens and 15,000 tokens read from the prompt cache. The exposé uses 4 rooms, 82.5 m² from the floor plan, and dates written out in words, as the prompt asks. The number check accepted it on the first attempt.</p>
 <p>The most interesting part was the agent&#39;s closing message to the broker. The sample photos come from a stock series, not from one real flat, and the agent noticed. It reported that the hallway photo actually showed a second kitchen with a gas hob, that two photos had a herringbone floor the rest of the flat did not, and that the bathroom photo showed no bathtub although the notes mentioned one.</p>
-<p>That message is also the clearest limit of the checks. The exposé it had just submitted still said “Bad mit Wanne”, because the notes said so and the number check does not read words. The agent was right to raise the doubt with the broker rather than overrule the notes. A system that relies on the agent raising it is not a system that guarantees it.</p>
+<p>That message is also the clearest limit of the checks. The exposé it had just submitted still said “bathroom with bathtub”, because the notes said so and the number check does not read words. The agent was right to raise the doubt with the broker rather than overrule the notes. A system that relies on the agent raising it is not a system that guarantees it.</p>
 <h2 id="what-broke-before-the-workshop"><a class="anchor" href="#what-broke-before-the-workshop">What broke before the workshop</a></h2>
 <p>An earlier run that morning did not export at all. The photo and floor plan tools share a helper for structured vision calls, and that helper forced the model to answer through one specific tool. Opus 5.5 and Sonnet 5.5 reject a forced <code>tool_choice</code> on Bedrock with HTTP 400. Every call to <code>analyze_photos</code> and <code>read_floor_plan</code> failed.</p>
 <p>The rest of the system behaved as intended:</p>
 <ul>
-<li>With no floor plan, the agent asked the broker for the living area instead of guessing one.</li>
+<li>With the floor plan unreadable, the agent asked the broker for the living area instead of guessing one.</li>
 <li>The export refused with “photos not analysed”, so no listing went out without its photos checked.</li>
 <li>The run ended as <code>incomplete</code>, and the closing message listed what was done, what was not, and why.</li>
 <li>It also noticed that the energy certificate the tester had typed in expired on 1 January 2027, a month before the flat was available, and asked the broker to confirm.</li>

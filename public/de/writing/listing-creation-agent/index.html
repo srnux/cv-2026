@@ -259,7 +259,7 @@
 <blockquote>
 <p>„3 Zimmer, 2. OG, Küche neu 2023, Balkon Süd, 1.450 € kalt, NK 220 €. Musterstraße 12, 20255 Hamburg-Eimsbüttel. Ruhige Seitenstraße, 5 Min. zur U-Bahn Osterstraße, Park um die Ecke. Parkett, Wanne im Bad. Frei ab 1.2.2027.“</p>
 </blockquote>
-<p>Daraus ein Inserat für ein Portal zu machen, ist vor allem Schreibarbeit, und ein Sprachmodell schreibt gut. Das Problem ist das, was in den Notizen fehlt. Es gibt keine Wohnfläche und keinen Energieausweis, den das Gesetz in jeder Immobilienanzeige verlangt. Der Grundriss zeigt vier Zimmer, nicht drei. Drei der Fotos sind zu dunkel, zu unscharf oder fast eine Kopie eines anderen.</p>
+<p>Daraus ein Inserat für ein Portal zu machen, ist vor allem Schreibarbeit, und ein Sprachmodell schreibt gut. Das Problem ist das, was in den Notizen fehlt. Es gibt keine Wohnfläche und keine der Angaben zum Energieausweis, die das Gesetz in Immobilienanzeigen verlangt. Der Grundriss zeigt vier Zimmer, nicht drei. Drei der Fotos sind zu dunkel, zu unscharf oder fast eine Kopie eines anderen.</p>
 <p>Ein Modell, das „das Inserat schreiben“ soll, füllt diese Lücken mit etwas Plausiblem. Ein plausibler Energiekennwert in einer veröffentlichten Anzeige ist schlimmer als gar keiner.</p>
 <p><a href="https://github.com/srnux/listing-creation-agent" target="_blank" rel="noopener noreferrer">listing-creation-agent</a> ist ein TypeScript-Projekt, das auf einer einzigen Regel aufbaut: <strong>nur aus den erfassten Daten schreiben und den Makler zu allem anderen fragen.</strong> Ein Agent auf Amazon Bedrock liest die Notizen, die Fotos und den Grundriss, fragt den Makler, wenn Quellen sich widersprechen oder ein Pflichtfeld fehlt, schreibt das Exposé auf Deutsch und Englisch und exportiert OpenImmo-XML (Extensible Markup Language), das Austauschformat, das deutsche Immobilienportale importieren.</p>
 <p>Gebaut wurde es für den praktischen Teil eines KI-Workshops und am 19. November 2026 live vorgeführt. Es läuft lokal mit synthetischen Daten und Stockfotos, und die Agentur darin, Lindenhof Immobilien, ist erfunden. Es zeigt, wo die Regeln eines Agenten hingehören, und ist kein Produktivsystem. Es ist ein Geschwisterprojekt des <a href="/de/writing/proptech-inquiry-agent/">Agenten für Immobilienanfragen</a> und übernimmt dessen Modellschnittstelle und Loop.</p>
@@ -309,7 +309,7 @@
 <p>Die Felder stammen aus einer festen Liste von 21, jedes mit einem Zod-Schema. Zimmer sind positiv und kommen in halben Schritten, die Postleitzahl hat fünf Ziffern, die Energieeffizienzklasse ist eine von <code>A+</code> bis <code>H</code>, das Ablaufdatum des Ausweises ist ein Datum im Format <code>YYYY-MM-DD</code>. Ein Wert, der sein Schema verletzt, wird abgelehnt, egal wer ihn liefert. Im aufgezeichneten Lauf weiter unten scheiterte der erste Versuch des Modells, die Balkonausrichtung als <code>&quot;Süd&quot;</code> zu speichern, weil das Schema <code>&quot;south&quot;</code> erwartet. Beim nächsten Aufruf speicherte es den richtigen Wert.</p>
 <p>Zwölf dieser Felder sind Pflicht: Kaltmiete, Wohnfläche, Zimmer, Etage, Stadt, Stadtteil und die sechs Felder des Energieausweises. Diese Liste ist Code, kein Satz im Prompt.</p>
 <h2 id="ein-einfacher-loop-die-regeln-stecken-in-den-tools"><a class="anchor" href="#ein-einfacher-loop-die-regeln-stecken-in-den-tools">Ein einfacher Loop, die Regeln stecken in den Tools</a></h2>
-<p>Das steuernde Modell ist Claude Opus 5.5 über ein Bedrock-Inferenzprofil der EU (Europäische Union). Der Loop ist gewöhnliches TypeScript: Modell aufrufen, die angeforderten Tools ausführen, die Ergebnisse zurückschicken, wiederholen, bis es aufhört. Er begrenzt auf 20 Modellaufrufe, ein Token-Budget und Timeouts und wirft nie eine Ausnahme. Jeder Modell- und Tool-Aufruf wird zu einem Ereignis, das die Seite über SSE (Server-Sent Events) empfängt.</p>
+<p>Das steuernde Modell ist Claude Opus 5.5 über ein Bedrock-Inferenzprofil der EU (Europäische Union). Der Loop ist gewöhnliches TypeScript: Modell aufrufen, die angeforderten Tools ausführen, die Ergebnisse zurückschicken, wiederholen, bis es aufhört. Er begrenzt einen Lauf auf 20 Modellaufrufe, ein Token-Budget und Timeouts und wirft nie eine Ausnahme. Jeder Modell- und Tool-Aufruf wird zu einem Ereignis, das die Seite über SSE (Server-Sent Events) empfängt.</p>
 <p>Das Modell entscheidet über die Reihenfolge. Die Tools entscheiden, was erlaubt ist.</p>
 <div class="table-wrap"><table>
 <thead>
@@ -408,9 +408,10 @@ The conflict is settled: compare_sources ignores fields the broker answered
 <h2 id="jede-zahl-im-exposé-wird-geprüft"><a class="anchor" href="#jede-zahl-im-exposé-wird-geprüft">Jede Zahl im Exposé wird geprüft</a></h2>
 <p>Der schlimmste Fehler, den dieses Projekt machen kann, ist eine Zahl im Exposé, die aus dem Nichts kommt. <code>submit_expose</code> prüft deshalb im Code jede Zahl, bevor es einen Text annimmt.</p>
 <p>Es findet jede Zahl in den deutschen und englischen Titeln, Beschreibungen, Lagetexten und Merkmalslisten und vergleicht sie mit den Zahlen in den erfassten Daten. Zahlenformate machen das schwieriger, als es klingt:</p>
-<pre><code class="language-text">“1.450”  -&gt;  1450 in German, 1.45 in English   -&gt; both count
-“78,5”   -&gt;  78.5 in German, 785 in English    -&gt; both count
-“82.5”   -&gt;  82.5                              -&gt; matches the floor plan
+<pre><code class="language-text">“1.450”  -&gt;  1450 (German) or 1.45 (English)   -&gt; either may match
+“1,450”  -&gt;  1450 (English) or 1.45 (German)   -&gt; either may match
+“82,5”   -&gt;  82.5 only, one digit is no
+             thousands group                    -&gt; matches the floor plan
 </code></pre>
 <p>Eine Zahl besteht, wenn eine ihrer Lesarten in den Daten steht. Datumsangaben zählen auch in ihren deutschen Formen, ein gespeichertes <code>2027-02-01</code> macht also <code>1.2.2027</code> zulässig. Die Zahlen 0 und 1 bestehen immer, für Formulierungen wie „1 Balkon“.</p>
 <p>Die bekannten Zahlen stammen aus den aktuellen Fakten, nicht aus den rohen Notizen. Sobald der Makler 4 Zimmer angegeben hat, scheitert eine „3-Zimmer-Wohnung“, obwohl die 3 in den Notizen steht.</p>
@@ -441,7 +442,7 @@ The conflict is settled: compare_sources ignores fields the broker answered
 <p>Ein früherer Lauf am selben Morgen exportierte gar nicht. Das Foto- und das Grundriss-Tool teilen sich eine Hilfsfunktion für strukturierte Vision-Aufrufe, und diese zwang das Modell, über genau ein bestimmtes Tool zu antworten. Opus 5.5 und Sonnet 5.5 lehnen ein erzwungenes <code>tool_choice</code> auf Bedrock mit HTTP 400 ab. Jeder Aufruf von <code>analyze_photos</code> und <code>read_floor_plan</code> scheiterte.</p>
 <p>Der Rest des Systems verhielt sich wie vorgesehen:</p>
 <ul>
-<li>Ohne Grundriss fragte der Agent den Makler nach der Wohnfläche, statt sie zu schätzen.</li>
+<li>Weil der Grundriss nicht lesbar war, fragte der Agent den Makler nach der Wohnfläche, statt sie zu schätzen.</li>
 <li>Der Export verweigerte mit „photos not analysed“, also ging kein Inserat mit ungeprüften Fotos hinaus.</li>
 <li>Der Lauf endete als <code>incomplete</code>, und die Abschlussnachricht listete, was erledigt war, was nicht und warum.</li>
 <li>Außerdem bemerkte er, dass der eingetippte Energieausweis am 1. Januar 2027 ablief, einen Monat bevor die Wohnung frei wird, und bat den Makler, das zu bestätigen.</li>
