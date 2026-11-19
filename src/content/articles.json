@@ -1,6 +1,24 @@
 {
   "en": [
     {
+      "slug": "listing-creation-agent",
+      "lang": "en",
+      "title": "A Listing Agent on Amazon Bedrock That Asks Before It Writes",
+      "description": "A TypeScript agent that turns viewing photos, a floor plan and rough broker notes into a German and English exposé and OpenImmo XML. Conflicts and gaps become questions to the broker, and code checks every number.",
+      "date": "2026-11-19",
+      "displayDate": "19 November 2026",
+      "tags": [
+        "ai",
+        "typescript",
+        "aws",
+        "agents"
+      ],
+      "readingMinutes": 14,
+      "url": "/writing/listing-creation-agent/",
+      "coverImage": "/images/writing/listing-creation-agent-cover.jpg",
+      "repoUrl": "https://github.com/srnux/listing-creation-agent"
+    },
+    {
       "slug": "saga-pattern",
       "lang": "en",
       "title": "The Saga pattern in practice: compensations, pivots and the hard parts",
@@ -77,6 +95,24 @@
     }
   ],
   "de": [
+    {
+      "slug": "listing-creation-agent",
+      "lang": "de",
+      "title": "Ein Agent für Immobilieninserate auf Amazon Bedrock, der fragt, bevor er schreibt",
+      "description": "Ein TypeScript-Agent, der aus Besichtigungsfotos, einem Grundriss und knappen Maklernotizen ein deutsches und ein englisches Exposé und eine OpenImmo-XML-Datei macht. Widersprüche und Lücken werden zu Fragen an den Makler, und Code prüft jede Zahl.",
+      "date": "2026-11-19",
+      "displayDate": "19. November 2026",
+      "tags": [
+        "ki",
+        "typescript",
+        "aws",
+        "agents"
+      ],
+      "readingMinutes": 13,
+      "url": "/de/writing/listing-creation-agent/",
+      "coverImage": "/images/writing/listing-creation-agent-cover.jpg",
+      "repoUrl": "https://github.com/srnux/listing-creation-agent"
+    },
     {
       "slug": "saga-pattern",
       "lang": "de",

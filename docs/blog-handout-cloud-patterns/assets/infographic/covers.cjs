@@ -1,7 +1,8 @@
 // Draws the two article covers in the style of the earlier ones:
 // black ground, grey UI cards with skeleton lines, thin connectors, green checks, one gold accent, no text.
-// Usage: node covers.cjs <outDir>
+// Usage: node covers.cjs <outDir> [cover file names...]
 const { chromium } = require('playwright')
+const fs = require('fs')
 const path = require('path')
 
 const C = {
@@ -211,12 +212,183 @@ function cloud() {
   return svg(s)
 }
 
+// ---------- Listing agent: photos, floor plan and notes in; the record with sources; the broker's form in gold; exposé and XML out ----------
+function listing() {
+  const P = {
+    camera: 'M4 8h3l2-2.5h6L17 8h3v11H4ZM12 16.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z',
+    plan: 'M4 4h16v16H4ZM4 12h6M10 4v4M10 16v4M14 12h6M14 4v8',
+    doc: 'M6 3h9l4 4v14H6ZM14 3v5h5M9 12h6M9 16h6',
+  }
+  const ic = (d, x, y, size = 26, color = C.icon, w = 1.7) =>
+    `<g transform="translate(${x} ${y}) scale(${size / 24})"><path d="${d}" fill="none" stroke="${color}" stroke-width="${(w * 24) / size}" stroke-linecap="round" stroke-linejoin="round"/></g>`
+  const tileP = (d, x, y, s = 46, opts = {}) =>
+    `<rect x="${x}" y="${y}" width="${s}" height="${s}" rx="11" fill="${opts.fill || 'url(#tile)'}" stroke="${opts.stroke || '#3a3a3a'}"/>` +
+    ic(d, x + (s - 26) / 2, y + (s - 26) / 2, 26, opts.color || C.icon)
+  const flag = (cx, cy) =>
+    `<circle cx="${cx}" cy="${cy}" r="9" fill="#2e2e2e" stroke="#5a5a5a"/><path d="M${cx - 3.5} ${cy - 3.5}l7 7M${cx + 3.5} ${cy - 3.5}l-7 7" stroke="#bdbdbd" stroke-width="1.8" stroke-linecap="round"/>`
+
+  // A greyscale thumbnail of one of the sample photos (Pexels, see listing/README.md). kind: ok | flagged
+  const img = name => 'data:image/jpeg;base64,' + fs.readFileSync(path.join(__dirname, 'listing', `${name}.jpg`)).toString('base64')
+  const photo = (x, y, w, h, name, kind = 'ok') => {
+    const id = `ph${x}_${y}`
+    let s = `<clipPath id="${id}"><rect x="${x}" y="${y}" width="${w}" height="${h}" rx="6"/></clipPath>`
+    s += `<image href="${img(name)}" x="${x}" y="${y}" width="${w}" height="${h}" preserveAspectRatio="xMidYMid slice" clip-path="url(#${id})"/>`
+    s += `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="6" fill="none" stroke="#000" stroke-opacity=".5"/>`
+    if (kind !== 'ok') s += `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="6" fill="#000" opacity=".3" stroke="#5a5a5a" stroke-dasharray="3 4"/>` + flag(x + w - 4, y + 4)
+    return s
+  }
+
+  // The sample floor plan (2. OG, Musterstraße 12), in its own 900 x 620 coordinates: three bedrooms and a bath to
+  // the north, the hallway, living room and kitchen to the south, the balcony below. Doors are gaps with a swing.
+  const floorPlan = (x, y, scale) => {
+    const wall = '#d6d6d6', thin = '#8f8f8f', paper = '#151515'
+    let g = `<g transform="translate(${x} ${y}) scale(${scale})">`
+    g += `<rect x="100" y="520" width="380" height="100" fill="none" stroke="${thin}" stroke-width="5" stroke-dasharray="16 12"/>`
+    // walls; [x1,y1,x2,y2]
+    const walls = [
+      [0, 0, 900, 0], [0, 0, 0, 520], [900, 0, 900, 200], [900, 280, 900, 520], [0, 520, 900, 520],
+      [260, 0, 260, 200], [480, 0, 480, 200], [660, 0, 660, 200],
+      [0, 200, 150, 200], [210, 200, 370, 200], [430, 200, 550, 200], [610, 200, 720, 200], [780, 200, 900, 200],
+      [0, 280, 330, 280], [400, 280, 640, 280], [700, 280, 900, 280],
+      [580, 280, 580, 520],
+    ]
+    g += walls.map(([a, b, c, d]) => `<path d="M${a} ${b}L${c} ${d}" stroke="${wall}" stroke-width="16" stroke-linecap="square"/>`).join('')
+    // windows: a gap in the outer wall with a thin double line
+    const win = (a, b, c, d) => {
+      const h = b === d
+      return `<path d="M${a} ${b}L${c} ${d}" stroke="${paper}" stroke-width="12"/>` +
+        (h ? `<path d="M${a} ${b - 5}H${c}M${a} ${b + 5}H${c}"` : `<path d="M${a - 5} ${b}V${d}M${a + 5} ${b}V${d}"`) + ` stroke="${thin}" stroke-width="3"/>`
+    }
+    g += [[70, 0, 190, 0], [320, 0, 420, 0], [530, 0, 610, 0], [740, 0, 820, 0], [0, 330, 0, 470], [140, 520, 440, 520], [660, 520, 820, 520]]
+      .map(w => win(...w)).join('')
+    // door swings into the rooms off the hallway, and the entrance on the east wall
+    const door = (hx, hy, r, sweep, dx, dy) =>
+      `<path d="M${hx} ${hy}l${dx} ${dy}A${r} ${r} 0 0 ${sweep} ${hx + (dx ? 0 : r * Math.sign(dy) * 0 + r)} ${hy}" fill="none" stroke="${thin}" stroke-width="3"/>`
+    g += [[150, 200], [370, 200], [550, 200], [720, 200]].map(([dx]) => `<path d="M${dx} 200V140A60 60 0 0 1 ${dx + 60} 200" fill="none" stroke="${thin}" stroke-width="3"/>`).join('')
+    g += [[330, 280], [640, 280]].map(([dx]) => `<path d="M${dx} 280V350A70 70 0 0 0 ${dx + 70} 280" fill="none" stroke="${thin}" stroke-width="3"/>`).join('')
+    g += `<path d="M900 200H830A70 70 0 0 0 900 270" fill="none" stroke="${thin}" stroke-width="3"/>`
+    // furniture
+    const f = `fill="none" stroke="${thin}" stroke-width="3"`
+    g += `<rect x="40" y="40" width="120" height="140" rx="6" ${f}/><path d="M40 75H160" stroke="${thin}" stroke-width="3"/>` // bed
+    g += `<rect x="300" y="40" width="80" height="130" rx="6" ${f}/>` // child's bed
+    g += `<rect x="500" y="30" width="140" height="50" rx="4" ${f}/>` // desk
+    g += `<rect x="700" y="30" width="170" height="70" rx="30" ${f}/><circle cx="790" cy="160" r="20" ${f}/>` // tub, basin
+    g += `<path d="M40 470V340H90M40 470H260" ${f}/><rect x="300" y="360" width="140" height="90" rx="6" ${f}/>` // sofa, table
+    g += `<path d="M860 300V500H640" ${f}/><circle cx="840" cy="330" r="12" ${f}/><circle cx="840" cy="370" r="12" ${f}/>` // counter, hob
+    return g + '</g>'
+  }
+
+  let s = ''
+
+  // inputs: photos, floor plan, notes
+  const IX = 40, IW = 250
+  const inputs = [
+    { y: 30, h: 182 },
+    { y: 226, h: 150 },
+    { y: 390, h: 78 },
+  ]
+  const join = { x: 318, y: 248 }
+  inputs.forEach(({ y, h }) => {
+    const my = y + h / 2
+    s += `<path d="M${IX + IW} ${my}H${join.x - 16}q16 0 16 ${my < join.y ? 16 : -16}V${join.y}" fill="none" stroke="${C.line}" stroke-width="2" stroke-linecap="round"/>`
+  })
+  s += dot(join.x, join.y) + arrow(`M${join.x} ${join.y}H${352}`)
+
+  // photos card: exterior and interiors, plus the dark and the blurry photo that code flags
+  const pc = inputs[0]
+  s += card(IX, pc.y, IW, pc.h)
+  s += tileP(P.camera, IX + 16, pc.y + 14, 38) + bars(IX + 66, pc.y + 21, [96, 64], C.bar, 16, 7)
+  const shots = [['13-exterior'], ['01-living'], ['04-kitchen'], ['05-bedroom'], ['14-dark', 'flagged'], ['15-blurry', 'flagged']]
+  shots.forEach(([name, k], i) => {
+    const tw = 68, th = 50
+    s += photo(IX + 16 + (i % 3) * (tw + 9), pc.y + 66 + Math.floor(i / 3) * (th + 8), tw, th, name, k)
+  })
+
+  // floor plan card
+  const fc = inputs[1]
+  s += card(IX, fc.y, IW, fc.h)
+  s += `<rect x="${IX + 14}" y="${fc.y + 14}" width="${IW - 28}" height="${fc.h - 28}" rx="8" fill="#151515" stroke="#333"/>`
+  s += floorPlan(IX + 42, fc.y + 18, 0.185)
+
+  // notes card
+  const nc = inputs[2]
+  s += card(IX, nc.y, IW, nc.h)
+  s += iconTile('pen', IX + 16, nc.y + 16, 46)
+  s += bars(IX + 80, nc.y + 22, [138, 104], C.bar, 18, 7)
+
+  // the record: every fact with its source
+  const RX = 360, RY = 44, RW = 290, RH = 412
+  s += `<rect x="${RX + 12}" y="${RY - 12}" width="${RW}" height="${RH}" rx="18" fill="#161616" stroke="#2f2f2f"/>`
+  s += card(RX, RY, RW, RH)
+  s += bars(RX + 24, RY + 24, [150], C.bar, 0, 10) + `<rect x="${RX + 24}" y="${RY + 44}" width="96" height="8" rx="4" fill="${C.bar}"/>`
+  const rows = [
+    { d: P.doc, w: 120 },
+    { d: P.camera, w: 92 },
+    { d: P.plan, w: 108 },
+    { d: ICON.person, w: 100, broker: true },
+    { d: ICON.person, w: 84, broker: true },
+  ]
+  rows.forEach((r, i) => {
+    const y = RY + 80 + i * 64
+    s += `<rect x="${RX + 18}" y="${y}" width="${RW - 36}" height="52" rx="11" fill="#1a1a1a" stroke="#333"/>`
+    s += r.broker
+      ? tileP(r.d, RX + 26, y + 7, 38, { fill: 'url(#gold)', stroke: C.gold2, color: C.goldInk })
+      : tileP(r.d, RX + 26, y + 7, 38, { fill: '#232323' })
+    s += `<rect x="${RX + 78}" y="${y + 15}" width="${r.w}" height="8" rx="4" fill="${C.barLight}"/><rect x="${RX + 78}" y="${y + 31}" width="${r.w - 36}" height="7" rx="3.5" fill="${C.bar}"/>`
+    s += badge('check', RX + RW - 44, y + 26, 13)
+  })
+
+  // the broker's form, in gold: a conflict goes out as a question, typed answers come back into the record
+  const GX = 690, GY = 296, GW = 206, GH = 158
+  s += dot(RX + RW + 2, GY + 52, 3.5) + arrow(`M${RX + RW + 6} ${GY + 52}H${GX - 6}`, true)
+  s += arrow(`M${GX - 4} ${GY + 108}H${RX + RW + 6}`, true)
+  s += `<rect x="${GX}" y="${GY}" width="${GW}" height="${GH}" rx="16" fill="url(#gold)" filter="url(#sh)"/>`
+  s += tileP(ICON.person, GX + 18, GY + 18, 46, { fill: '#2a2414', stroke: '#2a2414', color: C.gold1 })
+  s += `<rect x="${GX + 78}" y="${GY + 26}" width="104" height="8" rx="4" fill="#3a3018"/><rect x="${GX + 78}" y="${GY + 44}" width="74" height="8" rx="4" fill="#5a4a22"/>`
+  ;[0, 1].forEach(i => {
+    const y = GY + 82 + i * 34
+    s += `<rect x="${GX + 18}" y="${y}" width="${GW - 36}" height="24" rx="7" fill="#e3c574" stroke="#7c6328" stroke-width="1.5"/>`
+    s += `<rect x="${GX + 30}" y="${y + 9}" width="${[38, 64][i]}" height="6" rx="3" fill="#5a4a22"/>`
+  })
+
+  // outputs: the exposé in two languages, the validated XML
+  const ox = 930, OX = 958, OW = 206
+  s += `<path d="M${RX + RW + 4} ${150}H${ox}" stroke="${C.line}" stroke-width="2" stroke-linecap="round"/>`
+  s += dot(ox, 150)
+  s += arrow(`M${ox} 150V${100}q0-12 12-12H${OX - 8}`)
+  s += `<path d="M${ox} 150V${336}q0 12 12 12H${OX - 8}" fill="none" stroke="${C.line}" stroke-width="2" marker-end="url(#ah)" stroke-linecap="round"/>`
+  // exposé card
+  const ey = 34, eh = 232
+  s += card(OX, ey, OW, eh)
+  s += `<rect x="${OX + 18}" y="${ey + 18}" width="52" height="24" rx="12" fill="#e6e6e6"/><rect x="${OX + 32}" y="${ey + 27}" width="24" height="6" rx="3" fill="#2a2a2a"/>`
+  s += `<rect x="${OX + 78}" y="${ey + 18}" width="52" height="24" rx="12" fill="#1a1a1a" stroke="#454545"/><rect x="${OX + 92}" y="${ey + 27}" width="24" height="6" rx="3" fill="#6a6a6a"/>`
+  s += photo(OX + 18, ey + 56, OW - 36, 82, '01-living-hero')
+  s += bars(OX + 18, ey + 156, [150, 120, 138, 96], C.bar, 17, 7)
+  // XML card
+  const xy = 296, xh = 160
+  s += card(OX, xy, OW, xh)
+  s += iconTile('code', OX + 18, xy + 18)
+  s += badge('check', OX + OW - 34, xy + 41)
+  s += bars(OX + 18, xy + 86, [128, 96], C.bar, 18, 7)
+  s += `<rect x="${OX + 18}" y="${xy + 124}" width="${OW - 36}" height="16" rx="8" fill="#101010" stroke="#2f2f2f"/><rect x="${OX + 26}" y="${xy + 129}" width="${OW - 70}" height="6" rx="3" fill="${C.green}" opacity=".85"/>`
+
+  return svg(s)
+}
+
+const COVERS = [
+  ['saga-pattern-cover.jpg', saga],
+  ['cloud-design-patterns-cover.jpg', cloud],
+  ['listing-creation-agent-cover.jpg', listing],
+]
+
 ;(async () => {
   const out = process.argv[2] || '.'
+  // Optional cover names after the output dir render only those, so the others stay byte-identical.
+  const only = process.argv.slice(3)
   // CHROME=<path to chrome.exe> when the installed Playwright has no matching browser download.
   const browser = await chromium.launch(process.env.CHROME ? { executablePath: process.env.CHROME } : {})
   const page = await browser.newPage({ viewport: { width: 1200, height: 500 }, deviceScaleFactor: 1 })
-  for (const [name, make] of [['saga-pattern-cover.jpg', saga], ['cloud-design-patterns-cover.jpg', cloud]]) {
+  for (const [name, make] of COVERS.filter(([n]) => !only.length || only.includes(n))) {
     await page.setContent(`<!doctype html><html><body style="margin:0;background:#000">${make()}</body></html>`)
     await page.screenshot({ path: path.join(out, name), type: 'jpeg', quality: 90, clip: { x: 0, y: 0, width: 1200, height: 500 } })
     console.log('Wrote ' + name)
