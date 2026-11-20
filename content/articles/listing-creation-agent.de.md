@@ -1,5 +1,5 @@
 ---
-title: "Ein Agent für Immobilieninserate auf Amazon Bedrock, der fragt, bevor er schreibt"
+title: "Von Maklernotizen zum Immobilienexposé mit Amazon Bedrock"
 description: "Ein TypeScript-Agent, der aus Besichtigungsfotos, einem Grundriss und knappen Maklernotizen ein deutsches und ein englisches Exposé und eine OpenImmo-XML-Datei macht. Widersprüche und Lücken werden zu Fragen an den Makler, und Code prüft jede Zahl."
 tags: [ki, typescript, aws, agents]
 ---
