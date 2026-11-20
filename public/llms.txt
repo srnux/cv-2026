@@ -18,7 +18,7 @@ Currently open to permanent, fully remote roles employed in Germany, at Staff, P
 
 ## Writing
 - [All articles](https://luka-engels.de/writing/): Index of every article, newest first.
-- [A Listing Agent on Amazon Bedrock That Asks Before It Writes](https://luka-engels.de/writing/listing-creation-agent/): A TypeScript agent that turns viewing photos, a floor plan and rough broker notes into a German and English exposé and OpenImmo XML. Conflicts and gaps become questions to the broker, and code checks every number.
+- [From Broker Notes to Property Listings with Amazon Bedrock](https://luka-engels.de/writing/listing-creation-agent/): A TypeScript agent that turns viewing photos, a floor plan and rough broker notes into a German and English exposé and OpenImmo XML. Conflicts and gaps become questions to the broker, and code checks every number.
 - [The Saga pattern in practice: compensations, pivots and the hard parts](https://luka-engels.de/writing/saga-pattern/): How the Saga pattern replaces one database transaction with a chain of local ones, why the pivot step matters most, and what goes wrong in production, with an AWS (Amazon Web Services) Step Functions example.
 - [20 cloud design patterns, grouped by the problem they solve](https://luka-engels.de/writing/cloud-design-patterns/): Twenty cloud design patterns sorted into six groups by the problem they solve, with when to use each one, where it shows up in real cloud services, and how they combine.
 - [A Property Inquiry Agent with React, MCP, and Hybrid RAG](https://luka-engels.de/writing/proptech-inquiry-agent/): A TypeScript agent for property inquiries: answers backed by records, checked before delivery, with human follow-up when needed. Built with React, MCP, and hybrid RAG.

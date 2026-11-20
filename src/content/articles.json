@@ -3,7 +3,7 @@
     {
       "slug": "listing-creation-agent",
       "lang": "en",
-      "title": "A Listing Agent on Amazon Bedrock That Asks Before It Writes",
+      "title": "From Broker Notes to Property Listings with Amazon Bedrock",
       "description": "A TypeScript agent that turns viewing photos, a floor plan and rough broker notes into a German and English exposé and OpenImmo XML. Conflicts and gaps become questions to the broker, and code checks every number.",
       "date": "2026-11-19",
       "displayDate": "19 November 2026",
@@ -98,7 +98,7 @@
     {
       "slug": "listing-creation-agent",
       "lang": "de",
-      "title": "Ein Agent für Immobilieninserate auf Amazon Bedrock, der fragt, bevor er schreibt",
+      "title": "Von Maklernotizen zum Immobilienexposé mit Amazon Bedrock",
       "description": "Ein TypeScript-Agent, der aus Besichtigungsfotos, einem Grundriss und knappen Maklernotizen ein deutsches und ein englisches Exposé und eine OpenImmo-XML-Datei macht. Widersprüche und Lücken werden zu Fragen an den Makler, und Code prüft jede Zahl.",
       "date": "2026-11-19",
       "displayDate": "19. November 2026",

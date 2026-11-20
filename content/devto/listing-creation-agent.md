@@ -1,5 +1,5 @@
 ---
-title: "A Listing Agent on Amazon Bedrock That Asks Before It Writes"
+title: "From Broker Notes to Property Listings with Amazon Bedrock"
 published: false
 description: "A TypeScript agent that turns viewing photos, a floor plan and rough broker notes into a German and English exposé and OpenImmo XML. Conflicts and gaps become questions to the broker, and code checks every number."
 tags: ai, typescript, aws, agents
