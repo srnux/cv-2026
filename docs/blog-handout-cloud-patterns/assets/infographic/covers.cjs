@@ -142,73 +142,133 @@ function saga() {
   return svg(s)
 }
 
-// ---------- Cloud patterns: requests in, six pattern groups in the middle, a healthy system out ----------
+// ---------- Cloud patterns: the six groups as six cards, each showing what its patterns do; connectors are the typical combinations ----------
 function cloud() {
-  let s = ''
-  // inputs
-  const ins = [
-    { icon: 'person', y: 70 },
-    { icon: 'phone', y: 205 },
-    { icon: 'code', y: 340 },
-  ]
-  const IX = 40, IW = 200, IH = 92
-  const join = { x: 285, y: 250 }
-  ins.forEach(({ y }) => {
-    const my = y + IH / 2
-    s += `<path d="M${IX + IW} ${my}H${join.x - 20}q20 0 20 ${my < join.y ? 20 : my > join.y ? -20 : 0}V${join.y}" fill="none" stroke="${C.line}" stroke-width="2" stroke-linecap="round"/>`
-  })
-  s += dot(join.x, join.y) + arrow(`M${join.x} ${join.y}H${318}`)
-  ins.forEach(({ icon: ic, y }) => {
-    s += card(IX, y, IW, IH)
-    s += iconTile(ic, IX + 18, y + 23)
-    s += bars(IX + 80, y + 30, [92, 64])
-  })
-  // central panel with six group tiles
-  const PX = 325, PY = 40, PW = 520, PH = 420
-  s += `<rect x="${PX + 14}" y="${PY - 12}" width="${PW}" height="${PH}" rx="18" fill="#161616" stroke="#2f2f2f"/>`
-  s += card(PX, PY, PW, PH)
-  s += bars(PX + 26, PY + 26, [170], C.bar, 0, 10) + `<rect x="${PX + 26}" y="${PY + 46}" width="110" height="8" rx="4" fill="${C.bar}"/>`
-  s += `<circle cx="${PX + PW - 66}" cy="${PY + 40}" r="5" fill="#4a4a4a"/><circle cx="${PX + PW - 48}" cy="${PY + 40}" r="5" fill="#4a4a4a"/><circle cx="${PX + PW - 30}" cy="${PY + 40}" r="5" fill="#4a4a4a"/>`
-  const groups = ['shield', 'queue', 'db', 'link', 'gate', 'sliders']
-  const TW = 150, TH = 152, TG = 17, TX = PX + 26, TY = PY + 82
-  groups.forEach((g, i) => {
-    const x = TX + (i % 3) * (TW + TG), y = TY + Math.floor(i / 3) * (TH + TG)
-    const isGold = g === 'link'
-    if (isGold) {
-      s += `<rect x="${x}" y="${y}" width="${TW}" height="${TH}" rx="13" fill="url(#gold)"/>`
-      s += iconTile(g, x + 16, y + 16, 46, { fill: '#2a2414', stroke: '#2a2414', color: C.gold1 })
-      s += `<rect x="${x + 16}" y="${y + 82}" width="100" height="8" rx="4" fill="#3a3018"/><rect x="${x + 16}" y="${y + 100}" width="74" height="8" rx="4" fill="#5a4a22"/><rect x="${x + 16}" y="${y + 118}" width="88" height="8" rx="4" fill="#5a4a22"/>`
-    } else {
-      s += `<rect x="${x}" y="${y}" width="${TW}" height="${TH}" rx="13" fill="url(#tile)" stroke="#353535"/>`
-      s += iconTile(g, x + 16, y + 16, 46, { fill: '#232323' })
-      s += bars(x + 16, y + 82, [100, 74, 88])
+  const X = [40, 427, 814], Y = [30, 270], W = 346, H = 200
+  const ink = C.goldInk, goldLine = '#7c6328', goldBar = '#5a4a22'
+  const mini = (name, x, y, s, isz = 16, o = {}) =>
+    `<rect x="${x}" y="${y}" width="${s}" height="${s}" rx="${s / 4}" fill="${o.fill || '#232323'}" stroke="${o.stroke || '#3a3a3a'}"/>` +
+    (name ? icon(name, x + (s - isz) / 2, y + (s - isz) / 2, isz, o.color || C.icon, 1.7) : '')
+  const ok = (cx, cy, r = 9) => `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${C.green}"/>` + icon('check', cx - r * 0.85, cy - r * 0.85, r * 1.7, '#fff', 2.2)
+  const fail = (cx, cy, r = 9) =>
+    `<circle cx="${cx}" cy="${cy}" r="${r}" fill="#2e2e2e" stroke="#5a5a5a"/><path d="M${cx - r * 0.38} ${cy - r * 0.38}l${r * 0.76} ${r * 0.76}M${cx + r * 0.38} ${cy - r * 0.38}l${-r * 0.76} ${r * 0.76}" stroke="#bdbdbd" stroke-width="1.8" stroke-linecap="round"/>`
+  const curve = (x1, y1, x2, y2, o = {}) =>
+    `<path d="M${x1} ${y1}C${(x1 + x2) / 2} ${y1} ${(x1 + x2) / 2} ${y2} ${x2} ${y2}" fill="none" stroke="${C.line}" stroke-width="2" stroke-linecap="round" ${o.arrow === false ? '' : 'marker-end="url(#ah)"'} ${o.dash ? 'stroke-dasharray="5 6"' : ''}/>`
+  const head = (x, y, name, widths, gold = false) =>
+    gold
+      ? mini(name, x + 18, y + 18, 42, 22, { fill: '#2a2414', stroke: '#2a2414', color: C.gold1 }) +
+        `<rect x="${x + 74}" y="${y + 26}" width="${widths[0]}" height="8" rx="4" fill="#3a3018"/><rect x="${x + 74}" y="${y + 44}" width="${widths[1]}" height="8" rx="4" fill="${goldBar}"/>`
+      : mini(name, x + 18, y + 18, 42, 22, { fill: 'url(#tile)' }) + bars(x + 74, y + 26, widths)
+
+  let s = `<defs><marker id="ahInk" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse"><path d="M1 1l8 4-8 4" fill="none" stroke="${ink}" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>`
+
+  // typical combinations: E -> F, B -> C, C -> D
+  s += dot(X[0] + W / 2, Y[0] + H + 5, 3.5) + arrow(`M${X[0] + W / 2} ${Y[0] + H + 10}V${Y[1] - 7}`)
+  s += dot(X[1] + W + 5, Y[0] + H / 2, 3.5) + arrow(`M${X[1] + W + 10} ${Y[0] + H / 2}H${X[2] - 7}`)
+  s += dot(X[2] + W / 2, Y[0] + H + 5, 3.5) + arrow(`M${X[2] + W / 2} ${Y[0] + H + 10}V${Y[1] - 7}`)
+
+  // E, gateway and edge: three clients, one entry point, three services
+  {
+    const x = X[0], y = Y[0]
+    s += card(x, y, W, H) + head(x, y, 'gate', [112, 72])
+    const cy = [y + 96, y + 136, y + 176], g = { x: x + 150, y: y + 136 }
+    ;['person', 'phone', 'code'].forEach((ic, i) => {
+      s += curve(x + 54, cy[i], g.x - 6, g.y, { arrow: false })
+      s += curve(g.x + 46, g.y, x + 236, cy[i])
+    })
+    ;['person', 'phone', 'code'].forEach((ic, i) => {
+      s += mini(ic, x + 22, cy[i] - 16, 32, 18)
+      s += `<rect x="${x + 242}" y="${cy[i] - 13}" width="84" height="26" rx="8" fill="#1a1a1a" stroke="#353535"/><rect x="${x + 254}" y="${cy[i] - 3}" width="${[52, 40, 58][i]}" height="6" rx="3" fill="${C.bar}"/>`
+    })
+    s += `<rect x="${g.x - 4}" y="${y + 92}" width="50" height="88" rx="12" fill="#262626" stroke="#4a4a4a"/>` + icon('shield', g.x + 9, g.y - 12, 24)
+  }
+
+  // B, messaging and load: a burst, a queue that buffers it, workers that take one message each
+  {
+    const x = X[1], y = Y[0], cy = y + 136
+    s += card(x, y, W, H) + head(x, y, 'queue', [104, 66])
+    s += `<path d="M${x + 22} ${cy}h10l5-26 6 50 6-42 6 32 5-14h8" fill="none" stroke="${C.icon}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>`
+    s += arrow(`M${x + 72} ${cy}H${x + 92}`)
+    s += `<rect x="${x + 98}" y="${cy - 20}" width="124" height="40" rx="10" fill="#141414" stroke="#3a3a3a"/>`
+    for (let i = 0; i < 5; i++) s += `<rect x="${x + 106 + i * 22.5}" y="${cy - 12}" width="17" height="24" rx="4" fill="${i < 2 ? '#262626' : i === 4 ? C.barLight : C.bar}"/>`
+    s += dot(x + 226, cy, 3.5)
+    ;[cy - 40, cy, cy + 40].forEach(wy => {
+      s += curve(x + 230, cy, x + 262, wy)
+      s += `<rect x="${x + 268}" y="${wy - 15}" width="58" height="30" rx="8" fill="#1a1a1a" stroke="#353535"/>` + ok(x + 284, wy, 8) + `<rect x="${x + 298}" y="${wy - 3}" width="18" height="6" rx="3" fill="${C.bar}"/>`
+    })
+  }
+
+  // C, data: cache in front, shards behind it, an append-only log
+  {
+    const x = X[2], y = Y[0]
+    s += card(x, y, W, H) + head(x, y, 'db', [96, 76])
+    s += curve(x + 56, y + 130, x + 100, y + 103)
+    s += curve(x + 56, y + 146, x + 100, y + 163, { dash: true })
+    s += mini('code', x + 22, y + 121, 34, 18)
+    s += `<rect x="${x + 106}" y="${y + 84}" width="136" height="38" rx="10" fill="#262626" stroke="#4a4a4a"/>`
+    s += icon('pulse', x + 116, y + 93, 20) + `<rect x="${x + 146}" y="${y + 100}" width="54" height="6" rx="3" fill="${C.barLight}"/>` + ok(x + 222, y + 103, 9)
+    s += `<rect x="${x + 106}" y="${y + 140}" width="136" height="46" rx="10" fill="none" stroke="#3a3a3a" stroke-dasharray="4 5"/>`
+    ;[0, 1, 2].forEach(i => { s += mini('db', x + 114 + i * 42, y + 146, 34, 20) })
+    for (let i = 0; i < 4; i++) s += `<rect x="${x + 262}" y="${y + 86 + i * 20}" width="64" height="14" rx="5" fill="#1a1a1a" stroke="#3a3a3a"/><rect x="${x + 270}" y="${y + 91 + i * 20}" width="${[34, 26, 40, 30][i]}" height="4" rx="2" fill="${C.bar}"/>`
+    s += `<rect x="${x + 262}" y="${y + 166}" width="64" height="14" rx="5" fill="none" stroke="#5a5a5a" stroke-dasharray="3 4"/><path d="M${x + 294} ${y + 169}v8M${x + 290} ${y + 173}h8" stroke="${C.icon}" stroke-width="1.6" stroke-linecap="round"/>`
+  }
+
+  // F, operations and evolution: a service with its sidecar, legacy blocks replaced one by one
+  {
+    const x = X[0], y = Y[1]
+    s += card(x, y, W, H) + head(x, y, 'sliders', [100, 70])
+    s += `<rect x="${x + 22}" y="${y + 84}" width="84" height="96" rx="10" fill="#1a1a1a" stroke="#353535"/>` + bars(x + 34, y + 100, [56, 40, 48], C.bar, 16, 6)
+    s += `<path d="M${x + 106} ${y + 132}H${x + 116}" stroke="${C.line}" stroke-width="2"/>`
+    s += `<rect x="${x + 116}" y="${y + 104}" width="36" height="56" rx="8" fill="#262626" stroke="#4a4a4a"/>` + icon('sliders', x + 124, y + 122, 20)
+    for (let c = 0; c < 3; c++) for (let r = 0; r < 2; r++) {
+      const bx = x + 182 + c * 48, by = y + 84 + r * 46
+      s += c === 0 || (c === 1 && r === 1)
+        ? `<rect x="${bx}" y="${by}" width="40" height="40" rx="9" fill="none" stroke="#4a4a4a" stroke-dasharray="4 4"/>`
+        : `<rect x="${bx}" y="${by}" width="40" height="40" rx="9" fill="#262626" stroke="#4a4a4a"/><rect x="${bx + 10}" y="${by + 17}" width="20" height="6" rx="3" fill="${C.barLight}"/>`
     }
-  })
-  // outputs
-  const ox = 870, OX = 905, OW = 255
-  s += `<path d="M${PX + PW + 4} ${join.y}H${ox}" stroke="${C.line}" stroke-width="2" stroke-linecap="round"/>`
-  s += dot(ox, join.y)
-  s += `<path d="M${ox} ${join.y}V${150}q0-20 20-20H${OX - 8}" fill="none" stroke="${C.line}" stroke-width="2" marker-end="url(#ah)" stroke-linecap="round"/>`
-  s += `<path d="M${ox} ${join.y}V${350}q0 20 20 20H${OX - 8}" fill="none" stroke="${C.line}" stroke-width="2" marker-end="url(#ah)" stroke-linecap="round"/>`
-  // output 1: health chart card
-  const y1 = 62, h1 = 150
-  s += card(OX, y1, OW, h1)
-  s += iconTile('pulse', OX + 18, y1 + 18)
-  s += bars(OX + 80, y1 + 26, [96, 70])
-  const pts = [0, 14, 8, 22, 18, 30, 26, 40, 36, 44, 50]
-  const sx = OX + 20, sy = y1 + h1 - 22, step = (OW - 40) / (pts.length - 1)
-  const d = pts.map((p, i) => `${i ? 'L' : 'M'}${(sx + i * step).toFixed(1)} ${(sy - p).toFixed(1)}`).join('')
-  s += `<path d="${d}L${sx + (pts.length - 1) * step} ${sy + 6}H${sx}Z" fill="#ffffff" opacity=".05"/>`
-  s += `<path d="${d}" fill="none" stroke="#bdbdbd" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"/>`
-  s += `<circle cx="${sx + (pts.length - 1) * step}" cy="${sy - 50}" r="4.5" fill="${C.green}"/>`
-  // output 2: checklist card
-  const y2 = 290, h2 = 160
-  s += card(OX, y2, OW, h2)
-  ;[0, 1, 2].forEach(i => {
-    const yy = y2 + 32 + i * 44
-    s += badge('check', OX + 34, yy, 13)
-    s += `<rect x="${OX + 60}" y="${yy - 4}" width="${[132, 104, 150][i]}" height="8" rx="4" fill="${i ? C.bar : C.barLight}"/>`
-  })
+    s += arrow(`M${x + 182} ${y + 186}H${x + 324}`)
+  }
+
+  // A, resilience: retries with growing waits end in success; a bulkhead keeps one failure in its compartment
+  {
+    const x = X[1], y = Y[1], ly = y + 104
+    s += card(x, y, W, H) + head(x, y, 'shield', [108, 68])
+    s += `<path d="M${x + 54} ${ly}H${x + 290}" stroke="${C.line}" stroke-width="2" stroke-dasharray="2 6" stroke-linecap="round"/>`
+    s += mini('code', x + 22, ly - 16, 32, 18)
+    s += fail(x + 82, ly) + fail(x + 114, ly) + fail(x + 168, ly) + ok(x + 252, ly, 10)
+    s += mini('db', x + 292, ly - 16, 32, 18)
+    const bx = x + 22, by = y + 140, bw = 304, bh = 42
+    s += `<rect x="${bx}" y="${by}" width="${bw}" height="${bh}" rx="10" fill="#141414" stroke="#3a3a3a"/>`
+    for (let i = 1; i < 4; i++) s += `<path d="M${bx + (i * bw) / 4} ${by}V${by + bh}" stroke="#3a3a3a" stroke-width="2"/>`
+    for (let i = 0; i < 4; i++) {
+      const cx = bx + (i * bw) / 4 + bw / 8
+      if (i === 2) {
+        s += `<rect x="${bx + (i * bw) / 4 + 3}" y="${by + 3}" width="${bw / 4 - 6}" height="${bh - 6}" rx="7" fill="#000" opacity=".35"/>` + fail(cx, by + bh / 2)
+        continue
+      }
+      ;[-18, 0, 18].forEach(d => { s += `<circle cx="${cx + d}" cy="${by + bh / 2}" r="5" fill="${d ? C.bar : C.barLight}"/>` })
+    }
+  }
+
+  // D, distributed transactions (gold): a chain of local steps, the third fails, compensations run back
+  {
+    const x = X[2], y = Y[1]
+    s += `<rect x="${x}" y="${y}" width="${W}" height="${H}" rx="16" fill="url(#gold)" filter="url(#sh)"/>` + head(x, y, 'link', [104, 72], true)
+    const nx = [x + 22, x + 102, x + 182, x + 262], ny = y + 82, ns = 44
+    nx.forEach((n, i) => {
+      if (i) s += `<path d="M${nx[i - 1] + ns + 4} ${ny + ns / 2}H${n - 6}" stroke="${ink}" stroke-width="2" stroke-linecap="round" ${i === 3 ? 'stroke-dasharray="3 5"' : 'marker-end="url(#ahInk)"'}/>`
+      if (i === 3) { s += `<rect x="${n}" y="${ny}" width="${ns}" height="${ns}" rx="10" fill="none" stroke="${goldLine}" stroke-width="1.6" stroke-dasharray="4 4"/>`; return }
+      s += `<rect x="${n}" y="${ny}" width="${ns}" height="${ns}" rx="10" fill="#e3c574" stroke="${goldLine}" stroke-width="1.5"/>`
+      s += i < 2 ? icon('check', n + 8, ny + 8, 28, ink, 2.4) : `<path d="M${n + 15} ${ny + 15}l14 14M${n + 29} ${ny + 15}l-14 14" stroke="${ink}" stroke-width="2.4" stroke-linecap="round"/>`
+    })
+    const ly = y + 172, c = i => nx[i] + ns / 2
+    s += `<path d="M${c(2)} ${ny + ns + 6}V${ly - 10}q0 10-10 10H${c(0) + 10}q-10 0-10-10V${ny + ns + 10}" fill="none" stroke="${ink}" stroke-width="2" stroke-dasharray="5 6" stroke-linecap="round" marker-end="url(#ahInk)"/>`
+    s += `<path d="M${c(1)} ${ly}V${ny + ns + 10}" fill="none" stroke="${ink}" stroke-width="2" stroke-dasharray="5 6" stroke-linecap="round" marker-end="url(#ahInk)"/>`
+    ;[0, 1].forEach(i => {
+      s += `<rect x="${c(i) + 22}" y="${ly - 13}" width="26" height="26" rx="7" fill="#2a2414"/>` + icon('undo', c(i) + 26, ly - 9, 18, C.gold1, 2)
+    })
+  }
+
   return svg(s)
 }
 
