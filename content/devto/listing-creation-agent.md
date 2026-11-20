@@ -11,7 +11,7 @@ A broker comes back from a viewing with sixteen photos, a floor plan and three l
 
 > “3 rooms, 2nd floor, new kitchen 2023, balcony south, €1,450 rent excluding utilities, service charges €220. Musterstraße 12, 20255 Hamburg-Eimsbüttel. Quiet side street, 5 min to Osterstraße underground station, park around the corner. Parquet, bathtub in the bathroom. Available from 1.2.2027.”
 
-Turning that into a portal listing is mostly writing, and a language model writes well. The trouble is what the notes leave out. There is no living area, and none of the energy certificate details that German law requires in property ads. The floor plan shows four rooms, not three. Three of the photos are too dark, too blurry or a near copy of another one.
+Turning that into a portal listing is mostly writing, and a language model writes well. The trouble is what the notes leave out. There is no living area, and none of the energy certificate details that German law requires in a property ad once a certificate exists. The floor plan shows four rooms, not three. Three of the photos are too dark, too blurry or a near copy of another one.
 
 A model asked to “write the listing” will fill those gaps with something plausible. A plausible energy value in a published ad is worse than none.
 
@@ -130,7 +130,7 @@ The conflict is settled: compare_sources ignores fields the broker answered
 
 The model never turns a free-text answer into a fact, because there is no free text. Type “ca. 120” (about 120) into the energy value and the form rejects it before the agent sees anything.
 
-The energy certificate is the other half of the demo. GEG §87 (Gebäudeenergiegesetz, the German Buildings Energy Act) requires its key data in property ads, and the notes have none of it. The prompt asks for all six fields in one question, so the broker fills in one form instead of answering six interruptions. `ask_broker` is the one tool without a timeout, because it waits for a person.
+The energy certificate is the other half of the demo. §87 GModG (Gebäudemodernisierungsgesetz, the German act on energy in buildings, previously the Gebäudeenergiegesetz) requires five of its details in a property ad whenever a certificate exists: the certificate type, the energy value, the main energy carrier and, for residential buildings, the year of construction and the efficiency class. The demo also requires the expiry date. That is its own rule, not the law's, so that no ad goes out on a certificate about to lapse. The notes have none of the six. The prompt asks for all six fields in one question, so the broker fills in one form instead of answering six interruptions. `ask_broker` is the one tool without a timeout, because it waits for a person.
 
 ## Every number in the exposé is checked
 
@@ -243,6 +243,6 @@ From the terminal, `pnpm sample` runs the same flow and asks you the questions, 
 
 ## What remains
 
-The useful lesson matches the inquiry agent's: a prompt can describe a rule, but only code can hold it. The model chose a sensible order and wrote good German. The parts that had to be right, no invented number, no export without the energy certificate, no guessed room count, are the parts it had no way around.
+The useful lesson matches the inquiry agent's: a prompt can describe a rule, but only code can hold it. The model chose a sensible order and wrote good German. The parts that had to be right, no number that is not in the record, no export without the energy certificate, no guessed room count, are the parts the code enforces.
 
 The gaps are the ones this article names. The number check does not see claims, so a feature in the notes that the photos contradict still reaches the exposé. Uploads other than the sample are best effort, and the photo thresholds are tuned on that sample. Voice notes, portal upload and an MCP (Model Context Protocol) server are out of scope so far. And there is no evaluation suite yet, so there is no measured accuracy to report, only a workflow that has been seen to work.

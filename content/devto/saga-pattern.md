@@ -115,7 +115,7 @@ Create the tenant, provision a database or schema, create the admin user in the 
 
 ### 7. Agentic workflows
 
-An AI agent run that creates side effects across tools is a Saga, whether it was designed as one or not. For example: create a branch, generate code, open a pull request, link the ticket, notify the team channel. If the review agent rejects the change, the compensations are closing the pull request, deleting the branch and reverting the ticket status.
+An AI agent run that creates side effects across tools has the shape of a Saga, whether it was designed as one or not: several local steps and no transaction spanning them. What it lacks, unless someone adds them, are the compensations. For example: create a branch, generate code, open a pull request, link the ticket, notify the team channel. If the review agent rejects the change, the compensations are closing the pull request, deleting the branch and reverting the ticket status.
 
 Treating agent tool calls as Saga steps with explicit compensations means a failed agent run leaves a clean state instead of orphaned branches and half-updated tickets. Orchestration fits best here, because the agent harness already acts as the orchestrator.
 
@@ -183,7 +183,7 @@ The Saga sits in the middle of several patterns from the [overview of 20 cloud d
 - **[Retry (A1)](https://luka-engels.de/writing/cloud-design-patterns/#a1-retry) and [Circuit Breaker (A2)](https://luka-engels.de/writing/cloud-design-patterns/#a2-circuit-breaker):** used inside each step, before giving up and compensating.
 - **[Publisher-Subscriber (B3)](https://luka-engels.de/writing/cloud-design-patterns/#b3-publisher-subscriber) and [queues (B1)](https://luka-engels.de/writing/cloud-design-patterns/#b1-queue-based-load-leveling):** the transport for choreographed Sagas and for orchestrator commands.
 - **[Event Sourcing (C3)](https://luka-engels.de/writing/cloud-design-patterns/#c3-event-sourcing):** makes Saga state and compensations natural, because a compensation means appending a reversing event.
-- **[Sharding (C4)](https://luka-engels.de/writing/cloud-design-patterns/#c4-sharding) and a database per service:** the reason Sagas are needed in the first place.
+- **[Sharding (C4)](https://luka-engels.de/writing/cloud-design-patterns/#c4-sharding) and a database per service:** the reason Sagas are needed in the first place, once no single transaction spans the data.
 - **Transactional Outbox:** not one of the 20, but the pattern that makes Sagas reliable in practice.
 
 ## Further reading
