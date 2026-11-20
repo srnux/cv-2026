@@ -306,7 +306,7 @@ export const de: Messages = {
 
   writing: {
     heading: 'Artikel',
-    intro: 'Über Technologie, Arbeit und die Ideen, die beide prägen.',
+    intro: 'Praxisnotizen zu nachvollziehbaren KI-Workflows und zu Cloud-Systemen, die sich von Fehlern erholen.',
     englishOnly: 'Artikel auf Englisch',
   },
 
