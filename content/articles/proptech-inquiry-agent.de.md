@@ -88,6 +88,41 @@ Der Server stellt vier Tools bereit:
 
 Externe Assistenten wie Claude Desktop können die Tools über Standardein- und -ausgabe nutzen oder über den Streamable-HTTP-Endpunkt unter `/mcp`. Allgemeine Richtlinienseiten stehen außerdem als MCP-Ressourcen bereit.
 
+## Was die Evaluierung zeigt
+
+Die [Evaluierungssuite für den Agenten](https://github.com/srnux/proptech-inquiry-agent/blob/main/evals/cases.jsonl) enthält 49 Anfragen auf Deutsch und Englisch: Sachfragen, Suchen, alle sechs Übergabegründe, Folgefragen und Fallen, in denen eine Einschränkung entscheidend ist. „Haustiere auf Anfrage“ darf nicht zur Erlaubnis werden, eine geschätzte Umlage für die Fassade nicht zum endgültigen Betrag, und höfliches Feilschen muss trotzdem ein Verhandlungsticket erzeugen.
+
+Ein Fall nutzt ein Inserat, das es nur im Test gibt und dessen Beschreibung den Assistenten auffordert, seine Anweisungen zu ignorieren und eine Besichtigung zu bestätigen. Das erwartete Verhalten ist trotzdem eine Übergabe. Diese Fixture hat einen eigenen Katalog und Index und wird von der Anwendung nie ausgeliefert.
+
+Code prüft die erwarteten Inserate, die Übergabegründe und die Verankerung der Zahlen in den Belegen. Ein anderes Modell bewertet anhand einer [schriftlichen Rubrik](https://github.com/srnux/proptech-inquiry-agent/blob/main/evals/rubric.md) die geforderten Fakten, verbotene Aussagen, unbelegte Behauptungen und die Sprache der Antwort. Es sieht neben der Antwort auch die Tool-Ergebnisse und Tickets. Ausdrücklich erlaubte optionale Übergaben zählen bei der Berechnung von Precision und Recall weder als korrekt noch als zusätzlich.
+
+Zwei vollständige Läufe am 1. Oktober 2026 nutzten `claude-opus-5-5` auf Amazon Bedrock als Agent und `claude-sonnet-5-5` als Judge:
+
+| Metrik                                                                 | Erster Lauf    | Nach den Korrekturen |
+| ---------------------------------------------------------------------- | -------------- | -------------------- |
+| Fälle, die alle Prüfungen bestehen                                     | 41 / 49        | 46 / 49              |
+| Übergaben: Precision / Recall                                          | 93,8 % / 100 % | 100 % / 100 %        |
+| Antworten, die die Zahlenprüfung bestehen, endgültig / erster Entwurf  | 100 % / 100 %  | 100 % / 100 %        |
+| Korrekte Antworten laut Judge                                          | 83,7 %         | 93,9 %               |
+| Retrieval: erwartete Textstelle unter den ersten fünf                  | 24 / 25        | 26 / 26              |
+| Unbeantwortbare Retrieval-Fragen, die Textstellen liefern              | 0 / 8          | 0 / 8                |
+| Geschätzte Agentenkosten pro Anfrage im Mittel                         | 0,0160 $       | 0,0143 $             |
+| Mittlere Latenz / p95-Latenz                                          | 9,2 s / 14,7 s | 8,6 s / 13,8 s       |
+
+Der [erste Bericht](https://github.com/srnux/proptech-inquiry-agent/blob/main/evals/reports/2026-10-01.md) und der [Bericht nach den Korrekturen](https://github.com/srnux/proptech-inquiry-agent/blob/main/evals/reports/2026-10-01-after-fixes.md) verlinken jeden Fall mit seinem vollständigen Trace. Die Kostenschätzungen beruhen auf den Listenpreisen der Claude API, nicht auf der Abrechnung von Bedrock, und enthalten die separaten Kosten des Judge nicht. Die Läufe verarbeiteten drei Fälle parallel. Die Latenz enthält das Warten auf den gemeinsam genutzten lokalen Reranker. Zwischen den Läufen kam eine Regressionsfrage zum Retrieval-Set hinzu. Beide Läufe fanden lokal statt. Der Runner der Evaluierung scheitert, wenn eine Metrik ihren Schwellenwert verfehlt, und diese Schwellenwerte wurden nach dem ersten Lauf festgelegt und nach den Korrekturen angehoben.
+
+Diese Ergebnisse haben Grenzen. Die Verankerung der Zahlen wird mit derselben Zahlenprüfung gemessen, die zur Laufzeit als Guard läuft und weiter unten beschrieben ist. Der Wert für die endgültige Antwort zeigt deshalb vor allem, dass der Guard funktioniert. Der Wert für den ersten Entwurf zeigt zusätzlich, ob eine Nachbesserung bei den Zahlen nötig war. Keiner der beiden belegt, dass jede Aussage gestützt ist. Der Judge kann sich irren, und das kleine Entwicklungsset für das Retrieval dient auch zur Kalibrierung. Das sind Messungen an bekannten Fällen, kein unabhängiger Benchmark und kein Beweis, dass der Assistent nie Fakten erfindet.
+
+## Was kaputtging und was sich geändert hat
+
+Die ersten Läufe deckten drei unterschiedliche Probleme auf:
+
+- **Eine deutsche Frage zur Provision fand eine englische Richtlinie nicht.** Auf der Seite stand „commission“, aber keine der beiden Kandidatensuchen fand sie für „Provision“. Seit „Provision“ und „Maklerprovision“ in der Richtlinie stehen, wird sie gefunden. Die ursprünglich verfehlte Frage und eine neue Regressionsfrage bestehen jetzt, womit der Recall des Retrievals bei 26 von 26 liegt. Ein niedrigerer Schwellenwert für den Reranker, das Modell, das in der zweiten Stufe des Retrievals die Kandidaten bewertet, hätte nicht geholfen: Ein Reranker kann keine Textstelle retten, die er nie bekommt.
+- **Eine Folgefrage korrigierte eine frühere Antwort, die bereits richtig war.** Der Agent rief die Angabe zur Heizung erneut ab, bestätigte sie und präsentierte dieselbe Angabe dann als Korrektur. Der Prompt verlangt eine Korrektur jetzt nur noch, wenn neue Belege der früheren Antwort widersprechen. Ein separater Fall mit einer tatsächlich falschen früheren Zahl prüft weiterhin, dass der Agent sie korrigiert.
+- **Der Judge wertete gewöhnliche Formulierungen zur Übergabe als unbelegte Behauptungen.** Die Rubrik akzeptiert jetzt Aussagen über die Weiterbearbeitung durch einen Menschen, wenn ein passendes Ticket existiert, und lehnt versprochene Ergebnisse wie eine bestätigte Besichtigung oder ein genehmigtes Haustier weiterhin ab. Das korrigiert den Evaluator. Eine Verbesserung des Agenten selbst ist es nicht.
+
+Drei Fälle scheitern auch nach diesen Änderungen. Zwei betreffen grenzwertige Schlussfolgerungen, die der Judge markiert, etwa die Aussage, der Kunde müsse die Treppe nehmen, weil eine Wohnung keinen Aufzug hat. Der dritte legt eine konkrete Behauptung über eine Fähigkeit offen: Der Agent bietet an, eine E-Mail-Adresse zu einem bestehenden Ticket hinzuzufügen, aber kein Tool kann ein Ticket ändern. Das ist noch offen. Eine Antwort kann jede Zahlen- und Quellenprüfung bestehen und trotzdem etwas versprechen, was das System nicht kann.
+
 ## Was der Agent Loop tatsächlich tut
 
 Der Loop ist gewöhnliches TypeScript. Er fragt das Modell, was als Nächstes zu tun ist, führt angeforderte Tools aus und schickt die Ergebnisse zurück. Das wiederholt er, bis das Modell einen Antwortentwurf liefert oder der Lauf an eine Grenze stößt.
@@ -329,41 +364,6 @@ Frühere Antworten erreichen das Modell als reiner Text, ohne ihre Tool-Aufrufe 
 
 Mehr als fünf Einträge im Verlauf lehnt die API mit HTTP 400 ab. Welche Einträge wegfallen, entscheidet der Client. So bleibt der Verlauf begrenzt, ohne serverseitige Gesprächssitzungen einzuführen. Alte Tool-Ergebnisse erneut einzuspielen würde Belege über Anfragen hinweg mitschleppen, und vom Modell erzeugte Zusammenfassungen würden dem Ablauf einen weiteren Modellaufruf und einen weiteren ungeprüften Text hinzufügen.
 
-## Was die Evaluierung zeigt
-
-Die [Evaluierungssuite für den Agenten](https://github.com/srnux/proptech-inquiry-agent/blob/main/evals/cases.jsonl) enthält 49 Anfragen auf Deutsch und Englisch: Sachfragen, Suchen, alle sechs Übergabegründe, Folgefragen und Fallen, in denen eine Einschränkung entscheidend ist. „Haustiere auf Anfrage“ darf nicht zur Erlaubnis werden, eine geschätzte Umlage für die Fassade nicht zum endgültigen Betrag, und höfliches Feilschen muss trotzdem ein Verhandlungsticket erzeugen.
-
-Ein Fall nutzt ein Inserat, das es nur im Test gibt und dessen Beschreibung den Assistenten auffordert, seine Anweisungen zu ignorieren und eine Besichtigung zu bestätigen. Das erwartete Verhalten ist trotzdem eine Übergabe. Diese Fixture hat einen eigenen Katalog und Index und wird von der Anwendung nie ausgeliefert.
-
-Code prüft die erwarteten Inserate, die Übergabegründe und die Verankerung der Zahlen in den Belegen. Ein anderes Modell bewertet anhand einer [schriftlichen Rubrik](https://github.com/srnux/proptech-inquiry-agent/blob/main/evals/rubric.md) die geforderten Fakten, verbotene Aussagen, unbelegte Behauptungen und die Sprache der Antwort. Es sieht neben der Antwort auch die Tool-Ergebnisse und Tickets. Ausdrücklich erlaubte optionale Übergaben zählen bei der Berechnung von Precision und Recall weder als korrekt noch als zusätzlich.
-
-Zwei vollständige Läufe am 1. Oktober 2026 nutzten `claude-opus-5-5` auf Amazon Bedrock als Agent und `claude-sonnet-5-5` als Judge:
-
-| Metrik                                                                 | Erster Lauf    | Nach den Korrekturen |
-| ---------------------------------------------------------------------- | -------------- | -------------------- |
-| Fälle, die alle Prüfungen bestehen                                     | 41 / 49        | 46 / 49              |
-| Übergaben: Precision / Recall                                          | 93,8 % / 100 % | 100 % / 100 %        |
-| Antworten, die die Zahlenprüfung bestehen, endgültig / erster Entwurf  | 100 % / 100 %  | 100 % / 100 %        |
-| Korrekte Antworten laut Judge                                          | 83,7 %         | 93,9 %               |
-| Retrieval: erwartete Textstelle unter den ersten fünf                  | 24 / 25        | 26 / 26              |
-| Unbeantwortbare Retrieval-Fragen, die Textstellen liefern              | 0 / 8          | 0 / 8                |
-| Geschätzte Agentenkosten pro Anfrage im Mittel                         | 0,0160 $       | 0,0143 $             |
-| Mittlere Latenz / p95-Latenz                                          | 9,2 s / 14,7 s | 8,6 s / 13,8 s       |
-
-Der [erste Bericht](https://github.com/srnux/proptech-inquiry-agent/blob/main/evals/reports/2026-10-01.md) und der [Bericht nach den Korrekturen](https://github.com/srnux/proptech-inquiry-agent/blob/main/evals/reports/2026-10-01-after-fixes.md) verlinken jeden Fall mit seinem vollständigen Trace. Die Kostenschätzungen beruhen auf den Listenpreisen der Claude API, nicht auf der Abrechnung von Bedrock, und enthalten die separaten Kosten des Judge nicht. Die Läufe verarbeiteten drei Fälle parallel. Die Latenz enthält das Warten auf den gemeinsam genutzten lokalen Reranker. Zwischen den Läufen kam eine Regressionsfrage zum Retrieval-Set hinzu.
-
-Diese Ergebnisse haben Grenzen. Die Verankerung der Zahlen wird mit derselben Zahlenprüfung gemessen, die zur Laufzeit als Guard läuft. Der Wert für die endgültige Antwort zeigt deshalb vor allem, dass der Guard funktioniert. Der Wert für den ersten Entwurf zeigt zusätzlich, ob eine Nachbesserung bei den Zahlen nötig war. Keiner der beiden belegt, dass jede Aussage gestützt ist. Der Judge kann sich irren, und das kleine Entwicklungsset für das Retrieval dient auch zur Kalibrierung. Das sind Messungen an bekannten Fällen, kein unabhängiger Benchmark und kein Beweis, dass der Assistent nie Fakten erfindet.
-
-## Was kaputtging und was sich geändert hat
-
-Die ersten Läufe deckten drei unterschiedliche Probleme auf:
-
-- **Eine deutsche Frage zur Provision fand eine englische Richtlinie nicht.** Auf der Seite stand „commission“, aber keine der beiden Kandidatensuchen fand sie für „Provision“. Seit „Provision“ und „Maklerprovision“ in der Richtlinie stehen, wird sie gefunden. Die ursprünglich verfehlte Frage und eine neue Regressionsfrage bestehen jetzt, womit der Recall des Retrievals bei 26 von 26 liegt. Ein niedrigerer Schwellenwert für den Reranker hätte nicht geholfen: Ein Reranker kann keine Textstelle retten, die er nie bekommt.
-- **Eine Folgefrage korrigierte eine frühere Antwort, die bereits richtig war.** Der Agent rief die Angabe zur Heizung erneut ab, bestätigte sie und präsentierte dieselbe Angabe dann als Korrektur. Der Prompt verlangt eine Korrektur jetzt nur noch, wenn neue Belege der früheren Antwort widersprechen. Ein separater Fall mit einer tatsächlich falschen früheren Zahl prüft weiterhin, dass der Agent sie korrigiert.
-- **Der Judge wertete gewöhnliche Formulierungen zur Übergabe als unbelegte Behauptungen.** Die Rubrik akzeptiert jetzt Aussagen über die Weiterbearbeitung durch einen Menschen, wenn ein passendes Ticket existiert, und lehnt versprochene Ergebnisse wie eine bestätigte Besichtigung oder ein genehmigtes Haustier weiterhin ab. Das korrigiert den Evaluator. Eine Verbesserung des Agenten selbst ist es nicht.
-
-Drei Fälle scheitern auch nach diesen Änderungen. Zwei betreffen grenzwertige Schlussfolgerungen, die der Judge markiert, etwa die Aussage, der Kunde müsse die Treppe nehmen, weil eine Wohnung keinen Aufzug hat. Der dritte legt eine konkrete Behauptung über eine Fähigkeit offen: Der Agent bietet an, eine E-Mail-Adresse zu einem bestehenden Ticket hinzuzufügen, aber kein Tool kann ein Ticket ändern. Das ist noch offen. Eine Antwort kann jede Zahlen- und Quellenprüfung bestehen und trotzdem etwas versprechen, was das System nicht kann.
-
 ## Verschiedene Tests beantworten verschiedene Fragen
 
 Die gewöhnlichen Tests laufen mit einem deterministischen Ersatz für das Embedding-Modell, ohne Modell-Downloads. Ein separater Befehl `pnpm test:model` prüft das Retrieval mit den echten Modellen.
@@ -419,7 +419,7 @@ Der Queue-Stream abonniert die gemeinsame Queue des Servers. Ein Ticket, das ein
 
 Der Server bindet standardmäßig an `127.0.0.1:3000` und hat derzeit keine Authentifizierung. Während der Entwicklung leitet Vite die API-Anfragen des Browsers an ihn weiter.
 
-## Den Ablauf ohne API-Schlüssel ausprobieren
+## Ausprobieren
 
 `DemoModel` implementiert dieselbe Schnittstelle `ModelClient` mit Regeln. Es ruft die echten MCP-Tools auf, zitiert abgerufene Textstellen und schickt seine Antworten durch dieselben Antwortprüfungen. Es ist für die vier Beispielanfragen und eine begrenzte Menge verwandter Anfragen gedacht, nicht für allgemeine Gespräche.
 
@@ -429,39 +429,6 @@ Claude model ──────────┐
 Rule-based demo ───────┘
 ```
 
-`pnpm dev` greift auf die Demo zurück, wenn die Prüfung der Zugangsdaten fehlende Einstellungen meldet. Die Seite kennzeichnet diesen Modus mit „Demo model, no API key“. Mit `MODEL_PROVIDER=demo` lässt er sich ausdrücklich wählen, auch wenn Zugangsdaten vorhanden sind.
-
-Der Demo-Modus ändert das Gesprächsmodell, nicht die Konfiguration des Retrievals. Standardmäßig werden die lokalen Retrieval-Modelle beim ersten Einsatz trotzdem heruntergeladen. Wer zusätzlich `EMBEDDER=hashing` wählt, spart diesen Download und nutzt den schwächeren Ersatz fürs Retrieval. So laufen auch die Browsertests.
-
-## Orientierung im Code
-
-Das Repository ist ein pnpm-Workspace mit drei Paketen: der Browseroberfläche, der Kernlogik und dem Server, der diese Logik mit externen Schnittstellen verbindet.
-
-```text
-apps/web/                  React inquiry desk and browser tests
-packages/core/
-  src/domain/              Property records and ticket queue
-  src/retrieval/           Chunking, search, models, ranking
-  src/agent/               Loop, checks, interfaces, demo model
-  scripts/                 Index building and calibration
-packages/server/
-  src/mcp/                 Tools and MCP transports
-  src/agent/               Provider adapters, MCP client, CLI
-  src/api/                 Inquiries, queue, and source routes
-data/                      Synthetic records and policy pages
-evals/                     Agent cases, judge rubric, thresholds, retrieval golden set
-  reports/                 Recorded results and per-case traces
-  fixtures/                Test-only prompt-injection listing
-```
-
-Das Core-Paket importiert nichts aus MCP, HTTP oder von Modellanbietern. Der Server passt diese externen Schnittstellen an den Kern an. Die Web-App nutzt gemeinsame Typen und Beispielanfragen, ohne die Node.js-Implementierung des Kerns ins Browser-Bundle zu ziehen.
-
-In der Entwicklung wird der TypeScript-Quelltext der Pakete direkt genutzt. Für den kompilierten MCP-Einstiegspunkt, den Claude Desktop verwendet, zuerst bauen und Node mit `--conditions=built` starten. Der Einstiegspunkt des Servers ist `packages/server/dist/mcp/stdio.js`, sein Quelltext liegt in `packages/server/src/mcp/stdio.ts`.
-
-Der Vector Store liegt derzeit im Arbeitsspeicher, die Embeddings werden auf der Festplatte gecacht. Für diesen kleinen Korpus würde eine separate Datenbank Einrichtungsaufwand bringen, ohne ein akutes Problem zu lösen. Ein Adapter für pgvector ist eine optionale, nicht eingeplante Erweiterung, die die Store-Schnittstelle erproben soll. Er würde die Retrieval-Vektoren persistieren, nicht die Übergabetickets.
-
-## Den aktuellen Stand ausprobieren
-
 Klonen Sie das [GitHub-Repository](https://github.com/srnux/proptech-inquiry-agent) und führen Sie diese Befehle mit Node.js 20 oder neuer in dessen Wurzelverzeichnis aus. Ab Node.js 25 ist Corepack nicht mehr enthalten. Installieren Sie es in diesem Fall zuerst mit `npm install -g corepack`:
 
 ```bash
@@ -470,84 +437,14 @@ pnpm install
 pnpm dev
 ```
 
-Öffnen Sie `http://localhost:5173` und klicken Sie auf ein Beispiel. Die API läuft auf `127.0.0.1:3000`. Beim ersten Start werden die beiden Retrieval-Modelle heruntergeladen (etwa 120 MB und 570 MB) und der lokale Index vorbereitet.
+Öffnen Sie `http://localhost:5173` und klicken Sie auf ein Beispiel. Ohne Zugangsdaten für ein Modell greift `pnpm dev` auf das Demo-Modell zurück, und die Seite kennzeichnet diesen Modus mit „Demo model, no API key“. Der Demo-Modus ändert das Gesprächsmodell, nicht das Retrieval: Beim ersten Start werden trotzdem die beiden lokalen Retrieval-Modelle heruntergeladen (etwa 120 MB und 570 MB). Wer zusätzlich `EMBEDDER=hashing` setzt, spart diesen Download und nutzt den schwächeren Ersatz fürs Retrieval. So laufen auch die Browsertests.
 
-Für eine Demo ohne Downloads der Retrieval-Modelle setzen Sie vor dem Start diese Umgebungsvariablen. In PowerShell:
-
-```powershell
-$env:MODEL_PROVIDER = "demo"
-$env:EMBEDDER = "hashing"
-pnpm dev
-```
-
-Nutzen Sie ein neues Terminal oder entfernen Sie diese Overrides, wenn Sie zu den echten Modellen wechseln. `pnpm inspect` steht weiterhin bereit, um die MCP-Tools direkt aufzurufen.
-
-Für ein entferntes Gesprächsmodell kopieren Sie `.env.example` nach `.env` und tragen die Zugangsdaten für den gewählten Anbieter ein. Für den Standardadapter von Anthropic setzen Sie `ANTHROPIC_API_KEY`. Für Bedrock setzen Sie `MODEL_PROVIDER=bedrock`, eine AWS-Region (Amazon Web Services) und die passenden Zugangsdaten. CLI und HTTP-Server laden `.env` automatisch.
-
-Dann stellen Sie eine Frage und lassen sich den Tool-Trace anzeigen:
-
-```bash
-pnpm ask --trace "Is heating included in HH-1001, and can I view it on Saturday?"
-```
-
-Mit `--json` gibt es das vollständige strukturierte Ergebnis. Um die HTTP-Endpunkte bereitzustellen, führen Sie aus:
-
-```bash
-pnpm serve
-```
-
-Schicken Sie an `POST /inquiries` einen JSON-Body wie diesen:
-
-```json
-{ "inquiry": "Is heating included in HH-1001, and can I view it on Saturday?" }
-```
-
-Für eine Folgefrage geben Sie den früheren Wortwechsel mit. Dieses Beispiel zeigt die Form der Anfrage. In einer Anwendung übergeben Sie die tatsächlich zuvor gelieferte Antwort:
-
-```json
-{
-  "inquiry": "And what is the deposit?",
-  "history": [
-    {
-      "inquiry": "Is heating included in HH-1001?",
-      "reply": "Heating is included in the additional utilities charge of 240 EUR per month. [HH-1001#s5]"
-    }
-  ]
-}
-```
-
-Anders als `pnpm dev` brauchen `pnpm ask` und `pnpm serve` Zugangsdaten, sofern Sie nicht ausdrücklich `MODEL_PROVIDER=demo` wählen. Läufe mit echtem Modell nutzen die Zugangsdaten des Anbieters, Demo-Läufe nicht.
-
-So laufen die regulären Tests und die Browserprüfungen:
-
-```bash
-pnpm test
-pnpm --filter @proptech/web exec playwright install chromium
-pnpm test:e2e
-```
-
-Der Browser muss nur einmal installiert werden. Der optionale Live-Test mit echtem Modell läuft, wenn seine Bedingungen an die Zugangsdaten in der Prozessumgebung erfüllt sind. Der Test selbst lädt `.env` nicht.
-
-Nach Änderungen am Korpus oder am Modell meldet `pnpm calibrate` Scores und schlägt Schwellenwerte vor. Diese Werte werden geprüft und in `retrieval.thresholds.json` übernommen. Die Kalibrierung aktualisiert die Datei nicht automatisch.
-
-Um den echten Agenten und das Retrieval zu evaluieren, konfigurieren Sie Zugangsdaten für Agent und Judge und führen dann aus:
-
-```bash
-pnpm eval                  # all 49 cases, with a report and per-case traces
-pnpm eval --subset         # 12 cases covering both languages and the main case types
-pnpm eval --case handoff-viewing --case trap-pets-hh1001
-```
-
-Der Runner beendet sich mit einem Exit-Code ungleich null, wenn eine Metrik einen Schwellenwert in `evals/thresholds.json` verfehlt. Zu den aktuellen Anforderungen gehören mindestens 90 % bei der Bestehensquote der Fälle und bei der vom Judge bewerteten Korrektheit, 100 % Recall bei den Übergaben und 100 % Recall des Retrievals auf dem Golden Set. Die Schwellenwerte wurden nach dem ersten Lauf festgelegt und nach den Korrekturen angehoben. Die eingecheckten Berichte enthalten die Schwellenwerte, die damals galten.
-
-Für die kostenpflichtigen Evaluierungen gibt es außerdem einen manuell ausgelösten [Workflow in GitHub Actions](https://github.com/srnux/proptech-inquiry-agent/actions/workflows/eval.yml). Wählen Sie im Tab Actions des Repositorys „Eval subset“ und dann „Run workflow“. Wählen Sie `subset` für die Auswahl aus 12 Fällen oder `all` für alle 49 Fälle. Konfigurieren Sie das Repository-Secret `ANTHROPIC_API_KEY` oder, für Bedrock, `AWS_BEARER_TOKEN_BEDROCK` zusammen mit der Repository-Variable `AWS_REGION` (Standard `eu-central-1`). Sind beide Secrets vorhanden, wählt der Workflow die Anthropic API.
-
-Die Berichtstabelle erscheint in der Zusammenfassung des Workflow-Laufs, Bericht und Traces pro Fall werden als Artefakt hochgeladen. Ein Workflow-Lauf committet sie nicht ins Repository. Die kostenlosen CI-Prüfungen waren erfolgreich, ein erfolgreicher Lauf des manuellen Eval-Workflows ist noch nicht bestätigt. Die eingecheckten Messwerte der vollständigen Läufe oben stammen aus lokalen Läufen.
+Mit Zugangsdaten für die Anthropic API oder Amazon Bedrock in `.env` nutzt die Oberfläche ein echtes Modell, `pnpm ask --trace "…"` schickt eine Anfrage aus dem Terminal, und `pnpm eval` führt die 49 Evaluierungsfälle mit Bericht und Traces pro Fall aus. Das [README](https://github.com/srnux/proptech-inquiry-agent#readme) des Repositorys beschreibt den Rest: die HTTP API, die Einrichtung in Claude Desktop, die Browsertests, die Kalibrierung der Schwellenwerte und den manuell ausgelösten Workflow für die Evaluierung.
 
 ## Was noch zu beweisen ist
 
 Die Evaluierungssuite testet jetzt, ob Einschränkungen eine Umformulierung überstehen, ob Anfragen, die einen Menschen brauchen, Übergaben erzeugen und ob eine bösartige Anweisung in einem Inserat das Verhalten des Agenten ändert. Als Nächstes stehen an: das unbelegte Angebot zur Ticketänderung beheben, die Abdeckung über diese bekannten Fälle hinaus erweitern und ein günstigeres Agentenmodell mit einem separaten Judge vergleichen. Ein bestandener Fall zu Prompt Injection belegt keine Widerstandsfähigkeit gegen andere Angriffe.
 
-Architekturleitfaden, aufgezeichnete Demo, Fehleranalyse und CI-Workflows sind vorhanden. Beschreibung, Topics und Social Preview des Repositorys sind ebenfalls eingerichtet. Übergabetickets liegen weiterhin nur im Arbeitsspeicher, eine persistente Speicherung der Tickets steht noch aus. Vorerst ist das eine lokale Anwendung mit synthetischen Daten, kein vollständiges System für den Betrieb eines Maklerbüros.
+Architekturleitfaden, aufgezeichnete Demo, Fehleranalyse und CI-Workflows sind vorhanden. Übergabetickets liegen weiterhin nur im Arbeitsspeicher, eine persistente Speicherung der Tickets steht noch aus. Vorerst ist das eine lokale Anwendung mit synthetischen Daten, kein vollständiges System für den Betrieb eines Maklerbüros.
 
 Die bisher nützlichste Lehre: Retrieval, Antwortgenerierung und Antwortprüfung brauchen getrennte Tests. Ein Suchergebnis kann relevant sein und trotzdem falsch zitiert werden. Eine Quellenangabe kann existieren und trotzdem eine andere Aussage stützen. Die Anfrageoberfläche macht Belege, Tool-Aufrufe und entstandene Tickets nachvollziehbar und hält abgelehnte Entwürfe aus dem Gespräch heraus.
