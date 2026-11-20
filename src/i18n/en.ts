@@ -363,7 +363,7 @@ export const en: Messages = {
 
   writing: {
     heading: 'Articles',
-    intro: 'On technology, work, and the ideas shaping both.',
+    intro: 'Practical notes on building inspectable AI workflows and cloud systems that recover from failure.',
     englishOnly: 'Article in English',
   },
 
