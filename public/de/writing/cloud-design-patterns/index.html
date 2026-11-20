@@ -304,7 +304,7 @@
 </ul>
 <h3 id="b2-competing-consumers"><a class="anchor" href="#b2-competing-consumers">B2. Competing Consumers</a></h3>
 <ul>
-<li><strong>Was:</strong> Mehrere Worker-Instanzen lesen aus derselben Queue, und jede Nachricht wird von genau einer davon verarbeitet.</li>
+<li><strong>Was:</strong> Mehrere Worker-Instanzen lesen aus derselben Queue, und jede Nachricht geht jeweils an eine davon. Scheitert die Verarbeitung oder läuft sie in einen Timeout, wird die Nachricht wieder sichtbar, und ein anderer Worker kann sie erhalten.</li>
 <li><strong>Wann:</strong> Sie müssen den Verarbeitungsdurchsatz horizontal skalieren.</li>
 <li><strong>Wo:</strong> Lambda, das Simple Queue Service abfragt und dabei automatisch skaliert. Kubernetes-Deployments, die mit Kubernetes Event-driven Autoscaling nach Queue-Tiefe skaliert werden.</li>
 <li><strong>Vorsicht:</strong> Nachrichten können in anderer Reihenfolge oder mehrfach ankommen, deshalb müssen Handler idempotent sein. Fehlschlagende Nachrichten gehören in eine Dead-Letter-Queue.</li>
@@ -348,8 +348,8 @@
 <li><strong>Was:</strong> Teilt Daten horizontal auf mehrere Datenbanken oder Partitionen auf, anhand eines Shard-Schlüssels wie einer Mandanten-ID oder einer Region.</li>
 <li><strong>Wann:</strong> Eine einzelne Datenbank stößt an Grenzen bei Speicher, Durchsatz oder Verbindungen, oder Sie brauchen Mandantentrennung oder Datenresidenz.</li>
 <li><strong>Wo:</strong> Partition Keys in DynamoDB (eingebautes Sharding), Citus für PostgreSQL, Sharded Cluster in MongoDB, eine Datenbank pro Mandant in mandantenfähiger Software as a Service.</li>
-<li><strong>Vorsicht:</strong> Abfragen und Transaktionen über Shards hinweg werden schwierig. Ein schlechter Schlüssel erzeugt „heiße“ Shards.</li>
-<li><strong>Verbindungen:</strong> Es ist ein Bulkhead auf Datenebene. Es ist auch der Grund, warum die Patterns für verteilte Transaktionen aus Gruppe D nötig werden, sobald eine Operation mehrere Shards umfasst.</li>
+<li><strong>Vorsicht:</strong> Abfragen und Transaktionen über Shards hinweg werden schwierig, es sei denn, der Datenspeicher übernimmt sie selbst, wie es Transaktionen in DynamoDB innerhalb ihrer dokumentierten Grenzen tun. Ein schlechter Schlüssel erzeugt „heiße“ Shards.</li>
+<li><strong>Verbindungen:</strong> Es ist ein Bulkhead auf Datenebene. Sobald eine Operation Shards oder Datenbanken ohne gemeinsame Transaktion umfasst, ist es auch der Grund, warum die Patterns für verteilte Transaktionen aus Gruppe D nötig werden.</li>
 </ul>
 <h2 id="gruppe-d-verteilte-transaktionen"><a class="anchor" href="#gruppe-d-verteilte-transaktionen">Gruppe D: Verteilte Transaktionen</a></h2>
 <p>Konsistent bleiben, wenn eine fachliche Aktion mehrere Dienste umfasst.</p>
@@ -429,7 +429,7 @@
 <li><strong>Der Resilienz-Stack:</strong> Retry, Circuit Breaker, Bulkhead und Health Endpoint Monitoring. Retry fängt kurze Ausfälle ab, der Breaker lange, das Bulkhead begrenzt den Schaden, und Health Checks steuern die automatische Wiederherstellung. Ein Sidecar aus einem Service Mesh liefert oft alle vier.</li>
 <li><strong>Das asynchrone Rückgrat:</strong> Queue-Based Load Leveling plus Competing Consumers, um Arbeit zu verteilen, und Publisher-Subscriber für das Auffächern. Eine Queue nehmen Sie, wenn ein Worker eine Nachricht verarbeiten soll, ein Topic, wenn alle davon erfahren sollen.</li>
 <li><strong>Das ereignisgetriebene Daten-Trio:</strong> Event Sourcing hält die Wahrheit als Ereignisse, Publisher-Subscriber verteilt sie, und CQRS-Lesemodelle beantworten Abfragen schnell. Cache-Aside ist die günstigere Alternative, wenn Sie nur schnellere Lesezugriffe brauchen.</li>
-<li><strong>Das Paar für verteilte Transaktionen:</strong> Saga plus Compensating Transaction. Beide werden nötig, sobald eine fachliche Operation Daten umfasst, die mit Sharding oder einer Datenbank pro Dienst aufgeteilt sind.</li>
+<li><strong>Das Paar für verteilte Transaktionen:</strong> Saga plus Compensating Transaction. Beide werden nötig, sobald eine fachliche Operation Daten umfasst, die mit Sharding oder einer Datenbank pro Dienst aufgeteilt sind, und keine einzelne Transaktion sie abdeckt.</li>
 <li><strong>Die Edge-Schicht:</strong> Gateway Routing, Offloading und Aggregation stecken meist in einem Produkt wie Amazon API Gateway oder Azure API Management, ergänzt um Backends for Frontends, wenn sich die Clients auseinanderentwickeln.</li>
 <li><strong>Der Modernisierungspfad:</strong> Strangler Fig über Gateway Routing, ein External Configuration Store mit Feature Flags zum Umschalten des Traffics und Health Endpoint Monitoring, um den neuen Pfad vor dem Umschalten zu prüfen.</li>
 </ol>

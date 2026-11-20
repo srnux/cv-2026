@@ -67,7 +67,7 @@ Volumen bewältigen, ohne das Backend zu überlasten.
 
 ### B2. Competing Consumers
 
-- **Was:** Mehrere Worker-Instanzen lesen aus derselben Queue, und jede Nachricht wird von genau einer davon verarbeitet.
+- **Was:** Mehrere Worker-Instanzen lesen aus derselben Queue, und jede Nachricht geht jeweils an eine davon. Scheitert die Verarbeitung oder läuft sie in einen Timeout, wird die Nachricht wieder sichtbar, und ein anderer Worker kann sie erhalten.
 - **Wann:** Sie müssen den Verarbeitungsdurchsatz horizontal skalieren.
 - **Wo:** Lambda, das Simple Queue Service abfragt und dabei automatisch skaliert. Kubernetes-Deployments, die mit Kubernetes Event-driven Autoscaling nach Queue-Tiefe skaliert werden.
 - **Vorsicht:** Nachrichten können in anderer Reihenfolge oder mehrfach ankommen, deshalb müssen Handler idempotent sein. Fehlschlagende Nachrichten gehören in eine Dead-Letter-Queue.
@@ -113,8 +113,8 @@ Speicher skalieren und dabei Lesezugriffe schnell und Daten konsistent halten.
 - **Was:** Teilt Daten horizontal auf mehrere Datenbanken oder Partitionen auf, anhand eines Shard-Schlüssels wie einer Mandanten-ID oder einer Region.
 - **Wann:** Eine einzelne Datenbank stößt an Grenzen bei Speicher, Durchsatz oder Verbindungen, oder Sie brauchen Mandantentrennung oder Datenresidenz.
 - **Wo:** Partition Keys in DynamoDB (eingebautes Sharding), Citus für PostgreSQL, Sharded Cluster in MongoDB, eine Datenbank pro Mandant in mandantenfähiger Software as a Service.
-- **Vorsicht:** Abfragen und Transaktionen über Shards hinweg werden schwierig. Ein schlechter Schlüssel erzeugt „heiße“ Shards.
-- **Verbindungen:** Es ist ein Bulkhead auf Datenebene. Es ist auch der Grund, warum die Patterns für verteilte Transaktionen aus Gruppe D nötig werden, sobald eine Operation mehrere Shards umfasst.
+- **Vorsicht:** Abfragen und Transaktionen über Shards hinweg werden schwierig, es sei denn, der Datenspeicher übernimmt sie selbst, wie es Transaktionen in DynamoDB innerhalb ihrer dokumentierten Grenzen tun. Ein schlechter Schlüssel erzeugt „heiße“ Shards.
+- **Verbindungen:** Es ist ein Bulkhead auf Datenebene. Sobald eine Operation Shards oder Datenbanken ohne gemeinsame Transaktion umfasst, ist es auch der Grund, warum die Patterns für verteilte Transaktionen aus Gruppe D nötig werden.
 
 ## Gruppe D: Verteilte Transaktionen
 
@@ -202,7 +202,7 @@ Kaum eines dieser Patterns tritt allein auf. Sechs Kombinationen kommen immer wi
 1. **Der Resilienz-Stack:** Retry, Circuit Breaker, Bulkhead und Health Endpoint Monitoring. Retry fängt kurze Ausfälle ab, der Breaker lange, das Bulkhead begrenzt den Schaden, und Health Checks steuern die automatische Wiederherstellung. Ein Sidecar aus einem Service Mesh liefert oft alle vier.
 2. **Das asynchrone Rückgrat:** Queue-Based Load Leveling plus Competing Consumers, um Arbeit zu verteilen, und Publisher-Subscriber für das Auffächern. Eine Queue nehmen Sie, wenn ein Worker eine Nachricht verarbeiten soll, ein Topic, wenn alle davon erfahren sollen.
 3. **Das ereignisgetriebene Daten-Trio:** Event Sourcing hält die Wahrheit als Ereignisse, Publisher-Subscriber verteilt sie, und CQRS-Lesemodelle beantworten Abfragen schnell. Cache-Aside ist die günstigere Alternative, wenn Sie nur schnellere Lesezugriffe brauchen.
-4. **Das Paar für verteilte Transaktionen:** Saga plus Compensating Transaction. Beide werden nötig, sobald eine fachliche Operation Daten umfasst, die mit Sharding oder einer Datenbank pro Dienst aufgeteilt sind.
+4. **Das Paar für verteilte Transaktionen:** Saga plus Compensating Transaction. Beide werden nötig, sobald eine fachliche Operation Daten umfasst, die mit Sharding oder einer Datenbank pro Dienst aufgeteilt sind, und keine einzelne Transaktion sie abdeckt.
 5. **Die Edge-Schicht:** Gateway Routing, Offloading und Aggregation stecken meist in einem Produkt wie Amazon API Gateway oder Azure API Management, ergänzt um Backends for Frontends, wenn sich die Clients auseinanderentwickeln.
 6. **Der Modernisierungspfad:** Strangler Fig über Gateway Routing, ein External Configuration Store mit Feature Flags zum Umschalten des Traffics und Health Endpoint Monitoring, um den neuen Pfad vor dem Umschalten zu prüfen.
 

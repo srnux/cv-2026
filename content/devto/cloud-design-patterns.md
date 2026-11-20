@@ -62,7 +62,7 @@ Handling volume without overwhelming the backend.
 
 ### B2. Competing Consumers
 
-- **What:** Several worker instances read from the same queue, and each message is processed by exactly one of them.
+- **What:** Several worker instances read from the same queue, and each message goes to one of them at a time. A message whose processing fails or times out becomes visible again, so another worker may receive it.
 - **When:** You need to scale processing throughput horizontally.
 - **Where:** Lambda polling Simple Queue Service, where concurrency scales automatically. Kubernetes deployments scaled by queue depth with Kubernetes Event-driven Autoscaling.
 - **Caution:** Messages can arrive out of order or more than once, so handlers must be idempotent. Send failing messages to a dead-letter queue.
@@ -108,8 +108,8 @@ Scaling storage while keeping reads fast and data consistent.
 - **What:** Splits data horizontally across several databases or partitions by a shard key, such as a tenant ID or a region.
 - **When:** A single database hits storage, throughput or connection limits, or you need tenant isolation or data residency.
 - **Where:** DynamoDB partition keys (built-in sharding), Citus for PostgreSQL, MongoDB sharded clusters, a database-per-tenant model in multi-tenant software as a service.
-- **Caution:** Queries and transactions across shards become hard. A bad key creates "hot" shards.
-- **Connections:** It's a Bulkhead at the data level. It's also what makes the distributed transaction patterns in group D necessary once an operation spans several shards.
+- **Caution:** Queries and transactions across shards become hard, unless the store handles them itself, as DynamoDB transactions do within their documented limits. A bad key creates "hot" shards.
+- **Connections:** It's a Bulkhead at the data level. Once an operation spans shards or databases that share no transaction, it's also what makes the distributed transaction patterns in group D necessary.
 
 ## Group D: Distributed transactions
 
@@ -197,7 +197,7 @@ Few of these patterns show up alone. Six combinations come up again and again:
 1. **The resilience stack:** Retry, Circuit Breaker, Bulkhead and Health Endpoint Monitoring. Retry handles short failures, the breaker handles long ones, the bulkhead contains the damage, and health checks drive automated recovery. A service mesh sidecar often delivers all four.
 2. **The asynchronous backbone:** Queue-Based Load Leveling plus Competing Consumers for distributing work, Publisher-Subscriber for fan-out. Use a queue when one worker should process a message, and a topic when everyone should hear about it.
 3. **The event-driven data trio:** Event Sourcing holds the truth as events, Publisher-Subscriber distributes them, and CQRS read models answer queries fast. Cache-Aside is the cheaper alternative when you only need faster reads.
-4. **The distributed transaction pair:** Saga plus Compensating Transaction. They become necessary once a business operation spans data split with Sharding or a database per service.
+4. **The distributed transaction pair:** Saga plus Compensating Transaction. They become necessary once a business operation spans data split with Sharding or a database per service, and no single transaction covers it.
 5. **The edge layer:** Gateway Routing, Offloading and Aggregation usually live in one product, such as Amazon API Gateway or Azure API Management, with Backends for Frontends added when clients diverge.
 6. **The modernisation path:** Strangler Fig through Gateway Routing, an External Configuration Store with feature flags to switch traffic, and Health Endpoint Monitoring to verify the new path before cutting over.
 

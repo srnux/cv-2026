@@ -8,7 +8,7 @@ Ein Makler kommt von einer Besichtigung zurück, mit sechzehn Fotos, einem Grund
 
 > „3 Zimmer, 2. OG, Küche neu 2023, Balkon Süd, 1.450 € kalt, NK 220 €. Musterstraße 12, 20255 Hamburg-Eimsbüttel. Ruhige Seitenstraße, 5 Min. zur U-Bahn Osterstraße, Park um die Ecke. Parkett, Wanne im Bad. Frei ab 1.2.2027.“
 
-Daraus ein Inserat für ein Portal zu machen, ist vor allem Schreibarbeit, und ein Sprachmodell schreibt gut. Das Problem ist das, was in den Notizen fehlt. Es gibt keine Wohnfläche und keine der Angaben zum Energieausweis, die das Gesetz in Immobilienanzeigen verlangt. Der Grundriss zeigt vier Zimmer, nicht drei. Drei der Fotos sind zu dunkel, zu unscharf oder fast eine Kopie eines anderen.
+Daraus ein Inserat für ein Portal zu machen, ist vor allem Schreibarbeit, und ein Sprachmodell schreibt gut. Das Problem ist das, was in den Notizen fehlt. Es gibt keine Wohnfläche und keine der Angaben zum Energieausweis, die das Gesetz in Immobilienanzeigen verlangt, sobald ein Energieausweis vorliegt. Der Grundriss zeigt vier Zimmer, nicht drei. Drei der Fotos sind zu dunkel, zu unscharf oder fast eine Kopie eines anderen.
 
 Ein Modell, das „das Inserat schreiben“ soll, füllt diese Lücken mit etwas Plausiblem. Ein plausibler Energiekennwert in einer veröffentlichten Anzeige ist schlimmer als gar keiner.
 
@@ -129,7 +129,7 @@ The conflict is settled: compare_sources ignores fields the broker answered
 
 Das Modell macht nie aus einer Freitextantwort einen Fakt, weil es keinen Freitext gibt. Wer „ca. 120“ als Energiekennwert eintippt, bekommt eine Ablehnung vom Formular, bevor der Agent irgendetwas sieht.
 
-Der Energieausweis ist die andere Hälfte der Demo. § 87 GEG (Gebäudeenergiegesetz) verlangt seine wichtigsten Angaben in Immobilienanzeigen, und die Notizen enthalten keine davon. Der Prompt verlangt alle sechs Felder in einer Frage, damit der Makler ein Formular ausfüllt, statt sechsmal unterbrochen zu werden. `ask_broker` ist das einzige Tool ohne Timeout, weil es auf einen Menschen wartet.
+Der Energieausweis ist die andere Hälfte der Demo. § 87 GModG (Gebäudemodernisierungsgesetz, früher Gebäudeenergiegesetz) verlangt fünf seiner Angaben in einer Immobilienanzeige, sobald ein Energieausweis vorliegt: die Art des Ausweises, den Energiekennwert, den wesentlichen Energieträger und bei Wohngebäuden das Baujahr und die Energieeffizienzklasse. Die Demo verlangt zusätzlich das Ablaufdatum. Das ist ihre eigene Regel, nicht die des Gesetzes, damit keine Anzeige mit einem bald ablaufenden Ausweis erscheint. Die Notizen enthalten keine der sechs Angaben. Der Prompt verlangt alle sechs Felder in einer Frage, damit der Makler ein Formular ausfüllt, statt sechsmal unterbrochen zu werden. `ask_broker` ist das einzige Tool ohne Timeout, weil es auf einen Menschen wartet.
 
 ## Jede Zahl im Exposé wird geprüft
 
@@ -242,6 +242,6 @@ Im Terminal führt `pnpm sample` denselben Ablauf aus und stellt die Fragen, `pn
 
 ## Was noch offen ist
 
-Die nützliche Erkenntnis deckt sich mit der aus dem Agenten für Immobilienanfragen: Ein Prompt kann eine Regel beschreiben, aber nur Code kann sie durchsetzen. Das Modell wählte eine sinnvolle Reihenfolge und schrieb gutes Deutsch. Die Teile, die stimmen mussten, keine erfundene Zahl, kein Export ohne Energieausweis, keine geratene Zimmerzahl, sind die Teile, an denen es nicht vorbeikam.
+Die nützliche Erkenntnis deckt sich mit der aus dem Agenten für Immobilienanfragen: Ein Prompt kann eine Regel beschreiben, aber nur Code kann sie durchsetzen. Das Modell wählte eine sinnvolle Reihenfolge und schrieb gutes Deutsch. Die Teile, die stimmen mussten, keine Zahl, die nicht im Datensatz steht, kein Export ohne Energieausweis, keine geratene Zimmerzahl, sind die Teile, die der Code durchsetzt.
 
 Die Lücken sind die, die dieser Artikel nennt. Die Zahlenprüfung sieht keine Aussagen, ein Merkmal aus den Notizen, dem die Fotos widersprechen, landet also trotzdem im Exposé. Andere Uploads als das Beispiel funktionieren nach bestem Bemühen, und die Schwellenwerte für Fotos sind auf dieses Beispiel abgestimmt. Sprachnotizen, Upload an Portale und ein MCP-Server (Model Context Protocol) sind bisher nicht vorgesehen. Und es gibt noch keine Evaluierungssuite, also keine gemessene Genauigkeit, nur einen Ablauf, der nachweislich funktioniert hat.

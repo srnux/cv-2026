@@ -108,7 +108,7 @@
         "aws",
         "agents"
       ],
-      "readingMinutes": 13,
+      "readingMinutes": 14,
       "url": "/de/writing/listing-creation-agent/",
       "coverImage": "/images/writing/listing-creation-agent-cover.jpg",
       "repoUrl": "https://github.com/srnux/listing-creation-agent"

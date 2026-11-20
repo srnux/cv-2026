@@ -44,7 +44,7 @@
   "dateModified": "2026-11-19",
   "inLanguage": "de-DE",
   "keywords": "ki, typescript, aws, agents",
-  "wordCount": 2860,
+  "wordCount": 3080,
   "mainEntityOfPage": {
     "@type": "WebPage",
     "@id": "https://luka-engels.de/de/writing/listing-creation-agent/"
@@ -250,7 +250,7 @@
 
   <article>
     <h1>Ein Agent für Immobilieninserate auf Amazon Bedrock, der fragt, bevor er schreibt</h1>
-    <p class="meta">19. November 2026 · 13 Min. Lesezeit · Luka Engels</p>
+    <p class="meta">19. November 2026 · 14 Min. Lesezeit · Luka Engels</p>
     <p class="lede">Ein TypeScript-Agent, der aus Besichtigungsfotos, einem Grundriss und knappen Maklernotizen ein deutsches und ein englisches Exposé und eine OpenImmo-XML-Datei macht. Widersprüche und Lücken werden zu Fragen an den Makler, und Code prüft jede Zahl.</p>
     <ul class="tags"><li>ki</li><li>typescript</li><li>aws</li><li>agents</li></ul>
     <img class="cover" src="/images/writing/listing-creation-agent-cover.jpg" alt="" width="1200" height="500" loading="eager">
@@ -259,7 +259,7 @@
 <blockquote>
 <p>„3 Zimmer, 2. OG, Küche neu 2023, Balkon Süd, 1.450 € kalt, NK 220 €. Musterstraße 12, 20255 Hamburg-Eimsbüttel. Ruhige Seitenstraße, 5 Min. zur U-Bahn Osterstraße, Park um die Ecke. Parkett, Wanne im Bad. Frei ab 1.2.2027.“</p>
 </blockquote>
-<p>Daraus ein Inserat für ein Portal zu machen, ist vor allem Schreibarbeit, und ein Sprachmodell schreibt gut. Das Problem ist das, was in den Notizen fehlt. Es gibt keine Wohnfläche und keine der Angaben zum Energieausweis, die das Gesetz in Immobilienanzeigen verlangt. Der Grundriss zeigt vier Zimmer, nicht drei. Drei der Fotos sind zu dunkel, zu unscharf oder fast eine Kopie eines anderen.</p>
+<p>Daraus ein Inserat für ein Portal zu machen, ist vor allem Schreibarbeit, und ein Sprachmodell schreibt gut. Das Problem ist das, was in den Notizen fehlt. Es gibt keine Wohnfläche und keine der Angaben zum Energieausweis, die das Gesetz in Immobilienanzeigen verlangt, sobald ein Energieausweis vorliegt. Der Grundriss zeigt vier Zimmer, nicht drei. Drei der Fotos sind zu dunkel, zu unscharf oder fast eine Kopie eines anderen.</p>
 <p>Ein Modell, das „das Inserat schreiben“ soll, füllt diese Lücken mit etwas Plausiblem. Ein plausibler Energiekennwert in einer veröffentlichten Anzeige ist schlimmer als gar keiner.</p>
 <p><a href="https://github.com/srnux/listing-creation-agent" target="_blank" rel="noopener noreferrer">listing-creation-agent</a> ist ein TypeScript-Projekt, das auf einer einzigen Regel aufbaut: <strong>nur aus den erfassten Daten schreiben und den Makler zu allem anderen fragen.</strong> Ein Agent auf Amazon Bedrock liest die Notizen, die Fotos und den Grundriss, fragt den Makler, wenn Quellen sich widersprechen oder ein Pflichtfeld fehlt, schreibt das Exposé auf Deutsch und Englisch und exportiert OpenImmo-XML (Extensible Markup Language), das Austauschformat, das deutsche Immobilienportale importieren.</p>
 <p>Gebaut wurde es für den praktischen Teil eines KI-Workshops und am 19. November 2026 live vorgeführt. Es läuft lokal mit synthetischen Daten und Stockfotos, und die Agentur darin, Lindenhof Immobilien, ist erfunden. Es zeigt, wo die Regeln eines Agenten hingehören, und ist kein Produktivsystem. Es ist ein Geschwisterprojekt des <a href="/de/writing/proptech-inquiry-agent/">Agenten für Immobilienanfragen</a> und übernimmt dessen Modellschnittstelle und Loop.</p>
@@ -404,7 +404,7 @@ Each answer is checked against its field schema
 The conflict is settled: compare_sources ignores fields the broker answered
 </code></pre>
 <p>Das Modell macht nie aus einer Freitextantwort einen Fakt, weil es keinen Freitext gibt. Wer „ca. 120“ als Energiekennwert eintippt, bekommt eine Ablehnung vom Formular, bevor der Agent irgendetwas sieht.</p>
-<p>Der Energieausweis ist die andere Hälfte der Demo. § 87 GEG (Gebäudeenergiegesetz) verlangt seine wichtigsten Angaben in Immobilienanzeigen, und die Notizen enthalten keine davon. Der Prompt verlangt alle sechs Felder in einer Frage, damit der Makler ein Formular ausfüllt, statt sechsmal unterbrochen zu werden. <code>ask_broker</code> ist das einzige Tool ohne Timeout, weil es auf einen Menschen wartet.</p>
+<p>Der Energieausweis ist die andere Hälfte der Demo. § 87 GModG (Gebäudemodernisierungsgesetz, früher Gebäudeenergiegesetz) verlangt fünf seiner Angaben in einer Immobilienanzeige, sobald ein Energieausweis vorliegt: die Art des Ausweises, den Energiekennwert, den wesentlichen Energieträger und bei Wohngebäuden das Baujahr und die Energieeffizienzklasse. Die Demo verlangt zusätzlich das Ablaufdatum. Das ist ihre eigene Regel, nicht die des Gesetzes, damit keine Anzeige mit einem bald ablaufenden Ausweis erscheint. Die Notizen enthalten keine der sechs Angaben. Der Prompt verlangt alle sechs Felder in einer Frage, damit der Makler ein Formular ausfüllt, statt sechsmal unterbrochen zu werden. <code>ask_broker</code> ist das einzige Tool ohne Timeout, weil es auf einen Menschen wartet.</p>
 <h2 id="jede-zahl-im-exposé-wird-geprüft"><a class="anchor" href="#jede-zahl-im-exposé-wird-geprüft">Jede Zahl im Exposé wird geprüft</a></h2>
 <p>Der schlimmste Fehler, den dieses Projekt machen kann, ist eine Zahl im Exposé, die aus dem Nichts kommt. <code>submit_expose</code> prüft deshalb im Code jede Zahl, bevor es einen Text annimmt.</p>
 <p>Es findet jede Zahl in den deutschen und englischen Titeln, Beschreibungen, Lagetexten und Merkmalslisten und vergleicht sie mit den Zahlen in den erfassten Daten. Zahlenformate machen das schwieriger, als es klingt:</p>
@@ -476,7 +476,7 @@ pnpm dev
 <p>Die Seite öffnen, die Vite ausgibt (standardmäßig Port 6014), „Load sample“ und dann „Create listing“ klicken. Bei den Zimmern 4 antworten und das Formular zum Energieausweis ausfüllen.</p>
 <p>Im Terminal führt <code>pnpm sample</code> denselben Ablauf aus und stellt die Fragen, <code>pnpm sample --auto</code> beantwortet sie mit Beispielwerten. <code>pnpm test</code> und <code>pnpm typecheck</code> brauchen kein AWS-Konto (Amazon Web Services).</p>
 <h2 id="was-noch-offen-ist"><a class="anchor" href="#was-noch-offen-ist">Was noch offen ist</a></h2>
-<p>Die nützliche Erkenntnis deckt sich mit der aus dem Agenten für Immobilienanfragen: Ein Prompt kann eine Regel beschreiben, aber nur Code kann sie durchsetzen. Das Modell wählte eine sinnvolle Reihenfolge und schrieb gutes Deutsch. Die Teile, die stimmen mussten, keine erfundene Zahl, kein Export ohne Energieausweis, keine geratene Zimmerzahl, sind die Teile, an denen es nicht vorbeikam.</p>
+<p>Die nützliche Erkenntnis deckt sich mit der aus dem Agenten für Immobilienanfragen: Ein Prompt kann eine Regel beschreiben, aber nur Code kann sie durchsetzen. Das Modell wählte eine sinnvolle Reihenfolge und schrieb gutes Deutsch. Die Teile, die stimmen mussten, keine Zahl, die nicht im Datensatz steht, kein Export ohne Energieausweis, keine geratene Zimmerzahl, sind die Teile, die der Code durchsetzt.</p>
 <p>Die Lücken sind die, die dieser Artikel nennt. Die Zahlenprüfung sieht keine Aussagen, ein Merkmal aus den Notizen, dem die Fotos widersprechen, landet also trotzdem im Exposé. Andere Uploads als das Beispiel funktionieren nach bestem Bemühen, und die Schwellenwerte für Fotos sind auf dieses Beispiel abgestimmt. Sprachnotizen, Upload an Portale und ein MCP-Server (Model Context Protocol) sind bisher nicht vorgesehen. Und es gibt noch keine Evaluierungssuite, also keine gemessene Genauigkeit, nur einen Ablauf, der nachweislich funktioniert hat.</p>
 
   </article>

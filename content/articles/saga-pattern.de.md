@@ -109,7 +109,7 @@ Mandanten anlegen, eine Datenbank oder ein Schema bereitstellen, den Admin-Benut
 
 ### 7. Agentische Workflows
 
-Ein Lauf eines KI-Agenten, der über mehrere Werkzeuge hinweg Nebenwirkungen erzeugt, ist eine Saga, ob er als solche entworfen wurde oder nicht. Zum Beispiel: Branch anlegen, Code generieren, Pull Request öffnen, Ticket verknüpfen, das Team im Channel benachrichtigen. Lehnt der Review-Agent die Änderung ab, bestehen die Kompensationen darin, den Pull Request zu schließen, den Branch zu löschen und den Ticketstatus zurückzusetzen.
+Ein Lauf eines KI-Agenten, der über mehrere Werkzeuge hinweg Nebenwirkungen erzeugt, hat die Form einer Saga, ob er als solche entworfen wurde oder nicht: mehrere lokale Schritte und keine Transaktion, die sie umspannt. Was ihm fehlt, solange niemand sie ergänzt, sind die Kompensationen. Zum Beispiel: Branch anlegen, Code generieren, Pull Request öffnen, Ticket verknüpfen, das Team im Channel benachrichtigen. Lehnt der Review-Agent die Änderung ab, bestehen die Kompensationen darin, den Pull Request zu schließen, den Branch zu löschen und den Ticketstatus zurückzusetzen.
 
 Werden die Werkzeugaufrufe eines Agenten als Saga-Schritte mit ausdrücklichen Kompensationen behandelt, hinterlässt ein gescheiterter Lauf einen sauberen Zustand statt verwaister Branches und halb aktualisierter Tickets. Orchestrierung passt hier am besten, weil das Agenten-Harness ohnehin als Orchestrator arbeitet.
 
@@ -184,7 +184,7 @@ Die Saga steht in der Mitte mehrerer Patterns aus der [Übersicht über 20 Cloud
 - **[Retry (A1)](/de/writing/cloud-design-patterns/#a1-retry) und [Circuit Breaker (A2)](/de/writing/cloud-design-patterns/#a2-circuit-breaker):** innerhalb jedes Schritts, bevor aufgegeben und kompensiert wird.
 - **[Publisher-Subscriber (B3)](/de/writing/cloud-design-patterns/#b3-publisher-subscriber) und [Queues (B1)](/de/writing/cloud-design-patterns/#b1-queue-based-load-leveling):** der Transportweg für choreografierte Sagas und für Befehle des Orchestrators.
 - **[Event Sourcing (C3)](/de/writing/cloud-design-patterns/#c3-event-sourcing):** macht Saga-Zustand und Kompensationen natürlich, weil eine Kompensation ein angehängtes Gegenereignis ist.
-- **[Sharding (C4)](/de/writing/cloud-design-patterns/#c4-sharding) und eine Datenbank pro Dienst:** der Grund, warum Sagas überhaupt nötig sind.
+- **[Sharding (C4)](/de/writing/cloud-design-patterns/#c4-sharding) und eine Datenbank pro Dienst:** der Grund, warum Sagas überhaupt nötig sind, sobald keine einzelne Transaktion die Daten umspannt.
 - **Transactional Outbox:** keines der 20 Patterns, aber das, was Sagas in der Praxis zuverlässig macht.
 
 ## Weiterführende Literatur
