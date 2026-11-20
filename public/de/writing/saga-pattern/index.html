@@ -44,7 +44,7 @@
   "dateModified": "2026-11-16",
   "inLanguage": "de-DE",
   "keywords": "architektur, aws, microservices, serverless",
-  "wordCount": 1980,
+  "wordCount": 2200,
   "mainEntityOfPage": {
     "@type": "WebPage",
     "@id": "https://luka-engels.de/de/writing/saga-pattern/"
@@ -250,7 +250,7 @@
 
   <article>
     <h1>Das Saga Pattern in der Praxis: Kompensationen, Pivots und die schwierigen Stellen</h1>
-    <p class="meta">16. November 2026 · 9 Min. Lesezeit · Luka Engels</p>
+    <p class="meta">16. November 2026 · 10 Min. Lesezeit · Luka Engels</p>
     <p class="lede">Wie das Saga Pattern eine Datenbanktransaktion durch eine Kette lokaler Transaktionen ersetzt, warum der Pivot-Schritt am wichtigsten ist und was im Produktivbetrieb schiefgeht, mit einem Beispiel in AWS (Amazon Web Services) Step Functions.</p>
     <ul class="tags"><li>architektur</li><li>aws</li><li>microservices</li><li>serverless</li></ul>
     <img class="cover" src="/images/writing/saga-pattern-cover.jpg" alt="" width="1200" height="500" loading="eager">
@@ -356,6 +356,7 @@ Order Service        hears PaymentFailed → marks order Cancelled
 <p>Eine versendete E-Mail oder Textnachricht lässt sich nicht zurückholen. Solche Schritte gehören entweder hinter den Pivot, oder sie werden fachlich kompensiert, mit einer E-Mail wie „Ihre Buchung wurde leider storniert“.</p>
 <h3 id="6-timeouts-sind-fehler"><a class="anchor" href="#6-timeouts-sind-fehler">6. Timeouts sind Fehler</a></h3>
 <p>Ein Schritt, der nie antwortet, ist schlimmer als einer, der scheitert. Jeder Schritt braucht einen Timeout und einen ausdrücklichen Wiederherstellungspfad. Vor dem Pivot kann das eine Kompensation sein. Nach dem Pivot wird der Schritt wiederholt oder zur manuellen Bearbeitung eskaliert. Langlaufende Sagas brauchen dauerhafte Timer, kein <code>setTimeout</code> im Arbeitsspeicher.</p>
+<p>Ein Timeout beweist allerdings nicht, dass nichts passiert ist. Der Aufruf kann erfolgreich gewesen sein, und nur die Antwort ging verloren. Im Beispiel kann der Zahlungsdienstleister die Kaution eingezogen haben, obwohl die Saga nie eine Antwort erhielt, und eine Wiederholung ohne Idempotenzschlüssel belastet den Mieter dann zweimal. Nach einem Timeout gilt es deshalb zuerst herauszufinden, was der Teilnehmer tatsächlich getan hat. Eine Wiederholung mit demselben Idempotenzschlüssel ist sicher, weil ein Schritt, der schon gelaufen ist, sein ursprüngliches Ergebnis zurückgibt, statt erneut zu laufen. Bietet ein Teilnehmer eine Statusabfrage über diesen Schlüssel an, beantwortet sie die Frage direkt. Klärt beides die Lage nicht, markieren Sie den Schritt als ungeklärt und lassen einen Abgleich später beide Seiten vergleichen, statt in die eine oder andere Richtung zu raten.</p>
 <h3 id="7-beobachtbarkeit"><a class="anchor" href="#7-beobachtbarkeit">7. Beobachtbarkeit</a></h3>
 <p>Reichen Sie eine Korrelations-ID, die Saga-ID, durch jede Nachricht und jede Logzeile. Speichern Sie den Zustand der Saga (aktueller Schritt, Status, Verlauf), damit der Support die Frage „was ist mit dieser Bestellung passiert?“ beantworten kann. Bei Choreografie ist verteiltes Tracing mit OpenTelemetry oder AWS X-Ray nahezu Pflicht.</p>
 <h2 id="wann-sie-keine-saga-brauchen"><a class="anchor" href="#wann-sie-keine-saga-brauchen">Wann Sie keine Saga brauchen</a></h2>

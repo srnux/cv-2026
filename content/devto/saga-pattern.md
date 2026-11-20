@@ -164,6 +164,8 @@ A sent email or text message can't be unsent. Either move such steps after the p
 
 A step that never answers is worse than one that fails. Each step needs a timeout and an explicit recovery path. Before the pivot, that can mean compensation. After the pivot, retry or escalate for manual intervention. Long-running Sagas need durable timers, not an in-memory `setTimeout`.
 
+A timeout does not prove that nothing happened, though. The call may have succeeded and only the response got lost. In the example, the payment provider may have collected the deposit even though the Saga never heard back, and a retry without an idempotency key charges the tenant twice. So the first move after a timeout is to find out what the participant actually did. A retry with the same idempotency key is safe, because a step that already ran returns its original result instead of running again. Where a participant offers a status query by that key, it answers the question directly. If neither settles it, mark the step as in doubt and let a reconciliation job compare both sides later, rather than guessing in either direction.
+
 ### 7. Observability
 
 Propagate a correlation ID, the Saga ID, through every message and log line. Store the Saga state (current step, status, history) so support can answer "what happened to this order?" With choreography, distributed tracing with OpenTelemetry or AWS X-Ray is close to mandatory.

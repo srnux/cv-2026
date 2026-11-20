@@ -165,6 +165,8 @@ Eine versendete E-Mail oder Textnachricht lässt sich nicht zurückholen. Solche
 
 Ein Schritt, der nie antwortet, ist schlimmer als einer, der scheitert. Jeder Schritt braucht einen Timeout und einen ausdrücklichen Wiederherstellungspfad. Vor dem Pivot kann das eine Kompensation sein. Nach dem Pivot wird der Schritt wiederholt oder zur manuellen Bearbeitung eskaliert. Langlaufende Sagas brauchen dauerhafte Timer, kein `setTimeout` im Arbeitsspeicher.
 
+Ein Timeout beweist allerdings nicht, dass nichts passiert ist. Der Aufruf kann erfolgreich gewesen sein, und nur die Antwort ging verloren. Im Beispiel kann der Zahlungsdienstleister die Kaution eingezogen haben, obwohl die Saga nie eine Antwort erhielt, und eine Wiederholung ohne Idempotenzschlüssel belastet den Mieter dann zweimal. Nach einem Timeout gilt es deshalb zuerst herauszufinden, was der Teilnehmer tatsächlich getan hat. Eine Wiederholung mit demselben Idempotenzschlüssel ist sicher, weil ein Schritt, der schon gelaufen ist, sein ursprüngliches Ergebnis zurückgibt, statt erneut zu laufen. Bietet ein Teilnehmer eine Statusabfrage über diesen Schlüssel an, beantwortet sie die Frage direkt. Klärt beides die Lage nicht, markieren Sie den Schritt als ungeklärt und lassen einen Abgleich später beide Seiten vergleichen, statt in die eine oder andere Richtung zu raten.
+
 ### 7. Beobachtbarkeit
 
 Reichen Sie eine Korrelations-ID, die Saga-ID, durch jede Nachricht und jede Logzeile. Speichern Sie den Zustand der Saga (aktueller Schritt, Status, Verlauf), damit der Support die Frage „was ist mit dieser Bestellung passiert?“ beantworten kann. Bei Choreografie ist verteiltes Tracing mit OpenTelemetry oder AWS X-Ray nahezu Pflicht.
